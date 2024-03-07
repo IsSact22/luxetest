@@ -51,6 +51,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|User withoutRole($roles, $guard = null)
  *
  * @mixin Eloquent
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {

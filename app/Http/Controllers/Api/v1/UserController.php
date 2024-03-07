@@ -9,6 +9,7 @@ use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
 use App\Models\User;
 use App\Traits\HasModelName;
+use App\Traits\QueryExceptionDataTrait;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -25,6 +26,7 @@ use function App\Helpers\AfterCatchUnknown;
 class UserController extends Controller
 {
     use HasModelName;
+    use QueryExceptionDataTrait;
 
     public function getUsers(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
@@ -129,16 +131,7 @@ class UserController extends Controller
                 ResponseAlias::HTTP_NOT_FOUND
             );
         } catch (QueryException $e) {
-            $connectionName = $e->getConnectionName();
-            $sql = $e->getSql();
-            $bindings = $e->getBindings();
-            $previous = $e->getPrevious();
-
-            return new ApiErrorResponse(
-                new QueryException($connectionName, $sql, $bindings, $previous),
-                $e->getMessage(),
-                ResponseAlias::HTTP_CONFLICT
-            );
+            return $this->getQueryExceptionData($e);
         } catch (Exception $e) {
             LogHelper::logError($e);
 

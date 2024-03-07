@@ -2,14 +2,21 @@
 
 namespace App\Services;
 
+use App\Helpers\HasUpdated;
 use App\Helpers\LogHelper;
-use App\Http\Resources\PermissionResource;
-use App\Http\Resources\RoleResource;
 use App\Http\Responses\ApiErrorResponse;
-use App\Http\Responses\ApiSuccessResponse;
 use App\Interfaces\PermissionServiceInterface;
 use App\Models\User;
+use App\Traits\ModelNotFoundExceptionData;
+use App\Traits\QueryExceptionDataTrait;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Spatie\Permission\Exceptions\PermissionAlreadyExists;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
+use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -18,6 +25,9 @@ use function App\Helpers\AfterCatchUnknown;
 
 class PermissionService implements PermissionServiceInterface
 {
+    use ModelNotFoundExceptionData;
+    use QueryExceptionDataTrait;
+
     protected User $user;
 
     protected Role $role;
@@ -27,98 +37,116 @@ class PermissionService implements PermissionServiceInterface
     /**
      * Obtener todos los roles.
      */
-    public function getRoles(): ApiSuccessResponse|ApiErrorResponse
+    public function getRoles(Request $request): LengthAwarePaginator|ApiErrorResponse
     {
         try {
-            return new ApiSuccessResponse(
-                RoleResource::collection(Role::all()) ?? [],
-                ['message' => 'return resource Role'],
-                ResponseAlias::HTTP_ACCEPTED
+            $roles = Role::query()
+                ->when($request->get('search'), function ($query, string $search) {
+                    $query->where('id', $search)
+                        ->orWhere('name', 'LIKE', $search.'%');
+                })
+                ->paginate()
+                ->withQueryString();
+
+            if ($request->has('search') && $roles->isEmpty()) {
+                throw new RoleDoesNotExist('Role dont exist');
+            }
+
+            return $roles;
+        } catch (RoleDoesNotExist $e) {
+            return new ApiErrorResponse(
+                $e,
+                $e->getMessage(),
+                ResponseAlias::HTTP_NOT_FOUND
             );
+
         } catch (Exception $e) {
             LogHelper::logError($e);
 
             return AfterCatchUnknown();
         }
-
     }
 
     /**
      * Crear un nuevo rol.
      */
-    public function createRole(array $data): ApiSuccessResponse|ApiErrorResponse
+    public function createRole(array $data): \Spatie\Permission\Contracts\Role|Role|ApiErrorResponse
     {
         try {
-            $role = Role::create($data);
-
-            return new ApiSuccessResponse(
-                new RoleResource($role),
-                ['message' => 'User register successfully.'],
-                ResponseAlias::HTTP_ACCEPTED
-            );
+            return Role::create($data);
+        } catch (QueryException $e) {
+            return $this->getQueryExceptionData($e);
         } catch (Exception $e) {
             LogHelper::logError($e);
 
             return AfterCatchUnknown();
         }
-    }
-
-    /**
-     * Obtener un rol por su ID.
-     */
-    public function getRoleById(int $id): RoleResource
-    {
-        $role = Role::find($id);
-
-        return new RoleResource($role);
-    }
-
-    public function getRoleByName(string $name): RoleResource
-    {
-        $role = Role::findByName($name);
-
-        return new RoleResource($role);
     }
 
     /**
      * Actualizar un rol existente.
      */
-    public function updateRole(int $id, array $data): bool
+    public function updateRole(array $data, int $id): array|ApiErrorResponse
     {
-        $role = Role::find($id);
-
-        if ($role) {
+        try {
+            $role = Role::findOrFail($id);
             $role->update($data);
 
-            return true;
-        }
+            return HasUpdated::getModel($role);
 
-        return false;
+        } catch (ModelNotFoundException $e) {
+            return $this->getModelNotFoundExceptionData($e);
+        } catch (QueryException $e) {
+            return $this->getQueryExceptionData($e);
+        } catch (Exception $e) {
+            LogHelper::logError($e);
+
+            return AfterCatchUnknown();
+        }
     }
 
     /**
      * Eliminar un rol por su ID.
      */
-    public function deleteRole(int $id): bool
+    public function deleteRole(int $id): bool|ApiErrorResponse
     {
-        $rol = Role::find($id);
-
-        if ($rol) {
-            $rol->delete();
+        try {
+            $role = Role::findOrFail($id);
+            $role->delete();
 
             return true;
+        } catch (ModelNotFoundException $e) {
+            return $this->getModelNotFoundExceptionData($e);
+        } catch (QueryException $e) {
+            return $this->getQueryExceptionData($e);
+        } catch (Exception $e) {
+            LogHelper::logError($e);
+
+            return AfterCatchUnknown();
         }
 
-        return false;
     }
 
-    public function getPermissions(): ApiSuccessResponse|ApiErrorResponse
+    public function getPermissions(Request $request): LengthAwarePaginator|ApiErrorResponse
     {
         try {
-            return new ApiSuccessResponse(
-                PermissionResource::collection(Permission::all()) ?? [],
-                ['message' => 'return resource Permissions'],
-                ResponseAlias::HTTP_ACCEPTED
+            $permissions = Permission::query()
+                ->when($request->get('search'), function ($query, string $search) {
+                    $query->where('id', $search)
+                        ->orWhere('name', 'LIKE', $search.'%');
+                })
+                ->paginate()
+                ->withQueryString();
+            if ($request->has('search') && $permissions->isEmpty()) {
+                throw new PermissionDoesNotExist('Permission dont exist');
+            }
+
+            return $permissions;
+        } catch (PermissionDoesNotExist $e) {
+            return new ApiErrorResponse(
+                $e,
+                $e->getMessage(),
+                ResponseAlias::HTTP_NOT_FOUND
             );
         } catch (Exception $e) {
             LogHelper::logError($e);
@@ -127,15 +155,15 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
-    public function createPermission(array $data): ApiSuccessResponse|ApiErrorResponse
+    public function createPermission(array $data): \Spatie\Permission\Contracts\Permission|Permission|ApiErrorResponse
     {
         try {
-            $permission = Permission::create($data);
-
-            return new ApiSuccessResponse(
-                new PermissionResource($permission),
-                ['message' => 'Permission register successfully.'],
-                ResponseAlias::HTTP_ACCEPTED
+            return Permission::create($data);
+        } catch (PermissionAlreadyExists $e) {
+            return new ApiErrorResponse(
+                $e,
+                $e->getMessage(),
+                ResponseAlias::HTTP_CONFLICT
             );
         } catch (Exception $e) {
             LogHelper::logError($e);
@@ -144,23 +172,40 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
-    public function getPermissionByName(string $name): void
+    public function updatePermission(Request $request, int $id): array|ApiErrorResponse
     {
-        // TODO: Implement getPermissionByName() method.
+        try {
+            $permission = Permission::findOrFail($id);
+            $permission->update($request->all());
+
+            return HasUpdated::getModel($permission);
+
+        } catch (ModelNotFoundException $e) {
+            return $this->getModelNotFoundExceptionData($e);
+        } catch (QueryException $e) {
+            return $this->getQueryExceptionData($e);
+        } catch (Exception $e) {
+            LogHelper::logError($e);
+
+            return AfterCatchUnknown();
+        }
     }
 
-    public function getPermissionById(int $id): void
+    public function deletePermission(int $id): bool|ApiErrorResponse
     {
-        // TODO: Implement getPermissionById() method.
-    }
+        try {
+            $permission = Permission::findOrFail($id);
+            $permission->delete();
 
-    public function updatePermission(int $id, array $data): void
-    {
-        // TODO: Implement updatePermission() method.
-    }
+            return true;
+        } catch (ModelNotFoundException $e) {
+            return $this->getModelNotFoundExceptionData($e);
+        } catch (QueryException $e) {
+            return $this->getQueryExceptionData($e);
+        } catch (Exception $e) {
+            LogHelper::logError($e);
 
-    public function deletePermission(int $id): void
-    {
-        // TODO: Implement deletePermission() method.
+            return AfterCatchUnknown();
+        }
     }
 }
