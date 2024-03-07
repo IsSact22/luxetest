@@ -13,6 +13,7 @@ namespace PHPSTORM_META {
     */
     override(new \Illuminate\Contracts\Container\Container, map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -144,6 +145,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -187,6 +189,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -214,6 +218,7 @@ namespace PHPSTORM_META {
         ]));
     override(\Illuminate\Container\Container::makeWith(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -345,6 +350,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -388,6 +394,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -415,6 +423,7 @@ namespace PHPSTORM_META {
         ]));
     override(\Illuminate\Contracts\Container\Container::get(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -546,6 +555,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -589,6 +599,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -616,6 +628,7 @@ namespace PHPSTORM_META {
         ]));
     override(\Illuminate\Contracts\Container\Container::make(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -747,6 +760,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -790,6 +804,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -817,6 +833,7 @@ namespace PHPSTORM_META {
         ]));
     override(\Illuminate\Contracts\Container\Container::makeWith(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -948,6 +965,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -991,6 +1009,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -1018,6 +1038,7 @@ namespace PHPSTORM_META {
         ]));
     override(\App::get(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -1149,6 +1170,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -1192,6 +1214,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -1219,6 +1243,7 @@ namespace PHPSTORM_META {
         ]));
     override(\App::make(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -1350,6 +1375,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -1393,6 +1419,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -1420,6 +1448,7 @@ namespace PHPSTORM_META {
         ]));
     override(\App::makeWith(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -1551,6 +1580,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -1594,6 +1624,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -1621,6 +1653,7 @@ namespace PHPSTORM_META {
         ]));
     override(\app(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -1752,6 +1785,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -1795,6 +1829,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -1822,6 +1858,7 @@ namespace PHPSTORM_META {
         ]));
     override(\resolve(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -1953,6 +1990,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -1996,6 +2034,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,
@@ -2023,6 +2063,7 @@ namespace PHPSTORM_META {
         ]));
     override(\Psr\Container\ContainerInterface::get(0), map([
         '' => '@',
+            'App\Interfaces\PermissionServiceInterface' => \App\Services\PermissionService::class,
             'Illuminate\Auth\Console\ClearResetsCommand' => \Illuminate\Auth\Console\ClearResetsCommand::class,
             'Illuminate\Auth\Middleware\RequirePassword' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'Illuminate\Broadcasting\BroadcastManager' => \Illuminate\Broadcasting\BroadcastManager::class,
@@ -2154,6 +2195,7 @@ namespace PHPSTORM_META {
             'Illuminate\Session\Middleware\StartSession' => \Illuminate\Session\Middleware\StartSession::class,
             'Illuminate\Testing\ParallelTesting' => \Illuminate\Testing\ParallelTesting::class,
             'NunoMaduro\Collision\Provider' => \NunoMaduro\Collision\Provider::class,
+            'Opcodes\LogViewer\LogTypeRegistrar' => \Opcodes\LogViewer\LogTypeRegistrar::class,
             'Spatie\FlareClient\Flare' => \Spatie\FlareClient\Flare::class,
             'Spatie\Ignition\Config\IgnitionConfig' => \Spatie\Ignition\Config\IgnitionConfig::class,
             'Spatie\Ignition\Contracts\ConfigManager' => \Spatie\Ignition\Config\FileConfigManager::class,
@@ -2197,6 +2239,8 @@ namespace PHPSTORM_META {
             'hash' => \Illuminate\Hashing\HashManager::class,
             'hash.driver' => \Illuminate\Hashing\BcryptHasher::class,
             'log' => \Illuminate\Log\LogManager::class,
+            'log-viewer' => \Opcodes\LogViewer\LogViewerService::class,
+            'log-viewer-cache' => \Illuminate\Cache\Repository::class,
             'mail.manager' => \Illuminate\Mail\MailManager::class,
             'mailer' => \Illuminate\Mail\Mailer::class,
             'memcached.connector' => \Illuminate\Cache\MemcachedConnector::class,

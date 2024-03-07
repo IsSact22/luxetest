@@ -5,10 +5,15 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdatePermissionRequest;
+use App\Http\Requests\UpdateRoleRequest;
+use App\Http\Resources\PermissionResource;
+use App\Http\Resources\RoleResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
 use App\Services\PermissionService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class RolePermissionController extends Controller
 {
@@ -17,43 +22,52 @@ class RolePermissionController extends Controller
         parent::__construct();
     }
 
-    public function getRoles(): ApiSuccessResponse|ApiErrorResponse
+    public function getRoles(Request $request): AnonymousResourceCollection
     {
-        return $this->permissionService->getRoles();
+        $roles = $this->permissionService->getRoles($request);
+
+        return RoleResource::collection($roles);
     }
 
-    public function storeRole(StoreRoleRequest $request): ApiSuccessResponse|ApiErrorResponse
+    public function storeRole(StoreRoleRequest $request): RoleResource
     {
-        return $this->permissionService->createRole($request->all());
+        $role = $this->permissionService->createRole($request->all());
+
+        return new RoleResource($role);
     }
 
-    public function getPermissions(): ApiErrorResponse|ApiSuccessResponse
+    public function updateRole(UpdateRoleRequest $request, int $id): RoleResource
     {
-        return $this->permissionService->getPermissions();
+        $role = $this->permissionService->updateRole($request->all(), $id);
+
+        return new RoleResource($role);
     }
 
-    public function storePermission(StorePermissionRequest $request): ApiErrorResponse|ApiSuccessResponse
+    public function deleteRole(int $id): ApiSuccessResponse|ApiErrorResponse
     {
-        return $this->permissionService->createPermission($request->all());
+        return $this->permissionService->deleteRole($id);
     }
 
-    public function updateRole(Request $request, int $id): void
+    public function getPermissions(Request $request): AnonymousResourceCollection
     {
-        //
+        $permissions = $this->permissionService->getPermissions($request);
+        return PermissionResource::collection($permissions);
     }
 
-    public function updatePermission(Request $request, int $id): void
+    public function storePermission(StorePermissionRequest $request): PermissionResource
     {
-        //
+        $permission = $this->permissionService->createPermission($request->all());
+        return new PermissionResource($permission);
     }
 
-    public function deleteRole(int $id)
+    public function updatePermission(UpdatePermissionRequest $request, int $id): PermissionResource
     {
-
+        $permission = $this->permissionService->updatePermission($request, $id);
+        return new PermissionResource($permission);
     }
 
-    public function deletePermission(int $id)
+    public function deletePermission(int $id): bool|ApiErrorResponse
     {
-
+        return $this->permissionService->deletePermission($id);
     }
 }

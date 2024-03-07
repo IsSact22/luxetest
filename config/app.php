@@ -161,6 +161,7 @@ return [
          */
         Spatie\Permission\PermissionServiceProvider::class,
         App\Providers\HelperServiceProvider::class,
+        App\Providers\PermissionServiceProvider::class,
 
         /*
          * Application Service Providers...

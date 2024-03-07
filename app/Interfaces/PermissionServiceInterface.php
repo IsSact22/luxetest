@@ -2,29 +2,23 @@
 
 namespace App\Interfaces;
 
+use Illuminate\Http\Request;
+
 interface PermissionServiceInterface
 {
-    public function getRoles();
+    public function getRoles(Request $request);
 
     public function createRole(array $data);
 
-    public function getRoleByName(string $name);
-
-    public function getRoleById(int $id);
-
-    public function updateRole(int $id, array $data);
+    public function updateRole(array $data, int $id);
 
     public function deleteRole(int $id);
 
-    public function getPermissions();
+    public function getPermissions(Request $request);
 
     public function createPermission(array $data);
 
-    public function getPermissionByName(string $name);
-
-    public function getPermissionById(int $id);
-
-    public function updatePermission(int $id, array $data);
+    public function updatePermission(Request $request, int $id);
 
     public function deletePermission(int $id);
 }
