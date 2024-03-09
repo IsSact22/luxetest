@@ -59,6 +59,11 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
+        "fixed-code": [
+            "@rector",
+            "@duster-fix",
+            "@pint"
+        ],
         "rector": [
             "./vendor/bin/rector"
         ],

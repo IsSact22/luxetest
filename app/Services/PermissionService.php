@@ -9,6 +9,7 @@ use App\Interfaces\PermissionServiceInterface;
 use App\Models\User;
 use App\Traits\ModelNotFoundExceptionData;
 use App\Traits\QueryExceptionDataTrait;
+use ErrorException;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,7 +17,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Spatie\Permission\Exceptions\PermissionAlreadyExists;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
-use Spatie\Permission\Exceptions\RoleDoesNotExist;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -34,31 +34,16 @@ class PermissionService implements PermissionServiceInterface
 
     protected Permission $permission;
 
-    /**
-     * Obtener todos los roles.
-     */
     public function getRoles(Request $request): LengthAwarePaginator|ApiErrorResponse
     {
         try {
-            $roles = Role::query()
+            return Role::query()
                 ->when($request->get('search'), function ($query, string $search) {
                     $query->where('id', $search)
                         ->orWhere('name', 'LIKE', $search.'%');
                 })
                 ->paginate()
                 ->withQueryString();
-
-            if ($request->has('search') && $roles->isEmpty()) {
-                throw new RoleDoesNotExist('Role dont exist');
-            }
-
-            return $roles;
-        } catch (RoleDoesNotExist $e) {
-            return new ApiErrorResponse(
-                $e,
-                $e->getMessage(),
-                ResponseAlias::HTTP_NOT_FOUND
-            );
 
         } catch (Exception $e) {
             LogHelper::logError($e);
@@ -67,9 +52,6 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
-    /**
-     * Crear un nuevo rol.
-     */
     public function createRole(array $data): \Spatie\Permission\Contracts\Role|Role|ApiErrorResponse
     {
         try {
@@ -83,9 +65,6 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
-    /**
-     * Actualizar un rol existente.
-     */
     public function updateRole(array $data, int $id): array|ApiErrorResponse
     {
         try {
@@ -105,9 +84,6 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
-    /**
-     * Eliminar un rol por su ID.
-     */
     public function deleteRole(int $id): bool|ApiErrorResponse
     {
         try {
@@ -130,18 +106,14 @@ class PermissionService implements PermissionServiceInterface
     public function getPermissions(Request $request): LengthAwarePaginator|ApiErrorResponse
     {
         try {
-            $permissions = Permission::query()
+            return Permission::query()
                 ->when($request->get('search'), function ($query, string $search) {
                     $query->where('id', $search)
                         ->orWhere('name', 'LIKE', $search.'%');
                 })
                 ->paginate()
                 ->withQueryString();
-            if ($request->has('search') && $permissions->isEmpty()) {
-                throw new PermissionDoesNotExist('Permission dont exist');
-            }
 
-            return $permissions;
         } catch (PermissionDoesNotExist $e) {
             return new ApiErrorResponse(
                 $e,
@@ -202,6 +174,39 @@ class PermissionService implements PermissionServiceInterface
             return $this->getModelNotFoundExceptionData($e);
         } catch (QueryException $e) {
             return $this->getQueryExceptionData($e);
+        } catch (Exception $e) {
+            LogHelper::logError($e);
+
+            return AfterCatchUnknown();
+        }
+    }
+
+    public function assignPermissions(array $permissions, int $id, string $guard)
+    {
+        try {
+            $role = Role::findById($id, $guard);
+            $role->syncPermissions($permissions);
+
+            return $role;
+        } catch (ErrorException $e) {
+            return new ApiErrorResponse($e, $e->getMessage());
+        } catch (Exception $e) {
+            LogHelper::logError($e);
+
+            return AfterCatchUnknown();
+        }
+
+    }
+
+    public function revokePermissions(array $permissions, int $id, string $guard)
+    {
+        try {
+            $role = Role::findById($id);
+            $role->revokePermissionTo($permissions);
+
+            return $role;
+        } catch (ErrorException $e) {
+            return new ApiErrorResponse($e, $e->getMessage());
         } catch (Exception $e) {
             LogHelper::logError($e);
 

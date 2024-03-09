@@ -11,8 +11,6 @@ class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
@@ -21,7 +19,8 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'email_verified_at' => CarbonParse($this->email_verified_at),
-            'role' => null,
+            'role' => $this->getRoleNames()->first(),
+            'permissions' => $this->when($request->has('search'), PermissionResource::collection($this->getPermissionsViaRoles())),
             'created_at' => CarbonParse($this->created_at),
             'updated_at' => CarbonParse($this->updated_at),
         ];

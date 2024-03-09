@@ -28,7 +28,7 @@ class UserController extends Controller
     use HasModelName;
     use QueryExceptionDataTrait;
 
-    public function getUsers(Request $request): ApiSuccessResponse|ApiErrorResponse
+    public function index(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $users = User::query()
@@ -54,6 +54,61 @@ class UserController extends Controller
             return new ApiErrorResponse(
                 $e,
                 'Error occurred while fetching users.',
+                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    public function store(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'confirmation_password' => 'required|same:password',
+        ]);
+
+        if ($validator->fails()) {
+            return new ApiErrorResponse(
+                new ValidationException($validator->getException()),
+                $validator->messages(),
+                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        $input = $request->all();
+        $input['password'] = bcrypt($input['password']);
+        $teamId = $request->has('team_id') ? $request->get('team_id') : null;
+        try {
+            $user = User::create([
+                'name' => $input['name'],
+                'email' => $input['email'],
+                'password' => $input['password'],
+                'team_id' => $teamId,
+            ]);
+            $success['token'] = $user->createToken($request->get('email'))->plainTextToken;
+            $success['name'] = $user->name;
+
+            return new ApiSuccessResponse(
+                $success,
+                ['message' => 'User register successfully.'],
+                ResponseAlias::HTTP_CREATED
+            );
+        } catch (QueryException $e) {
+            $connectionName = $e->getConnectionName();
+            $sql = $e->getSql();
+            $bindings = $e->getBindings();
+            $previous = $e->getPrevious();
+
+            return new ApiErrorResponse(
+                new QueryException($connectionName, $sql, $bindings, $previous),
+                'Duplicate entry',
+                ResponseAlias::HTTP_CONFLICT
+            );
+        } catch (Exception $e) {
+            return new ApiErrorResponse(
+                $e,
+                'Server Error',
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );
         }

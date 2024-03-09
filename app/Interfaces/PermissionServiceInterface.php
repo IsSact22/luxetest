@@ -10,6 +10,10 @@ interface PermissionServiceInterface
 
     public function createRole(array $data);
 
+    public function assignPermissions(array $permissions, int $id, string $guard);
+
+    public function revokePermissions(array $permissions, int $id, string $guard);
+
     public function updateRole(array $data, int $id);
 
     public function deleteRole(int $id);

@@ -51,23 +51,41 @@ class RolePermissionController extends Controller
     public function getPermissions(Request $request): AnonymousResourceCollection
     {
         $permissions = $this->permissionService->getPermissions($request);
+
         return PermissionResource::collection($permissions);
     }
 
     public function storePermission(StorePermissionRequest $request): PermissionResource
     {
         $permission = $this->permissionService->createPermission($request->all());
+
         return new PermissionResource($permission);
     }
 
     public function updatePermission(UpdatePermissionRequest $request, int $id): PermissionResource
     {
         $permission = $this->permissionService->updatePermission($request, $id);
+
         return new PermissionResource($permission);
     }
 
     public function deletePermission(int $id): bool|ApiErrorResponse
     {
         return $this->permissionService->deletePermission($id);
+    }
+
+    public function assignPermissions(Request $request, int $id, string $guard): RoleResource
+    {
+        $role = $this->permissionService->assignPermissions($request->all(), $id, $guard);
+
+        return new RoleResource($role);
+
+    }
+
+    public function revokePermissions(Request $request, int $id): RoleResource
+    {
+        $role = $this->permissionService->revokePermissions($request, $id);
+
+        return new RoleResource($role);
     }
 }
