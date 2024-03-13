@@ -35,7 +35,11 @@ class AuthController extends Controller
                 $success['token'] = $user->createToken($request->get('email'))->plainTextToken;
                 $success['name'] = $user->name;
 
-                return new ApiSuccessResponse($success, ['message' => 'login successfully']);
+                return new ApiSuccessResponse(
+                    $success,
+                    ['message' => 'login successfully'],
+                    ResponseAlias::HTTP_ACCEPTED
+                );
             }
         } catch (Exception $e) {
             LogHelper::logError($e);

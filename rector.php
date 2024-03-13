@@ -18,6 +18,7 @@ return static function (RectorConfig $rectorConfig) {
         __DIR__.'/resources',
         __DIR__.'/routes',
         __DIR__.'/tests',
+        __DIR__.'/_ide_helper_models.php',
     ]);
 
     $rectorConfig->sets([

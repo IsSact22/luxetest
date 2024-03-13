@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\v1\AircraftController;
+use App\Http\Controllers\Api\v1\AircraftModelController;
+use App\Http\Controllers\Api\v1\FlightHourController;
+use App\Http\Controllers\Api\v1\ManufacturerController;
 use App\Http\Controllers\Api\v1\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,4 +58,31 @@ Route::group([
         ->name('api.v1.permissions.update');
     Route::delete('permissions/{id}', [RolePermissionController::class, 'deletePermission'])
         ->name('api.v1.permissions.delete');
+
 });
+
+// Manufacturer
+Route::namespace('api')
+    ->prefix('v1')
+    ->name('api.v1.')
+    ->middleware('auth:sanctum')
+    ->apiResource('v1/manufacturer', ManufacturerController::class);
+
+// Aircraft
+Route::namespace('api')
+    ->prefix('v1')
+    ->name('api.v1.')
+    ->middleware('auth:sanctum')
+    ->apiResource('aircraft/models', AircraftModelController::class);
+
+Route::namespace('api')
+    ->prefix('v1')
+    ->name('api.v1.')
+    ->middleware('auth:sanctum')
+    ->apiResource('aircraft', AircraftController::class);
+
+Route::namespace('api')
+    ->prefix('v1')
+    ->name('api.v1.')
+    ->middleware('auth:sanctum')
+    ->apiResource('aircraft/flight_hours', FlightHourController::class);
