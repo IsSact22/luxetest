@@ -4,14 +4,15 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAircraftModelRequest;
-use App\Http\Requests\UpdateAircraftModelRequest;
-use App\Http\Resources\AircraftModelResource;
+use App\Http\Requests\StoreAircraftRequest;
+use App\Http\Requests\UpdateAircraftRequest;
+use App\Http\Resources\AircraftResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
-use App\Models\AircraftModel;
+use App\Models\Aircraft;
 use App\Traits\HasModelName;
 use App\Traits\QueryExceptionDataTrait;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -20,7 +21,7 @@ use Throwable;
 
 use function App\Helpers\AfterCatchUnknown;
 
-class AircraftModelController extends Controller
+class AircraftController extends Controller
 {
     use HasModelName;
     use QueryExceptionDataTrait;
@@ -28,49 +29,41 @@ class AircraftModelController extends Controller
     public function index(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraftModels = AircraftModel::query()
+            $aircraft = Aircraft::query()
                 ->when($request->get('search'), function ($query, string $search) {
-                    $query->where('name', 'LIKE', $search.'%');
-                })
-                ->when($request->get('category'), function ($query, string $category) {
-                    $query->where('category', $category);
-                })
-                ->when($request->get('class'), function ($query, string $class) {
-                    $query->where('class', $class);
-                })
-                ->when($request->get('motor_type'), function ($query, string $motorType) {
-                    $query->where('motor_type', $motorType);
-                })
-                ->when($request->get('motor_qty'), function ($query, int $motorQty) {
-                    $query->where('motor_qty', $motorQty);
+                    $query->whereHas('owner', function (Builder $query) use ($search) {
+                        $query->where('name', 'LIKE', $search.'%');
+                    })
+                        ->orWhereHas('aircraftModel', function (Builder $query) use ($search) {
+                            $query->where('name', 'LIKE', $search);
+                        });
                 })
                 ->paginate()
                 ->withQueryString();
-            $resource = AircraftModelResource::collection($aircraftModels);
+            $resource = AircraftResource::collection($aircraft);
 
             return new ApiSuccessResponse(
                 $resource,
                 ['message' => 'resource '.$this->modelName],
                 ResponseAlias::HTTP_ACCEPTED
             );
-
         } catch (Throwable $e) {
+            LogHelper::logError($e);
+
             return new ApiErrorResponse(
                 $e,
                 $e->getMessage(),
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAircraftModelRequest $request): ApiSuccessResponse|ApiErrorResponse
+    public function store(StoreAircraftRequest $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraftModel = AircraftModel::create($request->all());
-            $resource = new AircraftModelResource($aircraftModel);
+            $aircraft = Aircraft::create($request->all());
+            $resource = new AircraftResource($aircraft);
 
             return new ApiSuccessResponse(
                 $resource,
@@ -86,18 +79,19 @@ class AircraftModelController extends Controller
         } catch (Throwable $e) {
             LogHelper::logError($e);
 
-            return AfterCatchUnknown();
+            return new ApiErrorResponse(
+                $e,
+                $e->getMessage(),
+                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraftModel = AircraftModel::findOrFail($id);
-            $resource = new AircraftModelResource($aircraftModel);
+            $aircraft = Aircraft::findOrFail($id);
+            $resource = new AircraftResource($aircraft);
 
             return new ApiSuccessResponse(
                 $resource,
@@ -113,12 +107,12 @@ class AircraftModelController extends Controller
         }
     }
 
-    public function update(UpdateAircraftModelRequest $request, string $id): ApiSuccessResponse|ApiErrorResponse
+    public function update(UpdateAircraftRequest $request, string $id): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraftModel = AircraftModel::findOrFail($id);
-            $aircraftModel->update($request->all());
-            $resource = new AircraftModelResource($aircraftModel);
+            $aircraft = Aircraft::findOrFail($id);
+            $aircraft->update($request->all());
+            $resource = new AircraftResource($aircraft);
 
             return new ApiSuccessResponse(
                 $resource,
@@ -137,7 +131,7 @@ class AircraftModelController extends Controller
     public function destroy(string $id): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraftModel = AircraftModel::findOrFail($id);
+            $aircraftModel = Aircraft::findOrFail($id);
             $aircraftModel->delete();
 
             return new ApiSuccessResponse(
