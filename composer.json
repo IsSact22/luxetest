@@ -9,9 +9,9 @@
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.8",
         "laravel/framework": "^10.10",
-        "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "opcodesio/log-viewer": "^3.5",
+        "php-open-source-saver/jwt-auth": "^2.2",
         "spatie/laravel-permission": "^6.4",
         "tightenco/ziggy": "^2.0"
     },
@@ -50,7 +50,7 @@
             "@php artisan package:discover --ansi",
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models"
+            "@php artisan ide-helper:models --write-mixin"
         ],
         "post-install-cmd": [
             "@php artisan ide-helper:generate",

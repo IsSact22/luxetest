@@ -14,7 +14,33 @@ import { Head } from '@inertiajs/vue3';
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">You're logged in!</div>
+                    <h1 class="p-6 text-gray-900">Welcome {{ $page.props.auth.user.name }}</h1>
+                    <div>
+                        <h1>Projects in progress</h1>
+                    </div>
+                    <div class="flex flex-row justify-around">
+                        <div class="max-w-xs p-6 rounded-md shadow-md dark:bg-gray-900 dark:text-gray-50">
+                            <div class="mt-6 mb-2">
+                                <span class="block text-xs font-medium tracking-widest uppercase dark:text-green-400">Clients</span>
+                                <h2 class="text-xl font-semibold tracking-wide">Register Client</h2>
+                            </div>
+                            <p class="dark:text-gray-100">Mauris et lorem at elit.</p>
+                        </div>
+                        <div class="max-w-xs p-6 rounded-md shadow-md dark:bg-gray-900 dark:text-gray-50">
+                            <div class="mt-6 mb-2">
+                                <span class="block text-xs font-medium tracking-widest uppercase dark:text-green-400">Aircraft</span>
+                                <h2 class="text-xl font-semibold tracking-wide">Register Aircraft</h2>
+                            </div>
+                            <p class="dark:text-gray-100">Mauris et lorem at elit.</p>
+                        </div>
+                        <div class="max-w-xs p-6 rounded-md shadow-md dark:bg-gray-900 dark:text-gray-50">
+                            <div class="mt-6 mb-2">
+                                <span class="block text-xs font-medium tracking-widest uppercase dark:text-green-400">Services</span>
+                                <h2 class="text-xl font-semibold tracking-wide">Register Service</h2>
+                            </div>
+                            <p class="dark:text-gray-100">Mauris et lorem at elit.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

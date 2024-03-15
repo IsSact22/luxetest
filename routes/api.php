@@ -28,7 +28,7 @@ Route::group(['namespace' => 'api', 'prefix' => 'v1'], function () {
 Route::group([
     'namespace' => 'api',
     'prefix' => 'v1',
-    'middleware' => 'auth:sanctum',
+    'middleware' => 'auth:api',
 ], function () {
     Route::get('users/{role}/byRole', fn ($role): \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\RoleFilterController)->filterByRole($role))
         ->name('api.v1.users.byRole');
@@ -65,24 +65,24 @@ Route::group([
 Route::namespace('api')
     ->prefix('v1')
     ->name('api.v1.')
-    ->middleware('auth:sanctum')
+    ->middleware('auth:api')
     ->apiResource('v1/manufacturer', ManufacturerController::class);
 
 // Aircraft
 Route::namespace('api')
     ->prefix('v1')
     ->name('api.v1.')
-    ->middleware('auth:sanctum')
+    ->middleware('auth:api')
     ->apiResource('aircraft/models', AircraftModelController::class);
 
 Route::namespace('api')
     ->prefix('v1')
     ->name('api.v1.')
-    ->middleware('auth:sanctum')
+    ->middleware('auth:api')
     ->apiResource('aircraft', AircraftController::class);
 
 Route::namespace('api')
     ->prefix('v1')
     ->name('api.v1.')
-    ->middleware('auth:sanctum')
+    ->middleware('auth:api')
     ->apiResource('aircraft/flight_hours', FlightHourController::class);

@@ -150,13 +150,22 @@ class AircraftModelSeeder extends Seeder
                 'passenger_qty' => 18,
             ],
             [
-                'manufacturer_id' => 17, // Gulfstream Aerospace
+                'manufacturer_id' => 17,
                 'name' => 'Gulfstream G550',
                 'category' => 'aircraft',
                 'class' => 'land',
                 'motor_type' => 'turbofan',
                 'motor_qty' => 2,
                 'passenger_qty' => 16,
+            ],
+            [
+                'manufacturer_id' => 24,
+                'name' => 'Dassault Falcon 900',
+                'category' => 'aircraft',
+                'class' => 'land',
+                'motor_type' => 'turbofan',
+                'motor_qty' => 3,
+                'passenger_qty' => 19,
             ],
         ];
 

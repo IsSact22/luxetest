@@ -1,0 +1,53 @@
+<script setup>
+import {Head} from "@inertiajs/vue3";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Paginator from "@/Components/Paginator.vue";
+import { Link } from '@inertiajs/vue3';
+
+const props = defineProps({
+    resource: {
+        type: Object,
+        default: () => ({})
+    }
+})
+</script>
+<template>
+    <Head title="Clients" />
+    <AuthenticatedLayout>
+        <template #header>
+            <h2>Clients</h2>
+        </template>
+        <div class="flex flex-col mx-auto px-4 mt-4">
+            <table class="w-full">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Register</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(user,idx) in resource.data" :key="idx">
+                    <td>{{user.id}}</td>
+                    <td>{{user.name}}</td>
+                    <td>{{user.client_profile.customer_name}}</td>
+                    <td>{{user.client_profile.phone}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.role}}</td>
+                    <td class="text-center">{{user.created_at}}</td>
+                    <td class="col-actions">
+                        <Link class="button-actions text-sky-900 bg-sky-300">Profile</Link>
+                        <Link class="button-actions">Role</Link>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <Paginator :data="resource" />
+        </div>
+    </AuthenticatedLayout>
+</template>

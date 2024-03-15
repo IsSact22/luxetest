@@ -17,6 +17,7 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'client_profile' => $this->when($this->clientProfile, $this->clientProfile),
             'email' => $this->email,
             'email_verified_at' => CarbonParse($this->email_verified_at),
             'role' => $this->getRoleNames()->first(),

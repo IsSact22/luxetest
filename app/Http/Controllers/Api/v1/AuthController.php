@@ -29,32 +29,69 @@ class AuthController extends Controller
     public function login(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $credentials = $request->only(['email', 'password']);
-            if (Auth::attempt($credentials)) {
-                $user = Auth::user();
-                $success['token'] = $user->createToken($request->get('email'))->plainTextToken;
-                $success['name'] = $user->name;
+            $request->validate([
+                'email' => 'required|string|email',
+                'password' => 'required|string',
+            ]);
 
-                return new ApiSuccessResponse(
-                    $success,
-                    ['message' => 'login successfully'],
-                    ResponseAlias::HTTP_ACCEPTED
+            $credentials = $request->only('email', 'password');
+
+            if (! $token = auth('api')->attempt($credentials)) {
+                return new ApiErrorResponse(
+                    new AuthenticationException,
+                    'Unauthorized',
+                    ResponseAlias::HTTP_UNAUTHORIZED
                 );
             }
+
+            $user = auth('api')->user();
+
+            return new ApiSuccessResponse(
+                [
+                    'status' => 'success',
+                    'user' => $user,
+                    'authorization' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ],
+                ['message' => 'login successfully'],
+                ResponseAlias::HTTP_ACCEPTED
+            );
+        } catch (Exception $e) {
+            LogHelper::logError($e);
+
+            return AfterCatchUnknown();
+        }
+    }
+
+    public function refresh(): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            return new ApiSuccessResponse(
+                [
+                    'status' => 'success',
+                    'user' => Auth::user(),
+                    'authorisation' => [
+                        'token' => Auth::refresh(),
+                        'type' => 'bearer',
+                    ],
+                ],
+                ['message' => 'login successfully'],
+                ResponseAlias::HTTP_ACCEPTED
+            );
         } catch (Exception $e) {
             LogHelper::logError($e);
 
             return AfterCatchUnknown();
         }
 
-        return new ApiErrorResponse(new AuthenticationException, 'login failed');
     }
 
     public function logout(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $user = auth()->user();
-            $user->tokens()->delete();
+            Auth::logout();
 
             return new ApiSuccessResponse(
                 [],

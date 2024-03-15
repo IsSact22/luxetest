@@ -20,7 +20,8 @@ class RoleFilterController extends Controller
     public function filterByRole($role): AnonymousResourceCollection|ApiErrorResponse
     {
         try {
-            $user = User::role($role)->get();
+            //dd($role);
+            $user = User::role($role, 'web')->get();
             if ($user->isEmpty()) {
                 $emptyCollect = collect();
 

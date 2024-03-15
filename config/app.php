@@ -185,6 +185,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'InertiaResponse' => App\Helpers\InertiaResponse::class,
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 

@@ -36,6 +36,7 @@ class ManufacturerSeeder extends Seeder
             ['acronym' => 'ACH', 'name' => 'Airbus Helicopter'],
             ['acronym' => 'BHI', 'name' => 'Bell Helicopter'],
             ['acronym' => 'RHC', 'name' => 'Robinson Helicopter company'],
+            ['acronym' => 'DA', 'name' => 'Dassault Aviation'],
         ];
 
         foreach ($data as $manufacturer) {

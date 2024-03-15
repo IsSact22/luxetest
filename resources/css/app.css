@@ -1,3 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    font-family: "Open Sans", sans-serif;
+}
+
+h1 {
+    @apply text-2xl;
+}
+
+h2 {
+    @apply font-semibold text-xl text-gray-800 leading-tight;
+}
+
+table {
+    @apply md:w-full lg:max-w-7xl mx-auto;
+}
+
+table {
+    @apply text-base;
+}
+
+table thead tr {
+    @apply bg-blue-100;
+}
+
+table thead tr th {
+    @apply uppercase text-sm px-4 py-1;
+}
+
+table th:first-child {
+    @apply rounded-tl-lg;
+}
+
+table th:last-child {
+    @apply rounded-tr-lg;
+}
+
+table tbody {
+    @apply border-collapse border
+}
+
+table tbody tr td {
+    @apply text-sm border-collapse px-2 py-1
+}
+
+@layer utilities {
+    tbody tr:nth-child(even) {
+        @apply bg-slate-200/50;
+    }
+}
+
+.col-actions {
+    @apply flex flex-row justify-items-center items-center space-x-2
+}
+
+.button-actions {
+    @apply border rounded-md px-2 py-0.5
+}
+
+

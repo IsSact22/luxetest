@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Traits\HasModelName;
 use App\Traits\QueryExceptionDataTrait;
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -59,40 +61,38 @@ class UserController extends Controller
         }
     }
 
-    public function store(Request $request): ApiSuccessResponse|ApiErrorResponse
+    public function store(StoreUserRequest $request): ApiSuccessResponse|ApiErrorResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'confirmation_password' => 'required|same:password',
-        ]);
-
-        if ($validator->fails()) {
-            return new ApiErrorResponse(
-                new ValidationException($validator->getException()),
-                $validator->messages(),
-                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $teamId = $request->has('team_id') ? $request->get('team_id') : null;
         try {
-            $user = User::create([
-                'name' => $input['name'],
-                'email' => $input['email'],
-                'password' => $input['password'],
-                'team_id' => $teamId,
-            ]);
-            $success['token'] = $user->createToken($request->get('email'))->plainTextToken;
-            $success['name'] = $user->name;
+            $user = User::create($request->all());
+            $credentials = $user->only('email', 'password');
+
+            if (! $token = auth('api')->attempt($credentials)) {
+                return new ApiErrorResponse(
+                    new AuthenticationException,
+                    'Unauthorized',
+                    ResponseAlias::HTTP_UNAUTHORIZED
+                );
+            }
 
             return new ApiSuccessResponse(
-                $success,
+                [
+                    'status' => 'success',
+                    'message' => 'User created successfully',
+                    'user' => $user,
+                    'authorization' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ],
                 ['message' => 'User register successfully.'],
                 ResponseAlias::HTTP_CREATED
+            );
+        } catch (ValidationException $e) {
+            return new ApiErrorResponse(
+                $e,
+                $e->getMessage(),
+                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
             );
         } catch (QueryException $e) {
             $connectionName = $e->getConnectionName();
