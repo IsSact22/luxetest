@@ -35,20 +35,16 @@ class UserFactory extends Factory
 
     public function setToUser(): Factory|UserFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => 'user',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => 'user',
+        ]);
     }
 
     public function setToClient(): Factory|UserFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => 'client',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => 'client',
+        ]);
     }
 
     /**

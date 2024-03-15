@@ -23,3 +23,10 @@
 - "phpstan/phpstan": "^1.10",
 - "rector/rector": "^1.0",
 - "tightenco/duster": "^2.7"
+- "spatie/laravel-permission": "^6.4",
+- "spatie/laravel-medialibrary": "^11.0.0"
+
+## Requirement OS
+```
+sudo apt install jpegoptim optipng pngquant gifsicle libavif-bin
+```

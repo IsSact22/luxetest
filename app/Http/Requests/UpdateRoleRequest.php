@@ -23,9 +23,9 @@ class UpdateRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable|string|unique:roles,name,'.$this->id,
+            'name' => 'required|string|unique:roles,name,'.$this->id,
             'guard_name' => 'nullable|string',
-            'team_id' => 'nullable|string',
+            'permissions' => 'required',
         ];
     }
 }

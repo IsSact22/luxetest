@@ -25,7 +25,7 @@ class StoreRoleRequest extends FormRequest
         return [
             'name' => 'required|string|unique:roles',
             'guard_name' => 'required|string',
-            'team_id' => 'nullable|string',
+            'permissions' => 'required',
         ];
     }
 }

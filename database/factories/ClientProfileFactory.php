@@ -18,9 +18,7 @@ class ClientProfileFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => function () {
-                return \App\Models\User::factory()->create()->id;
-            },
+            'user_id' => fn () => \App\Models\User::factory()->create()->id,
             'customer_name' => $this->faker->company,
         ];
     }

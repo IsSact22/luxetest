@@ -3,6 +3,7 @@ import {Head} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { Link } from '@inertiajs/vue3';
+import SubMenuUser from "@/Components/SubMenuUser.vue";
 
 const props = defineProps({
     resource: {
@@ -18,6 +19,7 @@ const props = defineProps({
             <h2>Users</h2>
         </template>
         <div class="flex flex-col mx-auto px-4 mt-4">
+            <SubMenuUser />
             <table class="w-full">
                 <thead>
                 <tr>
@@ -37,7 +39,7 @@ const props = defineProps({
                     <td>{{user.role}}</td>
                     <td class="text-center">{{user.created_at}}</td>
                     <td class="col-actions">
-                        <Link class="button-actions text-sky-900 bg-sky-300">Profile</Link>
+                        <Link v-if="user.has_profile" class="button-actions text-sky-900 bg-sky-300">Profile</Link>
                         <Link class="button-actions">Role</Link>
                     </td>
                 </tr>

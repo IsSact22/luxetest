@@ -51,7 +51,8 @@ namespace App\Models{
  * @property int $id
  * @property int $owner_id
  * @property int $aircraft_model_id
- * @property \Illuminate\Support\Carbon $construction_date
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $construction_date
  * @property string $serial
  * @property string $registration
  * @property string|null $flight_hours
@@ -61,6 +62,8 @@ namespace App\Models{
  * @property-read \App\Models\AircraftModel $aircraftModel
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\FlightHour> $flightHours
  * @property-read int|null $flight_hours_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \App\Models\User $owner
  * @method static \Database\Factories\AircraftFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Aircraft newModelQuery()
@@ -73,6 +76,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereFlightHours($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereRegistration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereSerial($value)
@@ -126,6 +130,7 @@ namespace App\Models{
  * @property int $id
  * @property int $user_id
  * @property string $customer_name
+ * @property string $phone
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\ClientProfileFactory factory($count = null, $state = [])
@@ -135,6 +140,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ClientProfile whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientProfile whereCustomerName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientProfile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ClientProfile wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientProfile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ClientProfile whereUserId($value)
  * @mixin \Eloquent
@@ -258,22 +264,25 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $code
- * @property int $client_profile_id
+ * @property int $client
+ * @property int $project_manager
  * @property string $contract
  * @property string $aircraft
  * @property string $description
  * @property string $start_date
  * @property string $end_estimated
  * @property string|null $finish_date
- * @property int $project_manager
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @method static \Database\Factories\ProjectFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Project newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Project newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Project query()
  * @method static \Illuminate\Database\Eloquent\Builder|Project whereAircraft($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereClientProfileId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Project whereClient($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Project whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Project whereContract($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Project whereCreatedAt($value)
@@ -314,6 +323,34 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperSchedulingPayment {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property string $name
+ * @property string|null $estimate_time
+ * @property bool $has_material
+ * @property bool $disable
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\ServiceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Service newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Service newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Service query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Service whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Service whereDisable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Service whereEstimateTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Service whereHasMaterial($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Service whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Service whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Service whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperService {}
 }
 
 namespace App\Models{
@@ -411,6 +448,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\ClientProfile|null $clientProfile
+ * @property-read bool $has_profile
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions

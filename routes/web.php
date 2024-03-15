@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function ($route) {
     $route->patch('/profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
     $route->delete('/profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
 
+    $route->resource('roles', \App\Http\Controllers\RoleController::class);
+    $route->resource('permissions', \App\Http\Controllers\PermissionController::class);
     $route->resource('users', \App\Http\Controllers\UserController::class);
     $route->resource('clients', \App\Http\Controllers\ClientController::class);
     $route->resource('services', \App\Http\Controllers\ServiceController::class);

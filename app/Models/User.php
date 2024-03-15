@@ -50,12 +50,19 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
+    protected $appends = ['has_profile'];
+
     public static function boot(): void
     {
         parent::boot();
         static::creating(function ($model) {
             //
         });
+    }
+
+    public function getHasProfileAttribute(): bool
+    {
+        return $this->clientProfile()->exists();
     }
 
     public function scopeClients($query)
