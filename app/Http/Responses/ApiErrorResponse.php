@@ -5,6 +5,7 @@ namespace App\Http\Responses;
 use Exception;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiErrorResponse implements Responsable
@@ -18,6 +19,7 @@ class ApiErrorResponse implements Responsable
     ) {
     }
 
+    #[Override]
     public function toResponse($request): JsonResponse|Response
     {
         $response = ['message' => $this->message];

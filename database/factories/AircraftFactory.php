@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Aircraft;
 use App\Models\AircraftModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<Aircraft>
@@ -18,6 +19,7 @@ class AircraftFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         return [

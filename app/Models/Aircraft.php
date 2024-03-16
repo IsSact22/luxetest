@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -46,6 +47,7 @@ class Aircraft extends Model implements HasMedia
         'updated_at' => 'datetime:Y-m-d H:i',
     ];
 
+    #[Override]
     public function registerMediaConversions(?Media $media = null): void
     {
         $this

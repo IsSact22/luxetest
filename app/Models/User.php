@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Override;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -52,6 +53,7 @@ class User extends Authenticatable implements JWTSubject
 
     protected $appends = ['has_profile'];
 
+    #[Override]
     public static function boot(): void
     {
         parent::boot();
@@ -80,11 +82,13 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(ClientProfile::class, 'user_id');
     }
 
+    #[Override]
     public function getJWTIdentifier(): mixed
     {
         return $this->getKey();
     }
 
+    #[Override]
     public function getJWTCustomClaims(): array
     {
         return [];

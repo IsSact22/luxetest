@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Inertia\Inertia;
+use Override;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,6 +26,7 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
+    #[Override]
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
@@ -32,6 +34,7 @@ class Handler extends ExceptionHandler
         });
     }
 
+    #[Override]
     public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response|RedirectResponse
     {
         $response = parent::render($request, $e);

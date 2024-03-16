@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\ClientProfile;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
 
 /**
  * @extends Factory<ClientProfile>
@@ -15,6 +16,7 @@ class ClientProfileFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         return [

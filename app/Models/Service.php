@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @mixin IdeHelperService
@@ -29,6 +30,7 @@ class Service extends Model
         'disable' => 'boolean',
     ];
 
+    #[Override]
     public static function boot(): void
     {
         parent::boot();

@@ -15,6 +15,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Override;
 use Spatie\Permission\Exceptions\PermissionAlreadyExists;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 use Spatie\Permission\Models\Permission;
@@ -34,6 +35,7 @@ class PermissionService implements PermissionServiceInterface
 
     protected Permission $permission;
 
+    #[Override]
     public function getRoles(Request $request): LengthAwarePaginator|ApiErrorResponse
     {
         try {
@@ -52,6 +54,7 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
+    #[Override]
     public function createRole(array $data): \Spatie\Permission\Contracts\Role|Role|ApiErrorResponse
     {
         try {
@@ -65,6 +68,7 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
+    #[Override]
     public function updateRole(array $data, int $id): array|ApiErrorResponse
     {
         try {
@@ -84,6 +88,7 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
+    #[Override]
     public function deleteRole(int $id): bool|ApiErrorResponse
     {
         try {
@@ -103,6 +108,7 @@ class PermissionService implements PermissionServiceInterface
 
     }
 
+    #[Override]
     public function getPermissions(Request $request): LengthAwarePaginator|ApiErrorResponse
     {
         try {
@@ -127,6 +133,7 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
+    #[Override]
     public function createPermission(array $data): \Spatie\Permission\Contracts\Permission|Permission|ApiErrorResponse
     {
         try {
@@ -144,6 +151,7 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
+    #[Override]
     public function updatePermission(Request $request, int $id): array|ApiErrorResponse
     {
         try {
@@ -163,6 +171,7 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
+    #[Override]
     public function deletePermission(int $id): bool|ApiErrorResponse
     {
         try {
@@ -181,6 +190,7 @@ class PermissionService implements PermissionServiceInterface
         }
     }
 
+    #[Override]
     public function assignPermissions(array $permissions, int $id, string $guard)
     {
         try {
@@ -198,6 +208,7 @@ class PermissionService implements PermissionServiceInterface
 
     }
 
+    #[Override]
     public function revokePermissions(array $permissions, int $id, string $guard)
     {
         try {

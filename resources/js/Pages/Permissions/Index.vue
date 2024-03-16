@@ -1,5 +1,5 @@
 <script setup>
-import {Head, useForm} from "@inertiajs/vue3";
+import {Head, useForm, router} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { Link } from '@inertiajs/vue3';
@@ -7,6 +7,7 @@ import {ref} from "vue";
 import { useToast } from "vue-toastification";
 import {route} from "ziggy-js";
 import SubMenuUser from "@/Components/SubMenuUser.vue";
+import Swal from 'sweetalert2'
 
 const toast = useToast();
 
@@ -42,8 +43,31 @@ const submit = () => {
             toast.success('Updated register', { timeout: 2000 });
         },
         onError: (error) => {
-            toast.error('')
+            toast.error('An error occurred while updating the record.')
             console.error(error);
+        }
+    });
+}
+const handleDelete = (id) => {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.delete(route('permissions.destroy', id), {
+                onSuccess: (response) => {
+                    toast.success('deleted register', { timeout: 2000 });
+                    form.reset();
+                },
+                onError: (err) => {
+                    toast.error('An error occurred while deleting the record.', { timeout: 2000 });
+                }
+            });
         }
     });
 }
@@ -55,7 +79,7 @@ const submit = () => {
             <h2>Users</h2>
         </template>
         <div class="flex flex-col mx-auto px-4 mt-4">
-            <SubMenuUser />
+            <SubMenuUser @new-permission="openModal" />
             <!-- Modal -->
             <transition name="modal-transition">
                 <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
@@ -108,6 +132,7 @@ const submit = () => {
                     <td class="text-center">{{permission.created_at}}</td>
                     <td class="col-actions">
                         <button class="b-edit" @click="handleEdit(permission)">Edit</button>
+                        <button class="b-delete" @click="handleDelete(permission.id)">Delete</button>
                     </td>
                 </tr>
                 </tbody>

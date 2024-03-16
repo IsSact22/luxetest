@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -31,6 +32,7 @@ class Project extends Model implements HasMedia
         'project_manager',
     ];
 
+    #[Override]
     public function registerMediaConversions(?Media $media = null): void
     {
         $this

@@ -18,6 +18,10 @@ const goToPermissions = () => {
 const isUserRoute = ref(route().current('users.index'));
 const isRoleRoute = ref(route().current('roles.index'));
 const isPermissionRoute = ref(route().current('permissions.index'));
+const emits = defineEmits(['new-permission']);
+const emitNewPermission = () => {
+    emits('new-permission');
+}
 </script>
 
 <template>
@@ -44,6 +48,7 @@ const isPermissionRoute = ref(route().current('permissions.index'));
             Permissions
         </button>
         <button
+            @click="emitNewPermission"
             class="b-goto"
             :class="{ 'hidden': !isPermissionRoute }"
         >

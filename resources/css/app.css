@@ -61,8 +61,13 @@ table tbody tr td {
 .button-actions {
     @apply border rounded-md px-2 py-0.5
 }
+
 .b-edit {
     @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded;
+}
+
+.b-delete {
+    @apply bg-rose-500 hover:bg-rose-700 text-white font-bold py-1 px-4 rounded;
 }
 
 .b-goto {
