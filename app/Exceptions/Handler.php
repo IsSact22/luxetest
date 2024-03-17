@@ -2,10 +2,12 @@
 
 namespace App\Exceptions;
 
-use App\Http\Responses\ApiErrorResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Nette\Schema\ValidationException;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Inertia\Inertia;
+use Override;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -24,17 +26,28 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
+    #[Override]
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
 
-        $this->renderable(function (ValidationException $e, $request) {
-            $message = $e->getMessage();
-            $statusCode = $e->status ?: ResponseAlias::HTTP_UNPROCESSABLE_ENTITY;
+    #[Override]
+    public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response|RedirectResponse
+    {
+        $response = parent::render($request, $e);
+        if (! app()->environment(['local', 'testing']) && in_array($response->status(), [500, 503, 404, 403])) {
+            return Inertia::render('Errors/Error', ['status' => $response->status()])
+                ->toResponse($request)
+                ->setStatusCode($response->status());
+        } elseif ($response->status() === 419) {
+            return back()->with([
+                'message' => 'The page expired, please try again.',
+            ]);
+        }
 
-            return new ApiErrorResponse($e, $message, $statusCode);
-        });
+        return $response;
     }
 }

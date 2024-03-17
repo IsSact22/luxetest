@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Traits\HasModelName;
 use App\Traits\QueryExceptionDataTrait;
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
@@ -28,7 +30,7 @@ class UserController extends Controller
     use HasModelName;
     use QueryExceptionDataTrait;
 
-    public function getUsers(Request $request): ApiSuccessResponse|ApiErrorResponse
+    public function index(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
             $users = User::query()
@@ -54,6 +56,59 @@ class UserController extends Controller
             return new ApiErrorResponse(
                 $e,
                 'Error occurred while fetching users.',
+                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    public function store(StoreUserRequest $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $user = User::create($request->all());
+            $credentials = $user->only('email', 'password');
+
+            if (! $token = auth('api')->attempt($credentials)) {
+                return new ApiErrorResponse(
+                    new AuthenticationException,
+                    'Unauthorized',
+                    ResponseAlias::HTTP_UNAUTHORIZED
+                );
+            }
+
+            return new ApiSuccessResponse(
+                [
+                    'status' => 'success',
+                    'message' => 'User created successfully',
+                    'user' => $user,
+                    'authorization' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ],
+                ['message' => 'User register successfully.'],
+                ResponseAlias::HTTP_CREATED
+            );
+        } catch (ValidationException $e) {
+            return new ApiErrorResponse(
+                $e,
+                $e->getMessage(),
+                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
+            );
+        } catch (QueryException $e) {
+            $connectionName = $e->getConnectionName();
+            $sql = $e->getSql();
+            $bindings = $e->getBindings();
+            $previous = $e->getPrevious();
+
+            return new ApiErrorResponse(
+                new QueryException($connectionName, $sql, $bindings, $previous),
+                'Duplicate entry',
+                ResponseAlias::HTTP_CONFLICT
+            );
+        } catch (Exception $e) {
+            return new ApiErrorResponse(
+                $e,
+                'Server Error',
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );
         }

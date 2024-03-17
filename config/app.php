@@ -109,7 +109,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'es_VE',
 
     /*
     |--------------------------------------------------------------------------
@@ -185,6 +185,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'InertiaResponse' => App\Helpers\InertiaResponse::class,
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 

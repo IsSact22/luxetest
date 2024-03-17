@@ -5,22 +5,26 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.3",
         "guzzlehttp/guzzle": "^7.2",
-        "laravel/framework": "^10.10",
-        "laravel/sanctum": "^3.3",
+        "inertiajs/inertia-laravel": "^1.0",
+        "laravel/framework": "^11.0",
         "laravel/tinker": "^2.8",
         "opcodesio/log-viewer": "^3.5",
-        "spatie/laravel-permission": "^6.4"
+        "php-open-source-saver/jwt-auth": "^2.2",
+        "spatie/laravel-medialibrary": "^11.0.0",
+        "spatie/laravel-permission": "^6.4",
+        "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
         "driftingly/rector-laravel": "^1.0",
         "fakerphp/faker": "^1.9.1",
+        "laravel/breeze": "^2.0",
         "laravel/pint": "^1.14",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
+        "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/phpstan": "^1.10",
@@ -46,7 +50,13 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
             "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta"
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models --write-mixin"
+        ],
+        "post-install-cmd": [
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
@@ -58,6 +68,11 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "fixed-code": [
+            "@rector",
+            "@duster-fix",
+            "@pint"
         ],
         "rector": [
             "./vendor/bin/rector"

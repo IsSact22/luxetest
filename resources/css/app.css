@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: "Open Sans", sans-serif;
+}
+
+h1 {
+    @apply text-2xl;
+}
+
+h2 {
+    @apply font-semibold text-xl text-gray-800 leading-tight;
+}
+
+table {
+    @apply md:w-full lg:max-w-7xl mx-auto;
+}
+
+table {
+    @apply text-base;
+}
+
+table thead tr {
+    @apply bg-blue-100;
+}
+
+table thead tr th {
+    @apply uppercase text-sm px-4 py-1;
+}
+
+table th:first-child {
+    @apply rounded-tl-lg;
+}
+
+table th:last-child {
+    @apply rounded-tr-lg;
+}
+
+table tbody {
+    @apply border-collapse border
+}
+
+table tbody tr td {
+    @apply text-sm border-collapse px-2 py-1
+}
+
+@layer utilities {
+    tbody tr:nth-child(even) {
+        @apply bg-slate-200/50;
+    }
+}
+
+.col-actions {
+    @apply flex flex-row justify-items-center items-center space-x-2
+}
+
+.button-actions {
+    @apply border rounded-md px-2 py-0.5
+}
+
+.b-show {
+    @apply bg-sky-500 hover:bg-sky-700 text-white font-bold py-1 px-4 rounded;
+}
+
+.b-edit {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded;
+}
+
+.b-delete {
+    @apply bg-rose-500 hover:bg-rose-700 text-white font-bold py-1 px-4 rounded;
+}
+
+.b-goto {
+    @apply rounded-md px-4 py-1 text-emerald-800 bg-emerald-300;
+}
+.b-goto:hover {
+    @apply rounded-md px-4 py-1 text-white bg-emerald-400;
+}
+input[type="text"] {
+    @apply block flex-1 border-2 rounded-md border-gray-200 bg-transparent px-4 py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6;
+}
+
