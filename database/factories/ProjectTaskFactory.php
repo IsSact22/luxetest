@@ -24,7 +24,7 @@ class ProjectTaskFactory extends Factory
 
         return [
             'project_service_id' => ProjectService::inRandomOrder()->first()->id,
-            'name' => $this->faker->sentence(5),
+            'name' => $this->faker->sentence(2),
             'description' => $this->faker->paragraph,
             'status' => $this->faker->randomElement(['backlog', 'ready', 'in_progress', 'in_review', 'done']),
             'due_date' => $this->faker->dateTimeBetween(now(), $endDate)->format('Y-m-d'),

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Override;
 
 /**
@@ -27,6 +28,11 @@ class ProjectTask extends Model
     public function projectService(): BelongsTo
     {
         return $this->belongsTo(ProjectService::class);
+    }
+
+    public function service(): HasOneThrough
+    {
+        return $this->hasOneThrough(Service::class, ProjectService::class, 'id', 'id', 'project_service_id', 'service_id');
     }
 
     #[Override]

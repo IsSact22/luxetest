@@ -26,7 +26,7 @@ class ServiceFactory extends Factory
         $estimateTime = Carbon::createFromTime($hours, $roundedMinutes);
 
         return [
-            'name' => fake()->sentence(3),
+            'name' => fake()->sentence(2),
             'description' => fake()->text,
             'estimate_time' => $estimateTime->format('H:i'),
             'has_material' => fake()->boolean,
