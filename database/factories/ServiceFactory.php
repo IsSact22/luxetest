@@ -27,9 +27,9 @@ class ServiceFactory extends Factory
 
         return [
             'name' => fake()->sentence(3),
+            'description' => fake()->text,
             'estimate_time' => $estimateTime->format('H:i'),
             'has_material' => fake()->boolean,
-            'disable' => false,
         ];
     }
 }

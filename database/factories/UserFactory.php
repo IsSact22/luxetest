@@ -35,20 +35,6 @@ class UserFactory extends Factory
         ];
     }
 
-    public function setToUser(): Factory|UserFactory
-    {
-        return $this->state(fn (array $attributes) => [
-            'type' => 'user',
-        ]);
-    }
-
-    public function setToClient(): Factory|UserFactory
-    {
-        return $this->state(fn (array $attributes) => [
-            'type' => 'client',
-        ]);
-    }
-
     /**
      * Indicate that the model's email address should be unverified.
      */

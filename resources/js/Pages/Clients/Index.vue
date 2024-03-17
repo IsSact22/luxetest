@@ -3,6 +3,7 @@ import {Head} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { Link } from '@inertiajs/vue3';
+import {route} from "ziggy-js";
 
 const props = defineProps({
     resource: {
@@ -26,23 +27,22 @@ const props = defineProps({
                     <th>Customer Name</th>
                     <th>Phone</th>
                     <th>Email</th>
-                    <th>Role</th>
                     <th>Register</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="(user,idx) in resource.data" :key="idx">
-                    <td>{{user.id}}</td>
-                    <td>{{user.name}}</td>
-                    <td>{{user.client_profile.customer_name}}</td>
-                    <td>{{user.client_profile.phone}}</td>
-                    <td>{{user.email}}</td>
-                    <td>{{user.role}}</td>
-                    <td class="text-center">{{user.created_at}}</td>
+                <tr v-for="(client,idx) in resource.data" :key="idx">
+                    <td>{{client.id}}</td>
+                    <td>{{client.user.name}}</td>
+                    <td>{{client.customer_name}}</td>
+                    <td>{{client.phone}}</td>
+                    <td>{{client.user.email}}</td>
+                    <td class="text-center">{{client.user.created_at}}</td>
                     <td class="col-actions">
-                        <Link class="button-actions text-sky-900 bg-sky-300">Profile</Link>
-                        <Link class="button-actions">Role</Link>
+                        <Link :href="route('clients.show', client.id)" class="b-show">Show</Link>
+                        <Link class="b-edit">Edit</Link>
+                        <Link class="b-delete">Delete</Link>
                     </td>
                 </tr>
                 </tbody>

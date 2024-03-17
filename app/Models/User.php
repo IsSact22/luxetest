@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
@@ -51,35 +51,12 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-    protected $appends = ['has_profile'];
+    protected $appends = ['is_client'];
 
-    #[Override]
-    public static function boot(): void
+    public function clients(): BelongsToMany
     {
-        parent::boot();
-        static::creating(function ($model) {
-            //
-        });
-    }
-
-    public function getHasProfileAttribute(): bool
-    {
-        return $this->clientProfile()->exists();
-    }
-
-    public function scopeClients($query)
-    {
-        return $query->where('type', 'client');
-    }
-
-    public function teams(): BelongsToMany
-    {
-        return $this->belongsToMany(Team::class, 'team_user')->withTimestamps();
-    }
-
-    public function clientProfile(): HasOne
-    {
-        return $this->hasOne(ClientProfile::class, 'user_id');
+        return $this->belongsToMany(Client::class, 'user_client', 'user_id', 'client_id')
+            ->withTimestamps();
     }
 
     #[Override]
@@ -92,5 +69,12 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    protected function isClient(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->clients()->exists(),
+        );
     }
 }

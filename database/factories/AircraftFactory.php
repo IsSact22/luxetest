@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Aircraft;
-use App\Models\AircraftModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Override;
 
@@ -23,13 +22,8 @@ class AircraftFactory extends Factory
     public function definition(): array
     {
         return [
-            'owner_id' => fake()->randomElement([8, 9, 10, 11, 12, 13, 14]),
-            'aircraft_model_id' => AircraftModel::all()->random()->id,
-            'name' => fake()->sentence(3),
-            'construction_date' => $this->faker->dateTimeBetween('-10 years', now()),
-            'serial' => $this->faker->unique()->bothify('??####?##???###'),
-            'registration' => $this->faker->bothify('YV-######'),
-            'flight_hours' => $this->faker->numberBetween(0, 3000),
+            'registration' => $this->faker->bothify('YV-####-#'),
+            'name' => fake()->unique()->randomElement(['F900EX-097', 'G650ER', 'CJ4', 'LJ45', 'P180', 'E55P', 'C750', 'H800XP']),
         ];
     }
 }

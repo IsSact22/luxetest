@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Interfaces\PermissionServiceInterface;
-use App\Services\PermissionService;
+use App\Contracts\PermissionServiceInterface;
+use App\Repositories\PermissionService;
 use Illuminate\Support\ServiceProvider;
 use Override;
 

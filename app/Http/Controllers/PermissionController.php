@@ -59,7 +59,7 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission): \Inertia\Response
     {
-        return Inertia::render('Errors/Error',['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
     }
 
     /**

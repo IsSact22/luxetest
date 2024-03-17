@@ -4,40 +4,55 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
-use Spatie\Image\Enums\Fit;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @mixin IdeHelperProject
  */
-class Project extends Model implements HasMedia
+class Project extends Model
 {
     use HasFactory;
-    use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $table = 'projects';
 
     protected $fillable = [
-        'code',
         'client_id',
-        'contract',
-        'aircraft',
-        'description',
-        'start_date',
-        'end_estimated',
-        'finish_date',
-        'project_manager',
+        'aircraft_id',
+        'date',
+        'name',
     ];
 
-    #[Override]
-    public function registerMediaConversions(?Media $media = null): void
+    public function client(): BelongsTo
     {
-        $this
-            ->addMediaConversion('preview')
-            ->fit(Fit::Contain, 300, 300)
-            ->nonQueued();
+        return $this->belongsTo(Client::class);
+    }
+
+    public function aircraft(): BelongsTo
+    {
+        return $this->belongsTo(Aircraft::class);
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, 'project_services')->withTimestamps();
+    }
+
+    #[Override]
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'client_id' => 'integer',
+            'aircraft_id' => 'integer',
+            'date' => 'datetime:Y-m-d',
+            'name' => 'string',
+            'created_at' => 'datetime:Y-m-d H:i',
+            'updated_at' => 'datetime:Y-m-d H:i',
+            'deleted_at' => 'datetime:Y-m-d H:i',
+        ];
     }
 }

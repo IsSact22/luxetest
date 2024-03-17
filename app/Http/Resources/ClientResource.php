@@ -16,6 +16,13 @@ class ClientResource extends JsonResource
     #[Override]
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        //return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'customer_name' => $this->customer_name,
+            'phone' => $this->phone,
+            'user' => new UserResource($this->users->first()),
+            'projects' => $this->when($this->projects()->exists(), ProjectResource::collection($this->projects)),
+        ];
     }
 }
