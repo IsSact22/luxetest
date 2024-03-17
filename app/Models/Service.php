@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 
 /**
  * @mixin IdeHelperService
@@ -11,29 +14,34 @@ use Illuminate\Database\Eloquent\Model;
 class Service extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'services';
 
     protected $fillable = [
         'name',
+        'description',
         'estimate_time',
         'has_material',
-        'disable',
     ];
 
-    protected $casts = [
-        'id' => 'integer',
-        'name' => 'string',
-        'estimate_time' => 'string',
-        'has_material' => 'boolean',
-        'disable' => 'boolean',
-    ];
-
-    public static function boot(): void
+    public function projects(): BelongsToMany
     {
-        parent::boot();
-        static::creating(function ($model) {
-            //
-        });
+        return $this->belongsToMany(Project::class, 'project_services')->withTimestamps();
+    }
+
+    #[Override]
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'name' => 'string',
+            'description' => 'string',
+            'estimate_time' => 'datetime:H:i',
+            'has_material' => 'boolean',
+            'created_at' => 'datetime:Y-m-d H:i',
+            'updated_at' => 'datetime:Y-m-d H:i',
+            'deleted_at' => 'datetime:Y-m-d H:i',
+        ];
     }
 }

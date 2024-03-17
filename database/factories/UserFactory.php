@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Override;
 
 /**
  * @extends Factory<User>
@@ -22,6 +23,7 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         return [
@@ -31,20 +33,6 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
-    }
-
-    public function setToUser(): Factory|UserFactory
-    {
-        return $this->state(fn (array $attributes) => [
-            'type' => 'user',
-        ]);
-    }
-
-    public function setToClient(): Factory|UserFactory
-    {
-        return $this->state(fn (array $attributes) => [
-            'type' => 'client',
-        ]);
     }
 
     /**

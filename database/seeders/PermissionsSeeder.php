@@ -24,9 +24,9 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete']);
 
         // Create Roles
-        Role::create(['name' => 'Super-Admin']);
+        Role::create(['name' => 'super-admin']);
 
-        $admin = Role::create(['name' => 'Admin']);
+        $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
             'create',
             'read',
@@ -34,7 +34,9 @@ class PermissionsSeeder extends Seeder
             'delete',
         ]);
 
-        $user = Role::create(['name' => 'User']);
+        Role::create(['name' => 'project-manager']);
+
+        $user = Role::create(['name' => 'user']);
         $user->givePermissionTo([
             'create',
             'read',
@@ -42,7 +44,7 @@ class PermissionsSeeder extends Seeder
             'delete',
         ]);
 
-        $client = Role::create(['name' => 'Client']);
+        $client = Role::create(['name' => 'client']);
         $client->givePermissionTo([
             'create',
             'read',

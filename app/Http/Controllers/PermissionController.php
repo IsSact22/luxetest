@@ -8,10 +8,12 @@ use App\Http\Resources\PermissionResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Nette\Schema\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Throwable;
 
 class PermissionController extends Controller
 {
@@ -31,7 +33,7 @@ class PermissionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): void
     {
         //
     }
@@ -39,7 +41,7 @@ class PermissionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         //
     }
@@ -47,17 +49,17 @@ class PermissionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Permission $permission)
+    public function show(Permission $permission): \Inertia\Response
     {
-        //
+        return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Permission $permission)
+    public function edit(Permission $permission): \Inertia\Response
     {
-        //
+        return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
     }
 
     /**
@@ -69,11 +71,11 @@ class PermissionController extends Controller
             $permission->update($request->all());
 
             return to_route('permissions.index');
-        } catch (ValidationException $e) {
+        } catch (ValidationException) {
             return Inertia::render('Errors/Error')
                 ->toResponse($request)
                 ->setStatusCode(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Throwable $e) {
+        } catch (Throwable) {
             return Inertia::render('Errors/Error')->toResponse($request)->setStatusCode(ResponseAlias::HTTP_ACCEPTED);
         }
     }
@@ -81,8 +83,18 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permission $permission)
+    public function destroy(Permission $permission): JsonResponse|ResponseAlias|RedirectResponse
     {
-        //
+        try {
+            $permission->delete();
+
+            return to_route('permissions.index');
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error')
+                ->toResponse(request())
+                ->setStatusCode(ResponseAlias::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 }

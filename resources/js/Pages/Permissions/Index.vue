@@ -1,12 +1,13 @@
 <script setup>
-import {Head, useForm} from "@inertiajs/vue3";
+import {Head, useForm, router} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { Link } from '@inertiajs/vue3';
-import {ref} from "vue";
-import { useToast } from "vue-toastification";
+import {ref, watch} from "vue";
 import {route} from "ziggy-js";
 import SubMenuUser from "@/Components/SubMenuUser.vue";
+import { useToast } from "vue-toastification";
+import Swal from 'sweetalert2'
 
 const toast = useToast();
 
@@ -22,12 +23,14 @@ const openModal = () => {
 }
 const closeModal = () => {
     isModalOpen.value = false;
+    editId.value = null
     form.reset();
 }
 const form = useForm({
     name: '',
-    guard_name: ''
-})
+    guard_name: 'web'
+});
+
 const editId = ref(null);
 const handleEdit = (data) => {
     openModal();
@@ -35,15 +38,53 @@ const handleEdit = (data) => {
     form.name = data.name
     form.guard_name = data.guard_name
 }
+
 const submit = () => {
-    form.submit('patch', route('permissions.update', editId.value), {
-        onSuccess: (response) => {
-            closeModal();
-            toast.success('Updated register', { timeout: 2000 });
-        },
-        onError: (error) => {
-            toast.error('')
-            console.error(error);
+    if (editId.value){
+        form.submit('patch', route('permissions.update', editId.value), {
+            onSuccess: (response) => {
+                closeModal();
+                toast.success('Updated register', { timeout: 2000 });
+            },
+            onError: (error) => {
+                toast.error('An error occurred while updating the record.')
+                console.error(error);
+            }
+        });
+    } else {
+        form.post(route('permissions.store'), {
+            onSuccess: (response) => {
+                closeModal();
+                toast.success('Created register', { timeout: 2000 });
+            },
+            onError: (error) => {
+                toast.error('An error occurred while creating the record.')
+                console.error(error);
+            }
+        })
+    }
+
+}
+const handleDelete = (id) => {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.delete(route('permissions.destroy', id), {
+                onSuccess: (response) => {
+                    toast.success('deleted register', { timeout: 2000 });
+                    form.reset();
+                },
+                onError: (err) => {
+                    toast.error('An error occurred while deleting the record.', { timeout: 2000 });
+                }
+            });
         }
     });
 }
@@ -55,7 +96,7 @@ const submit = () => {
             <h2>Users</h2>
         </template>
         <div class="flex flex-col mx-auto px-4 mt-4">
-            <SubMenuUser />
+            <SubMenuUser @new-permission="openModal" />
             <!-- Modal -->
             <transition name="modal-transition">
                 <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
@@ -72,7 +113,7 @@ const submit = () => {
                             </div>
                             <div class="sm:col-span-4">
                                 <label for="guard_name" class="block text-sm font-medium leading-6 text-gray-900">Guard-Name</label>
-                                <input type="text" name="guard_name" id="guard_name" placeholder="Guard Name" v-model="form.guard_name">
+                                <input type="text" name="guard_name" id="guard_name" placeholder="Guard Name" v-model="form.guard_name" readonly>
                                 <div v-if="form.errors.guard_name">{{ form.errors.guard_name }}</div>
                             </div>
                             <div class="flex justify-end mt-6">
@@ -81,7 +122,7 @@ const submit = () => {
                                     type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                     Guardar
                                 </button>
-                                <button @click="closeModal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2">
+                                <button type="button" @click="closeModal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2">
                                     Cancelar
                                 </button>
                             </div>
@@ -108,6 +149,7 @@ const submit = () => {
                     <td class="text-center">{{permission.created_at}}</td>
                     <td class="col-actions">
                         <button class="b-edit" @click="handleEdit(permission)">Edit</button>
+                        <button class="b-delete" @click="handleDelete(permission.id)">Delete</button>
                     </td>
                 </tr>
                 </tbody>

@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function ($route) {
     $route->resource('clients', \App\Http\Controllers\ClientController::class);
     $route->resource('services', \App\Http\Controllers\ServiceController::class);
     $route->resource('aircraft', \App\Http\Controllers\AircraftController::class);
+    $route->resource('projects', \App\Http\Controllers\ProjectController::class);
 });
 
 require __DIR__.'/auth.php';

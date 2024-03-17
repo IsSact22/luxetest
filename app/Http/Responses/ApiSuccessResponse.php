@@ -4,6 +4,7 @@ namespace App\Http\Responses;
 
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
+use Override;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ApiSuccessResponse implements Responsable
@@ -17,6 +18,7 @@ class ApiSuccessResponse implements Responsable
     ) {
     }
 
+    #[Override]
     public function toResponse($request): JsonResponse|ResponseAlias
     {
         return response()->json(

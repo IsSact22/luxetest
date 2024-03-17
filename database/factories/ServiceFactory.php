@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Override;
 
 /**
  * @extends Factory<Service>
@@ -16,6 +17,7 @@ class ServiceFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function definition(): array
     {
         $hours = fake()->numberBetween(1, 24);
@@ -25,9 +27,9 @@ class ServiceFactory extends Factory
 
         return [
             'name' => fake()->sentence(3),
+            'description' => fake()->text,
             'estimate_time' => $estimateTime->format('H:i'),
             'has_material' => fake()->boolean,
-            'disable' => false,
         ];
     }
 }

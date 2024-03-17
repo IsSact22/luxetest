@@ -6,13 +6,14 @@ use App\Helpers\InertiaResponse;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Response;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): \Inertia\Response
+    public function index(Request $request): Response
     {
         $users = User::query()
             ->when($request->get('search'), function ($query, string $search) {

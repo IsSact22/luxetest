@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Override;
 
 class AircraftResource extends JsonResource
 {
@@ -12,8 +13,15 @@ class AircraftResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[Override]
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'registration' => $this->registration,
+            'name' => $this->name,
+            'created_at' => $this->created_at->format('Y-m-d H:i'),
+            'updated_at' => $this->updated_at->format('Y-m-d H:i'),
+        ];
     }
 }
