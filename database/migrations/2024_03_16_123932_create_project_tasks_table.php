@@ -15,6 +15,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('status')->default('backlog');
             $table->date('due_date');
+            $table->double('position');
             $table->timestamps();
         });
     }

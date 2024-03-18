@@ -4,9 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Route;
 
-class ProjectResource extends JsonResource
+class ProjectTaskResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,14 +14,17 @@ class ProjectResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        //return parent::toArray($request);
         return [
             'id' => $this->id,
-            'client' => $this->client,
-            'aircraft' => new AircraftResource($this->aircraft),
-            'date' => $this->date->format('Y-m-d'),
+            'position' => $this->position,
+            'project_service_id' => $this->project_service_id,
             'name' => $this->name,
-            'has_tasks' => [$this->projectTasks()->exists(), $this->projectTasks()->count()],
-            'task' => $this->when(Route::is('projects.show'), ProjectTaskResource::collection($this->projectTasks)),
+            'description' => $this->description,
+            'status' => $this->status,
+            'due_date' => $this->due_date->format('Y-m-d'),
+            'proyect' => $this->project,
+            'service' => $this->service,
             'created_at' => $this->created_at->format('Y-m-d H:i'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i'),
         ];
