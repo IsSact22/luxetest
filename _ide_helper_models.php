@@ -46,9 +46,12 @@ namespace App\Models{
  *
  * @property int $id
  * @property string $customer_name
+ * @property string $phone
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Project> $projects
+ * @property-read int|null $projects_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
  * @property-read int|null $users_count
  * @method static \Database\Factories\ClientFactory factory($count = null, $state = [])
@@ -60,6 +63,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereCustomerName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Client wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Client withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|Client withoutTrashed()
@@ -83,6 +87,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Aircraft $aircraft
  * @property-read \App\Models\Client $client
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProjectTask> $projectTasks
+ * @property-read int|null $project_tasks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $services
  * @property-read int|null $services_count
  * @method static \Database\Factories\ProjectFactory factory($count = null, $state = [])
@@ -141,9 +147,13 @@ namespace App\Models{
  * @property string $description
  * @property string $status
  * @property \Illuminate\Support\Carbon $due_date
+ * @property float $position
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Project|null $project
  * @property-read \App\Models\ProjectService $projectService
+ * @property-read \App\Models\Service|null $service
+ * @method static \Database\Factories\ProjectTaskFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask query()
@@ -152,6 +162,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereDueDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask wherePosition($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereProjectServiceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereUpdatedAt($value)
@@ -173,6 +184,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Project> $projects
+ * @property-read int|null $projects_count
  * @method static \Database\Factories\ServiceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Service newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Service newQuery()
@@ -208,6 +221,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Client> $clients
  * @property-read int|null $clients_count
+ * @property-read mixed $is_client
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions

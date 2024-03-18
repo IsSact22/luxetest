@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProjectTaskStatusController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,6 +39,7 @@ Route::middleware('auth')->group(function ($route) {
     $route->resource('services', \App\Http\Controllers\ServiceController::class);
     $route->resource('aircraft', \App\Http\Controllers\AircraftController::class);
     $route->resource('projects', \App\Http\Controllers\ProjectController::class);
+    $route->patch('project_tasks/{id}/{status}/change', [ProjectTaskStatusController::class, 'change'])->name('project.tasks.changeStatus');
 });
 
 require __DIR__.'/auth.php';
