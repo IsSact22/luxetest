@@ -1,20 +1,8 @@
 <?php
 
-use App\Http\Controllers\ProjectTaskStatusController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', fn () => Inertia::render('Welcome', [
     'canLogin' => Route::has('login'),
@@ -23,23 +11,17 @@ Route::get('/', fn () => Inertia::render('Welcome', [
     'phpVersion' => PHP_VERSION,
 ]));
 
-Route::get('dashboard', fn () => Inertia::render('Dashboard'))
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::get('dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function ($route) {
-    $route->get('/profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
-    $route->patch('/profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
-    $route->delete('/profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
+Route::middleware('auth')->group(function () {
+    Route::get('profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
+    Route::patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
+    Route::delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
 
-    $route->resource('roles', \App\Http\Controllers\RoleController::class);
-    $route->resource('permissions', \App\Http\Controllers\PermissionController::class);
-    $route->resource('users', \App\Http\Controllers\UserController::class);
-    $route->resource('clients', \App\Http\Controllers\ClientController::class);
-    $route->resource('services', \App\Http\Controllers\ServiceController::class);
-    $route->resource('aircraft', \App\Http\Controllers\AircraftController::class);
-    $route->resource('projects', \App\Http\Controllers\ProjectController::class);
-    $route->patch('project_tasks/{id}/{status}/change', [ProjectTaskStatusController::class, 'change'])->name('project.tasks.changeStatus');
+    Route::resource('users', \App\Http\Controllers\UserController::class);
+    Route::get('camos/dashboard', [\App\Http\Controllers\DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
+    Route::resource('camos', \App\Http\Controllers\CamoController::class);
+    Route::resource('camo_activities', \App\Http\Controllers\CamoActivityController::class);
 });
 
 require __DIR__.'/auth.php';

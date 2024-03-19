@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
@@ -24,11 +24,13 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'type',
         'name',
         'email',
         'password',
+        'owner_id',
     ];
+
+    protected $guarded = ['disabled'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -46,17 +48,17 @@ class User extends Authenticatable implements JWTSubject
      * @var array<string, string>
      */
     protected $casts = [
-        'type' => 'string',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'owner_id' => 'integer',
+        'disabled' => 'boolean',
     ];
 
-    protected $appends = ['is_client'];
+    protected $appends = ['is_owner', 'is_crew'];
 
-    public function clients(): BelongsToMany
+    public function crew(): HasMany
     {
-        return $this->belongsToMany(Client::class, 'user_client', 'user_id', 'client_id')
-            ->withTimestamps();
+        return $this->hasMany(User::class, 'owner_id');
     }
 
     #[Override]
@@ -71,10 +73,17 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    protected function isClient(): Attribute
+    protected function isOwner(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->clients()->exists(),
+            get: fn () => $this->hasRole('owner') && $this->owner_id === null,
+        );
+    }
+
+    protected function isCrew(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->hasRole('crew') && $this->has('crew'),
         );
     }
 }

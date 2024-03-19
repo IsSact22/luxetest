@@ -1,0 +1,43 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Camo;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Override;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CamoActivity>
+ */
+class CamoActivityFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    #[Override]
+    public function definition(): array
+    {
+        $camo = Camo::inRandomOrder()->first();
+        $awrNumber = $this->faker->randomNumber(8);
+        $awrText = 'V3/Airframe inspections';
+        $awr = sprintf('%08d-%s', $awrNumber, $awrText);
+        $required = fake()->boolean;
+
+        return [
+            'camo_id' => $camo->id,
+            'required' => $required,
+            'date' => fake()->dateTimeBetween($camo->created_at, '+2 day'),
+            'name' => fake()->word,
+            'description' => fake()->paragraph,
+            'status' => fake()->randomElement(['pending', 'completed']),
+            'comments' => fake()->paragraph,
+            'labor_mount' => fake()->randomFloat(2, 0, 10000),
+            'material_mount' => fake()->randomFloat(2, 0, 10000),
+            'material_information' => fake()->sentence,
+            'awr' => $awr,
+            'approval_status' => $required ? 'approved' : fake()->randomElement(['approved', 'pending']),
+        ];
+    }
+}

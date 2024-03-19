@@ -1,8 +1,8 @@
 <script setup>
-import { computed } from 'vue'
+import {computed} from 'vue'
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
-const props = defineProps({ status: Number })
+const props = defineProps({status: Number})
 
 const title = computed(() => {
     return {
@@ -27,10 +27,10 @@ const description = computed(() => {
 <template>
     <div class="grid h-screen place-content-center bg-white px-4">
         <div class="flex flex-col justify-items-center items-center text-center">
-            <ApplicationLogo />
+            <ApplicationLogo/>
             <h1 class="mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ title }}</h1>
 
-            <p class="mt-4 text-gray-500">{{description}}</p>
+            <p class="mt-4 text-gray-500">{{ description }}</p>
         </div>
     </div>
 </template>

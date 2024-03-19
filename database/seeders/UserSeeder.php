@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Client;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -28,27 +27,20 @@ class UserSeeder extends Seeder
 
         User::factory(2)
             ->create();
-        $adminIds = User::whereIn('id', [2, 3])->pluck('id');
-        User::whereIn('id', $adminIds)->each(function ($admin) {
-            $admin->syncRoles('admin');
+        $cams = User::whereIn('id', [2, 3])->pluck('id');
+        User::whereIn('id', $cams)->each(function ($admin) {
+            $admin->syncRoles('cam');
         });
 
-        User::factory(3)
+        $users = User::factory(3)
             ->create();
 
-        $userIds = User::whereIn('id', [4, 5, 6])->pluck('id');
-        User::whereIn('id', $userIds)->each(function ($user) {
-            $user->syncRoles('project-manager');
+        $ownerIds = [4, 5, 6];
+        $owners = $users->whereIn('id', $ownerIds);
+        $owners->each(function ($user) {
+            $user->syncRoles('owner');
+            $crew = User::factory()->create(['owner_id' => $user->id]);
+            $crew->syncRoles('crew');
         });
-
-        User::factory(8)
-            ->create();
-        $clientsIds = User::where('id', '>', 6)->pluck('id');
-        User::whereIn('id', $clientsIds)->each(function ($user) {
-            $user->syncRoles('client');
-            $client = Client::factory()->create();
-            $user->clients()->attach($client);
-        });
-
     }
 }

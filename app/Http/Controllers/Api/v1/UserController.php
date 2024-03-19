@@ -147,7 +147,6 @@ class UserController extends Controller
                 ['message' => 'User register successfully.'],
                 ResponseAlias::HTTP_ACCEPTED
             );
-
         } catch (ModelNotFoundException) {
             return new ApiErrorResponse(
                 new ModelNotFoundException,

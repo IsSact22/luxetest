@@ -34,6 +34,5 @@ class RoleFilterController extends Controller
         } catch (Exception) {
             return AfterCatchUnknown();
         }
-
     }
 }

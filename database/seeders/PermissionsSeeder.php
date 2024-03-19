@@ -34,22 +34,17 @@ class PermissionsSeeder extends Seeder
             'delete',
         ]);
 
-        Role::create(['name' => 'project-manager']);
+        Role::create(['name' => 'cam']);
 
-        $user = Role::create(['name' => 'user']);
+        $user = Role::create(['name' => 'owner']);
         $user->givePermissionTo([
-            'create',
             'read',
             'update',
-            'delete',
         ]);
 
-        $client = Role::create(['name' => 'client']);
+        $client = Role::create(['name' => 'crew']);
         $client->givePermissionTo([
-            'create',
             'read',
-            'update',
-            'delete',
         ]);
     }
 }
