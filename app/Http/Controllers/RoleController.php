@@ -2,108 +2,118 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\RoleRepositoryInterface;
 use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreRoleRequest;
-use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Http\Resources\UserResource;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Throwable;
 
 class RoleController extends Controller
 {
+    public function __construct(protected RoleRepositoryInterface $role)
+    {
+        parent::__construct();
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Inertia\Response
+    public function index(Request $request): Response
     {
-        $roles = Role::orderBy('id', 'DESC')->paginate(5)
-            ->withQueryString();
+        $roles = $this->role->getAll($request);
         $resource = RoleResource::collection($roles);
 
-        return InertiaResponse::content('Users/Roles/Index', ['resource' => $resource]);
+        return InertiaResponse::content('Roles/Index', ['resource' => $resource]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Inertia\Response
+    public function create(): Response
     {
-        $permissions = Permission::get();
-
-        return InertiaResponse::content('Users/Roles/Create', ['resource' => $permissions]);
+        return InertiaResponse::content('Roles/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRoleRequest $request): \Illuminate\Http\RedirectResponse
+    public function store(StoreRoleRequest $request): RedirectResponse
     {
-        $roleData = $request->only(['name', 'guard_name']);
-        $role = Role::create($roleData);
-        $role->syncPermissions($request->get('permissions'));
+        $this->role->newRole($request->all());
 
-        return to_route('roles.index');
+        return to_route('roles.index')->with('success', 'Role created successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Role $role): \Inertia\Response
+    public function show(string $id): Response
     {
-        $rolePermissions = Permission::join(
-            'role_has_permissions',
-            'role_has_permissions.permission_id',
-            '=',
-            'permissions.id'
-        )
-            ->where('role_has_permissions.role_id', $role->id)
-            ->get();
+        try {
+            $user = $this->role->getById($id);
+            $resource = new UserResource($user);
 
-        return InertiaResponse::content('Users/Roles/Show', ['resource' => $rolePermissions]);
+            return InertiaResponse::content('Roles/Show', ['resource' => $resource]);
+        } catch (ModelNotFoundException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (Throwable) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role): \Inertia\Response
+    public function edit(string $id): Response
     {
-        $permissions = Permission::get();
-        $rolePermissions = DB::table('role_has_permissions')->where('role_has_permissions.role_id', $id)
-            ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
-            ->all();
+        try {
+            $user = $this->role->getById($id);
+            $resource = new UserResource($user);
 
-        return InertiaResponse::content('Users/Roles/Edit', [
-            'resource' => [
-                'role' => $role,
-                'permissions' => $permissions,
-                'rolePermissions' => $rolePermissions,
-            ],
-        ]);
+            return InertiaResponse::content('Roles/Edit', ['resource' => $resource]);
+        } catch (ModelNotFoundException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (Throwable) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRoleRequest $request, Role $role): \Illuminate\Http\RedirectResponse
+    public function update(Request $request, string $id): Response|RedirectResponse
     {
-        $role->name = $request->input('name');
-        if ($request->has('guard_name')) {
-            $role->guard_name = $request->get('guard_name');
-        }
-        $role->save();
-        $role->syncPermissions($request->input('permissions'));
+        try {
+            $this->role->updateRole($request->all(), $id);
 
-        return to_route('roles.index');
+            return to_route('roles.index')->with('success', 'Role updated successfully');
+        } catch (ModelNotFoundException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (Throwable) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role)
+    public function destroy(string $id): Response|RedirectResponse
     {
-        $role->delete();
+        try {
+            $this->role->deleteRole($id);
 
-        return to_route('roles.index');
+            return to_route('services.index')->with('success', 'Role deleted successfully');
+        } catch (ModelNotFoundException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (Throwable) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        }
     }
 }

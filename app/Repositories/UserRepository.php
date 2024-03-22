@@ -23,7 +23,10 @@ class UserRepository implements UserRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), function ($query, string $search) {
-                $query->where('name', 'like', $search.'%');
+                $query->where('name', 'like', $search.'%')
+                    ->orWhereHas('roles', function ($query) use ($search) {
+                        $query->where('name', 'like', $search.'%');
+                    });
             })
             ->paginate($perPage)
             ->withQueryString();
@@ -74,20 +77,29 @@ class UserRepository implements UserRepositoryInterface
     #[Override]
     public function newUser(array $data): ?Model
     {
-        return $this->model->create([
+        $user = $this->model->create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'owner_id' => $data['owner_id'] ?: null,
         ]);
+
+        $user->assignRole($data['role']);
+
+        return $user;
     }
 
     #[Override]
     public function updateUser(array $data, int $id): ?Model
     {
-        $this->model->findOrFail($id)->update($data);
+        $user = $this->model->findOrFail($id);
+        $user->update($data);
 
-        return $this->model->fresh();
+        if (isset($data['role'])) {
+            $user->assignRole($data['role']);
+        }
+
+        return $user->fresh();
     }
 
     #[Override]

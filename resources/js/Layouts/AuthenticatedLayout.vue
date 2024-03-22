@@ -5,8 +5,15 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import {Link, usePage} from '@inertiajs/vue3';
+import { useToast } from 'vue-toastification'
 
+
+const toast = useToast();
+const flash = usePage().props.flash.message;
+if (flash) {
+    toast(flash.message, flash.type)
+}
 const showingNavigationDropdown = ref(false);
 </script>
 
@@ -32,6 +39,9 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
+                                <NavLink :href="route('camos.index')" :active="route().current('camos.index')">
+                                    Camos
+                                </NavLink>
                                 <NavLink :href="route('users.index')" :active="route().current('users.index')">
                                     Users
                                 </NavLink>
@@ -48,8 +58,12 @@ const showingNavigationDropdown = ref(false);
                                                 type="button"
                                                 class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
+                                                <img v-if="$page.props.auth.avatarUrl"
+                                                     class="h-6 w-6 rounded-full mr-2"
+                                                     :src="$page.props.auth.avatarUrl"
+                                                     alt="Avatar"
+                                                />
                                                 {{ $page.props.auth.user.name }}
-
                                                 <svg
                                                     class="ms-2 -me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"

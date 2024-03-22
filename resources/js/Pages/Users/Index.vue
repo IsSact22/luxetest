@@ -1,9 +1,10 @@
 <script setup>
-import {Head} from "@inertiajs/vue3";
+import {Head, useForm} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import {Link} from '@inertiajs/vue3';
-import SubMenuUser from "@/Components/SubMenuUser.vue";
+import {route} from "ziggy-js";
+import _ from 'lodash';
 
 const props = defineProps({
     resource: {
@@ -11,6 +12,20 @@ const props = defineProps({
         default: () => ({})
     }
 })
+
+const form = useForm({
+    search: ''
+})
+const fireSearch = _.throttle(function () {
+    form.get(route('users.index'), {preserveState: true})
+}, 200);
+
+const destroy = (id) => {
+    if (confirm("Seguro desea eliminar el Usuario")) {
+        form.delete(route('users.destroy', id), {preserveState: true});
+    }
+}
+
 </script>
 <template>
     <Head title="Users"/>
@@ -20,16 +35,7 @@ const props = defineProps({
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 border rounded-md px-4 py-4">
-                <div class="my-2 flex flex-row justify-items-center items-center space-x-7">
-                    <div>
-                        <select
-                            name="filter_by"
-                            id="filter_by"
-                            class="py-1 rounded-md border-gray-300"
-                        >
-                            <option :value="null">Filter-by</option>
-                        </select>
-                    </div>
+                <form class="my-2 flex flex-row justify-items-center items-center space-x-7">
                     <div>
                         <input
                             type="text"
@@ -37,13 +43,34 @@ const props = defineProps({
                             name="search"
                             id="search"
                             placeholder="search"
+                            @keyup="fireSearch"
+                            v-model="form.search"
                         >
                     </div>
+                    <Link :href="route('users.create')"
+                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                    >
+                        New User
+                    </Link>
+                    <Link :href="route('roles.index')"
+                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                    >
+                        Roles
+                    </Link>
+                    <Link
+                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                    >
+                        Permissions
+                    </Link>
+                </form>
+                <div>
+
                 </div>
                 <table class="table-auto">
                     <thead>
                     <tr>
                         <th>Id</th>
+                        <th>Avatar</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -54,14 +81,18 @@ const props = defineProps({
                     <tbody>
                     <tr v-for="(user,idx) in resource.data" :key="idx">
                         <td>{{ user.id }}</td>
+                        <td>
+                            <div class="w-12 h-12 rounded-full overflow-hidden">
+                                <img v-if="user.avatar" :src="user.avatar" alt="Avatar" class="w-full h-full object-cover" />
+                            </div>
+                        </td>
                         <td>{{ user.name }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.role }}</td>
                         <td class="text-center">{{ user.created_at }}</td>
                         <td class="col-actions">
-                            <Link class="b-show">Show</Link>
-                            <Link class="b-edit">Edit</Link>
-                            <Link class="b-delete">Delete</Link>
+                            <Link :href="route('users.show', user.id)" class="b-edit">Edit</Link>
+                            <Link v-if="user.id !== 1" @click="destroy(user.id)" class="b-delete">Delete</Link>
                         </td>
                     </tr>
                     </tbody>

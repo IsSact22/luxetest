@@ -9,7 +9,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -60,7 +59,8 @@ class User extends Authenticatable implements HasMedia, JWTSubject
 
     protected $appends = ['is_owner', 'is_crew', 'is_super'];
 
-    public function registerMediaConversions(Media $media = null): void
+    #[Override]
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(50)

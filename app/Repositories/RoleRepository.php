@@ -6,6 +6,7 @@ use App\Contracts\RoleRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Override;
 use Spatie\Permission\Models\Role;
 
 class RoleRepository implements RoleRepositoryInterface
@@ -14,7 +15,7 @@ class RoleRepository implements RoleRepositoryInterface
     {
     }
 
-    #[\Override]
+    #[Override]
     public function getAll(Request $request): LengthAwarePaginator
     {
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
@@ -27,13 +28,13 @@ class RoleRepository implements RoleRepositoryInterface
             ->withQueryString();
     }
 
-    #[\Override]
+    #[Override]
     public function getById(int $id): ?Model
     {
         return $this->model->findOrFail($id);
     }
 
-    #[\Override]
+    #[Override]
     public function newRole(array $data): ?Model
     {
         return $this->model->create([
@@ -42,7 +43,7 @@ class RoleRepository implements RoleRepositoryInterface
         ]);
     }
 
-    #[\Override]
+    #[Override]
     public function updateRole(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
@@ -50,7 +51,7 @@ class RoleRepository implements RoleRepositoryInterface
         return $this->model->fresh();
     }
 
-    #[\Override]
+    #[Override]
     public function deleteRole(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
