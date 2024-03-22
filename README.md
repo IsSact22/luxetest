@@ -26,6 +26,7 @@
 - "tightenco/duster": "^2.7"
 - "spatie/laravel-permission": "^6.4",
 - "spatie/laravel-medialibrary": "^11.0.0"
+- "php-ffmpeg/php-ffmpeg"
 
 ## Requirement OS
 

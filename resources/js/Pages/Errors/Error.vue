@@ -2,7 +2,13 @@
 import {computed} from 'vue'
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
-const props = defineProps({status: Number})
+const props = defineProps({
+    status: Number,
+    message: {
+        type: String,
+        default: () => ''
+    }
+})
 
 const title = computed(() => {
     return {
@@ -31,6 +37,7 @@ const description = computed(() => {
             <h1 class="mt-6 text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ title }}</h1>
 
             <p class="mt-4 text-gray-500">{{ description }}</p>
+            <small>{{message}}</small>
         </div>
     </div>
 </template>

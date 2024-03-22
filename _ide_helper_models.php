@@ -28,6 +28,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CamoActivity> $activities
+ * @property-read int|null $activities_count
  * @property-read \App\Models\User|null $cam
  * @property-read \App\Models\User $owner
  * @method static \Database\Factories\CamoFactory factory($count = null, $state = [])
@@ -123,6 +125,9 @@ namespace App\Models{
  * @property-read int|null $crew_count
  * @property-read mixed $is_crew
  * @property-read mixed $is_owner
+ * @property-read mixed $is_super
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions

@@ -10,6 +10,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -46,7 +47,11 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        $this->user->newUser($request->all());
+        $user = $this->user->newUser($request->all());
+        $user->assignRole($request->get('role'));
+        if($request->hasFile('avatar')) {
+            $user->addMediaFromRequest('avatar')->toMediaCollection('avatars');
+        }
 
         return to_route('users.index')->with('success', 'User created successfully');
     }
@@ -61,9 +66,11 @@ class UserController extends Controller
             $resource = new UserResource($user);
 
             return InertiaResponse::content('Users/Show', ['resource' => $resource]);
-        } catch (ModelNotFoundException) {
+        } catch (ModelNotFoundException $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error('showUser:'.$e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -78,9 +85,11 @@ class UserController extends Controller
             $resource = new UserResource($user);
 
             return InertiaResponse::content('Users/Edit', ['resource' => $resource]);
-        } catch (ModelNotFoundException) {
+        } catch (ModelNotFoundException $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error('editUser:'.$e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -91,12 +100,24 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->user->updateUser($request->all(), $id);
+            $user = $this->user->updateUser($request->all(), $id);
+            if($request->hasFile('avatar')) {
+                $user->addMediaFromRequest('avatar')
+                    ->toMediaCollection('avatars');
+            }
 
-            return to_route('services.index')->with('success', 'User updated successfully');
-        } catch (ModelNotFoundException) {
+            return to_route('users.index')->with([
+                'message' => [
+                    'type' => 'success',
+                    'message' => 'User updated successfully',
+                ]
+            ]);
+
+        } catch (ModelNotFoundException $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error('updateUser:'.$e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -109,11 +130,16 @@ class UserController extends Controller
         try {
             $this->user->deleteUser($id);
 
-            return to_route('services.index')->with('success', 'User deleted successfully');
-        } catch (ModelNotFoundException) {
+            return to_route('users.index')->with('success', 'User deleted successfully');
+        } catch (ModelNotFoundException $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        } catch (Throwable $e) {
+            Log::error('deleteUser:'.$e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

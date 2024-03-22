@@ -9,14 +9,18 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements HasMedia, JWTSubject
 {
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, InteractsWithMedia, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -54,7 +58,19 @@ class User extends Authenticatable implements JWTSubject
         'disabled' => 'boolean',
     ];
 
-    protected $appends = ['is_owner', 'is_crew'];
+    protected $appends = ['is_owner', 'is_crew', 'is_super'];
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->width(50)
+            ->height(50);
+    }
+
+    public function isReadOnly(): bool
+    {
+        return $this->id === 1;
+    }
 
     public function crew(): HasMany
     {
@@ -71,6 +87,13 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    protected function isSuper(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->hasRole('super-admin')
+        );
     }
 
     protected function isOwner(): Attribute

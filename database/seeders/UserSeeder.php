@@ -15,10 +15,10 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate([
-            'email' => 'laymont@gmail.com',
+            'email' => 'superadmin@luxeplus.com',
         ], [
-            'name' => 'Laymont Arratia',
-            'password' => Hash::make('12215358'),
+            'name' => 'LuxePlus',
+            'password' => Hash::make('123456789'),
             'remember_token' => Str::random(10),
         ]);
 

@@ -21,10 +21,12 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'is_owner' => $this->is_owner,
             'is_crew' => $this->is_crew,
+            'is_super' => $this->is_super,
             'email' => $this->email,
             'email_verified_at' => CarbonParse($this->email_verified_at),
             'role' => $this->getRoleNames()->first(),
             'permissions' => PermissionResource::collection($this->getPermissionsViaRoles()),
+            'avatar' => $this->getFirstMediaUrl('avatars', 'thumb'),
             'created_at' => CarbonParse($this->created_at),
             'updated_at' => CarbonParse($this->updated_at),
         ];
