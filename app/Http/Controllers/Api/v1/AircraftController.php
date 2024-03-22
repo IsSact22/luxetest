@@ -56,7 +56,6 @@ class AircraftController extends Controller
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );
         }
-
     }
 
     public function store(StoreAircraftRequest $request): ApiSuccessResponse|ApiErrorResponse

@@ -61,7 +61,6 @@ class RoleController extends Controller
             ->get();
 
         return InertiaResponse::content('Users/Roles/Show', ['resource' => $rolePermissions]);
-
     }
 
     /**

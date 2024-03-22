@@ -2,15 +2,20 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.3",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "^11.0",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
-        "opcodesio/log-viewer": "^3.5",
+        "opcodesio/log-viewer": "^3.6",
+        "php-ffmpeg/php-ffmpeg": "^1.2",
         "php-open-source-saver/jwt-auth": "^2.2",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-permission": "^6.4",
@@ -18,6 +23,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.0",
+        "deployer/deployer": "^7.3",
         "driftingly/rector-laravel": "^1.0",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^2.0",
@@ -56,7 +62,7 @@
         "post-install-cmd": [
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models"
+            "@php artisan ide-helper:models --write-mixin"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",

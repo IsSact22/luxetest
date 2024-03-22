@@ -35,8 +35,10 @@ class Handler extends ExceptionHandler
     }
 
     #[Override]
-    public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response|RedirectResponse
-    {
+    public function render(
+        $request,
+        Throwable $e
+    ): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response|RedirectResponse {
         $response = parent::render($request, $e);
         if (! app()->environment(['local', 'testing']) && in_array($response->status(), [500, 503, 404, 403])) {
             return Inertia::render('Errors/Error', ['status' => $response->status()])

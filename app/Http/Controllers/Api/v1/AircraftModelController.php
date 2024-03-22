@@ -53,7 +53,6 @@ class AircraftModelController extends Controller
                 ['message' => 'resource '.$this->modelName],
                 ResponseAlias::HTTP_ACCEPTED
             );
-
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 $e,

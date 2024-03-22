@@ -79,7 +79,6 @@ class RolePermissionController extends Controller
         $role = $this->permissionService->assignPermissions($request->all(), $id, $guard);
 
         return new RoleResource($role);
-
     }
 
     public function revokePermissions(Request $request, int $id): RoleResource

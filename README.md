@@ -9,14 +9,15 @@
 
 ## About Users-Management
 
-
 ## Learning About
 
 ## Requirement
+
 - "php": "^8.1"
 - "laravel/sanctum": "^3.3"
 
 ## Requirement Dev
+
 - "barryvdh/laravel-ide-helper": "^3.0",
 - "driftingly/rector-laravel": "^1.0",
 - "laravel/pint": "^1.14",
@@ -25,8 +26,10 @@
 - "tightenco/duster": "^2.7"
 - "spatie/laravel-permission": "^6.4",
 - "spatie/laravel-medialibrary": "^11.0.0"
+- "php-ffmpeg/php-ffmpeg"
 
 ## Requirement OS
+
 ```
 sudo apt install jpegoptim optipng pngquant gifsicle libavif-bin
 ```

@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Route;
 use Override;
 
 use function App\Helpers\CarbonParse;
@@ -20,18 +19,16 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'is_client' => $this->is_client,
-            'client_data' => $this->when(
-                ($this->clients()->exists() && ! Route::is('clients.*')),
-                $this->clients
-            ),
+            'is_owner' => $this->is_owner,
+            'is_crew' => $this->is_crew,
+            'is_super' => $this->is_super,
             'email' => $this->email,
             'email_verified_at' => CarbonParse($this->email_verified_at),
             'role' => $this->getRoleNames()->first(),
             'permissions' => PermissionResource::collection($this->getPermissionsViaRoles()),
+            'avatar' => $this->getFirstMediaUrl('avatars', 'thumb'),
             'created_at' => CarbonParse($this->created_at),
             'updated_at' => CarbonParse($this->updated_at),
-            'route' => null,
         ];
     }
 }

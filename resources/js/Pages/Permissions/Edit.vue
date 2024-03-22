@@ -2,7 +2,7 @@
 import {Head} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
-import { Link } from '@inertiajs/vue3';
+import {Link} from '@inertiajs/vue3';
 
 const props = defineProps({
     resource: {
@@ -12,7 +12,7 @@ const props = defineProps({
 })
 </script>
 <template>
-    <Head title="Users" />
+    <Head title="Users"/>
     <AuthenticatedLayout>
         <template #header>
             <h2>Users</h2>

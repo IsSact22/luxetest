@@ -85,7 +85,6 @@ class AuthController extends Controller
 
             return AfterCatchUnknown();
         }
-
     }
 
     public function logout(Request $request): ApiSuccessResponse|ApiErrorResponse

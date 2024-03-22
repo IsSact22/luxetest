@@ -46,7 +46,6 @@ class PermissionService implements PermissionServiceInterface
                 })
                 ->paginate()
                 ->withQueryString();
-
         } catch (Exception $e) {
             LogHelper::logError($e);
 
@@ -76,7 +75,6 @@ class PermissionService implements PermissionServiceInterface
             $role->update($data);
 
             return HasUpdated::getModel($role);
-
         } catch (ModelNotFoundException $e) {
             return $this->getModelNotFoundExceptionData($e);
         } catch (QueryException $e) {
@@ -105,7 +103,6 @@ class PermissionService implements PermissionServiceInterface
 
             return AfterCatchUnknown();
         }
-
     }
 
     #[Override]
@@ -119,7 +116,6 @@ class PermissionService implements PermissionServiceInterface
                 })
                 ->paginate()
                 ->withQueryString();
-
         } catch (PermissionDoesNotExist $e) {
             return new ApiErrorResponse(
                 $e,
@@ -159,7 +155,6 @@ class PermissionService implements PermissionServiceInterface
             $permission->update($request->all());
 
             return HasUpdated::getModel($permission);
-
         } catch (ModelNotFoundException $e) {
             return $this->getModelNotFoundExceptionData($e);
         } catch (QueryException $e) {
@@ -205,7 +200,6 @@ class PermissionService implements PermissionServiceInterface
 
             return AfterCatchUnknown();
         }
-
     }
 
     #[Override]

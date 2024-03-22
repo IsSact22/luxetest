@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="gluxedb@localhost" uuid="fe6af706-27c6-4032-956f-c8c0475fa451">
+    <data-source source="LOCAL" name="luxeplusdb@localhost" uuid="dd3ca386-6adc-4af8-a047-78b4135b34b1">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/gluxedb</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3306/luxeplusdb</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
