@@ -21,6 +21,9 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
         return $this->model
+            ->when($request->get('camo_id'), function ($query, int $camoId) {
+                $query->where('camo_id', $camoId);
+            })
             ->when($request->get('search'), function ($query, string $search) {
                 $query->where('name', 'like', $search.'%');
             })

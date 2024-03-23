@@ -48,12 +48,12 @@ const destroy = (id) => {
                         >
                     </div>
                     <Link :href="route('users.index')"
-                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                        class="b-goto"
                     >
                         Users
                     </Link>
                     <Link
-                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                        class="b-goto"
                     >
                         Permissions
                     </Link>

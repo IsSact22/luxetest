@@ -16,6 +16,8 @@ Route::get('dashboard', fn () => Inertia::render('Dashboard'))->middleware(['aut
 Route::middleware('auth')->group(function () {
     Route::get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
     Route::get('owners/select', \App\Http\Controllers\Invokes\OwnerController::class)->name('owners.select');
+    Route::get('camos/activities', \App\Http\Controllers\Invokes\ActivityController::class)
+        ->name('camos.activities');
     Route::get('profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
     Route::patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
     Route::delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');

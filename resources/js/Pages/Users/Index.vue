@@ -48,24 +48,21 @@ const destroy = (id) => {
                         >
                     </div>
                     <Link :href="route('users.create')"
-                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                        class="b-goto"
                     >
                         New User
                     </Link>
                     <Link :href="route('roles.index')"
-                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                        class="b-goto"
                     >
                         Roles
                     </Link>
                     <Link
-                        class="px-2 py-1 rounded-md border border-neutral-300 hover:bg-neutral-300"
+                        class="b-goto"
                     >
                         Permissions
                     </Link>
                 </form>
-                <div>
-
-                </div>
                 <table class="table-auto">
                     <thead>
                     <tr>

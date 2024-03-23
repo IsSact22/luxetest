@@ -47,6 +47,7 @@ const destroy = (id) => {
                             v-model="form.search"
                         >
                     </div>
+                    <Link class="b-goto">New CAMO</Link>
                 </form>
                 <div>
 

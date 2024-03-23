@@ -12,7 +12,7 @@ table {
     @apply mx-auto;
 }
 table thead tr th {
-    @apply text-sm uppercase px-4 py-1 bg-neutral-200
+    @apply text-sm uppercase px-4 py-1 bg-neutral-300
 }
 table th:first-child {
     @apply rounded-tl-lg;
@@ -25,42 +25,48 @@ table tbody tr td {
     @apply text-sm  px-4 py-1
 }
 table tbody tr:hover {
-    @apply bg-sky-200/50;
+    @apply bg-neutral-200;
 }
 @layer utilities {
     tbody tr:nth-child(even) {
-        @apply bg-slate-200/50;
+        @apply bg-neutral-200/50;
     }
 }
 .col-actions {
-    @apply flex flex-row justify-items-center items-start space-x-2 bg-white
+    @apply space-x-2
+}
+.b-goto {
+    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
+}
+.b-goto:hover {
+    @apply bg-blue-400
 }
 .b-show {
-    @apply px-2 py-1 rounded-md bg-sky-200
+    @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 .b-show:hover {
     @apply bg-sky-300
 }
 .b-edit {
-    @apply px-2 py-1 rounded-md bg-amber-200
+    @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 .b-edit:hover {
-    @apply bg-amber-300
+    @apply bg-amber-500
 }
 .b-delete {
-    @apply px-2 py-1 rounded-md bg-red-200
+    @apply inline-flex items-center px-4 py-2 bg-neutral-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 .b-delete:hover {
-    @apply bg-red-300
+    @apply bg-red-500
 }
 .b-submit {
-    @apply px-2 py-1 rounded-md border border-gray-300
+    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 .b-submit:hover {
     @apply text-emerald-700 bg-emerald-300 border-emerald-300
 }
 .b-cancel {
-    @apply px-2 py-1 rounded-md border border-gray-300
+    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 .b-cancel:hover {
     @apply text-amber-700 bg-amber-300 border border-amber-300
@@ -71,6 +77,9 @@ table tbody tr:hover {
 }
 .badge-approval {
     @apply bg-emerald-100 text-emerald-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300
+}
+.badge-progress {
+    @apply bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300
 }
 .badge-completed {
     @apply bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300
