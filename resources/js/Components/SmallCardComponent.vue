@@ -1,8 +1,5 @@
 <template>
-    <div class="max-w-md p-8 sm:flex sm:space-x-6 dark:bg-gray-900 dark:text-gray-100 hover:bg-sky-100">
-        <div class="flex-shrink-0 w-full mb-6 h-44 sm:h-32 sm:w-32 sm:mb-0">
-            <img :src="image" alt="" class="object-cover object-center w-full h-full rounded dark:bg-gray-500">
-        </div>
+    <div class="max-w-md p-8 sm:flex sm:space-x-6 rounded-md border hover:bg-amber-100/50">
         <div class="flex flex-col space-y-4">
             <div>
                 <h2 class="text-base font-semibold">{{title}}</h2>
@@ -32,6 +29,5 @@ const props = defineProps({
     owner: String,
     manager: String,
     aircraft: String,
-    image: String,
 })
 </script>

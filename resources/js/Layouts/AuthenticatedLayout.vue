@@ -7,6 +7,8 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link, usePage} from '@inertiajs/vue3';
 import { useToast } from 'vue-toastification'
+import {computed} from "vue";
+import {route} from "ziggy-js";
 
 
 const toast = useToast();
@@ -15,6 +17,14 @@ if (flash) {
     toast(flash.message, flash.type)
 }
 const showingNavigationDropdown = ref(false);
+const showCamos = computed(() => {
+    const userRoles = usePage().props.auth.userRoles;
+    return ['super-admin', 'admin', 'cam'].includes(userRoles[0]);
+})
+const showUsers = computed(() => {
+    const userRoles = usePage().props.auth.userRoles;
+    return ['super-admin', 'admin'].includes(userRoles[0]);
+})
 </script>
 
 <template>
@@ -39,10 +49,18 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('camos.index')" :active="route().current('camos.index')">
+                                <NavLink
+                                    v-show="showCamos"
+                                    :href="route('camos.index')"
+                                    :active="route().current('camos.index')"
+                                >
                                     Camos
                                 </NavLink>
-                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                <NavLink
+                                    v-show="showUsers"
+                                    :href="route('users.index')"
+                                    :active="route().current('users.index')"
+                                >
                                     Users
                                 </NavLink>
                             </div>

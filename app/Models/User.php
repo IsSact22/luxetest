@@ -57,7 +57,7 @@ class User extends Authenticatable implements HasMedia, JWTSubject
         'disabled' => 'boolean',
     ];
 
-    protected $appends = ['is_owner', 'is_crew', 'is_super'];
+    protected $appends = ['is_cam', 'is_owner', 'is_crew', 'is_super'];
 
     #[Override]
     public function registerMediaConversions(?Media $media = null): void
@@ -93,6 +93,13 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     {
         return Attribute::make(
             get: fn () => $this->hasRole('super-admin')
+        );
+    }
+
+    protected function isCam(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->hasRole('cam') && $this->owner_id === null,
         );
     }
 

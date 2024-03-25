@@ -123,6 +123,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $crew
  * @property-read int|null $crew_count
+ * @property-read mixed $is_cam
  * @property-read mixed $is_crew
  * @property-read mixed $is_owner
  * @property-read mixed $is_super

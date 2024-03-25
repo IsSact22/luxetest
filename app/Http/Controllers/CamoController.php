@@ -20,6 +20,7 @@ class CamoController extends Controller
     public function __construct(protected CamoRepositoryInterface $camo)
     {
         parent::__construct();
+        $this->middleware(['role:super-admin|admin|cam']);
     }
 
     /**
@@ -48,7 +49,7 @@ class CamoController extends Controller
     {
         $this->camo->newCamo($request->all());
 
-        return to_route('users.index')->with('success', 'CAMO created successfully');
+        return to_route('camos.index')->with('success', 'CAMO created successfully');
     }
 
     /**

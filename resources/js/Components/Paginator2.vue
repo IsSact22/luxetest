@@ -3,7 +3,7 @@
         <div class="flex flex-row items-center mt-4">
             <button
                 :class="[
-          'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded cursor-pointer',
+          'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-500 border rounded cursor-pointer',
           { 'disabled': currentPage === 1 },
         ]"
                 v-if="currentPage !== 1"
@@ -16,7 +16,7 @@
                 v-for="page in lastPage"
                 :key="page"
                 :class="[
-          'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded cursor-pointer',
+          'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-500 border rounded cursor-pointer',
           { 'hover:text-blue-700 hover:bg-blue-300': currentPage !== page },
           { 'text-blue-700 bg-blue-300': currentPage === page },
         ]"
@@ -26,7 +26,7 @@
             </button>
             <button
                 v-if="currentPage !== lastPage"
-                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded cursor-pointer hover:text-blue-700 hover:bg-blue-300"
+                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-500 border rounded cursor-pointer hover:text-blue-700 hover:bg-blue-300"
                 :class="{ 'disabled': currentPage === lastPage }"
                 @click="goToPage(currentPage + 1)"
                 aria-label="Next"

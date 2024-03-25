@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             'email' => 'superadmin@luxeplus.com',
         ], [
             'name' => 'LuxePlus',
-            'password' => Hash::make('123456789'),
+            'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
 

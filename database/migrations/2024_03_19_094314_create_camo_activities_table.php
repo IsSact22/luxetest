@@ -12,11 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Camo::class)->constrained();
             $table->boolean('required')->default(false);
-            $table->date('date');
+            $table->date('date')->nullable();
             $table->string('name');
             $table->text('description');
-            $table->string('status');
-            $table->text('comments');
+            $table->string('status')->default('pending');
+            $table->text('comments')->nullable();
             $table->decimal('labor_mount', 8, 2)->default(0);
             $table->decimal('material_mount', 8, 2)->default(0);
             $table->text('material_information')->nullable();

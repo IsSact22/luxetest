@@ -47,7 +47,7 @@ class CamoRepository implements CamoRepositoryInterface
     #[Override]
     public function newCamo(array $data): ?Model
     {
-        return $this->model->create([
+        $camo = $this->model->create([
             'customer' => $data['customer'],
             'owner_id' => $data['owner_id'],
             'contract' => $data['contract'],
@@ -58,6 +58,12 @@ class CamoRepository implements CamoRepositoryInterface
             'finish_date' => $data['finish_date'],
             'location' => $data['location'],
         ]);
+
+        if (isset($data['activities'])) {
+            $camo->activities()->createMany($data['activities']);
+        }
+
+        return $camo;
     }
 
     #[Override]
