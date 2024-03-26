@@ -96,7 +96,6 @@ const handleDelete = (id) => {
             <h2>Users</h2>
         </template>
         <div class="flex flex-col mx-auto px-4 mt-4">
-            <SubMenuUser @new-permission="openModal"/>
             <!-- Modal -->
             <transition name="modal-transition">
                 <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">

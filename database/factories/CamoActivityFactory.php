@@ -26,19 +26,22 @@ class CamoActivityFactory extends Factory
         $awr = sprintf('%08d-%s', $awrNumber, $awrText);
         $required = fake()->boolean;
 
+        $status = fake()->randomElement(['pending', 'in_progress', 'completed']);
+        $approvalStatus = $required ? 'approved' : fake()->randomElement(['approved', 'pending']);
+
         return [
             'camo_id' => $camo->id,
             'required' => $required,
-            'date' => fake()->dateTimeBetween($camo->created_at, '+2 day'),
+            'date' => $status === 'pending' ? null : fake()->dateTimeBetween($camo->created_at, '+2 day'),
             'name' => fake()->word,
             'description' => fake()->paragraph,
-            'status' => fake()->randomElement(['pending', 'in_progress', 'completed']),
+            'status' => $approvalStatus === 'pending' ? $approvalStatus : $status,
             'comments' => fake()->paragraph,
             'labor_mount' => fake()->randomFloat(2, 0, 10000),
             'material_mount' => fake()->randomFloat(2, 0, 10000),
             'material_information' => fake()->sentence,
             'awr' => $awr,
-            'approval_status' => $required ? 'approved' : fake()->randomElement(['approved', 'pending']),
+            'approval_status' => $approvalStatus,
         ];
     }
 }

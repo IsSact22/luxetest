@@ -29,7 +29,7 @@ class UpdateUserRequest extends FormRequest
             'email' => 'sometimes|email|unique:users,id,email,'.$this->id,
             'password' => 'sometimes',
             'confirmation_password' => 'sometimes|same:password',
-            'avatar' => 'sometimes|image',
+            'avatar' => 'nullable|image',
         ];
     }
 }

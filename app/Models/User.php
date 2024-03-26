@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -57,7 +57,7 @@ class User extends Authenticatable implements HasMedia, JWTSubject
         'disabled' => 'boolean',
     ];
 
-    protected $appends = ['is_owner', 'is_crew', 'is_super'];
+    protected $appends = ['is_cam', 'is_owner', 'is_crew', 'is_super'];
 
     #[Override]
     public function registerMediaConversions(?Media $media = null): void
@@ -70,6 +70,11 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     public function isReadOnly(): bool
     {
         return $this->id === 1;
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function crew(): HasMany
@@ -89,24 +94,23 @@ class User extends Authenticatable implements HasMedia, JWTSubject
         return [];
     }
 
-    protected function isSuper(): Attribute
+    protected function getIsSuperAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->hasRole('super-admin')
-        );
+        return $this->hasRole('super-admin');
     }
 
-    protected function isOwner(): Attribute
+    protected function getIsCamAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->hasRole('owner') && $this->owner_id === null,
-        );
+        return $this->hasRole('cam') && $this->owner_id === null;
     }
 
-    protected function isCrew(): Attribute
+    protected function getIsOwnerAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->hasRole('crew') && $this->has('crew'),
-        );
+        return $this->hasRole('owner') && $this->owner_id === null;
+    }
+
+    protected function getIsCrewAttribute(): bool
+    {
+        return $this->hasRole('crew') && $this->has('crew');
     }
 }

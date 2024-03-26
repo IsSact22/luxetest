@@ -47,13 +47,13 @@ class CamoActivityController extends Controller
     {
         $this->activity->newActivity($request->all());
 
-        return to_route('camo_activities.index')->with('success', 'CAMO created successfully');
+        return to_route('camo_activities.index')->with('success', 'CAMO Activity created successfully');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): \Inertia\Response
     {
         try {
             $camo = $this->activity->getById($id);

@@ -7,8 +7,15 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from 'ziggy-js';
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import {createPinia} from "pinia";
+import piniaPluginPersistedState from "pinia-plugin-persistedstate"
+import {i18nVue} from 'laravel-vue-i18n'
+import VueSelect from 'vue-select'
+import "vue-select/dist/vue-select.css";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedState)
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -17,7 +24,15 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(pinia)
             .use(Toast)
+            .use(i18nVue, {
+                resolve: async lang => {
+                    const langs = import.meta.glob('../../lang/*.json');
+                    return await langs[`../../lang/${lang}.json`]();
+                }
+            })
+            .component('v-select', VueSelect)
             .mount(el);
     },
     progress: {

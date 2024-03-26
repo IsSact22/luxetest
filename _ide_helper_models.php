@@ -65,11 +65,11 @@ namespace App\Models{
  * @property int $id
  * @property int $camo_id
  * @property bool $required
- * @property \Illuminate\Support\Carbon $date
+ * @property \Illuminate\Support\Carbon|null $date
  * @property string $name
  * @property string $description
  * @property string $status
- * @property string $comments
+ * @property string|null $comments
  * @property string $labor_mount
  * @property string $material_mount
  * @property string|null $material_information
@@ -78,6 +78,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Camo $camo
  * @method static \Database\Factories\CamoActivityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity newQuery()
@@ -123,13 +124,15 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $crew
  * @property-read int|null $crew_count
- * @property-read mixed $is_crew
- * @property-read mixed $is_owner
- * @property-read mixed $is_super
+ * @property-read bool $is_cam
+ * @property-read bool $is_crew
+ * @property-read bool $is_owner
+ * @property-read bool $is_super
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read User|null $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles

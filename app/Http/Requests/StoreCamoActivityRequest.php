@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCamoActivityRequest extends FormRequest
@@ -11,18 +12,29 @@ class StoreCamoActivityRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return request()->user()->can('create-activity');
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'camo_id' => 'required',
+            'required' => 'sometimes|boolean',
+            'date' => 'nullable|date',
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'status' => 'required|string',
+            'comments' => 'nullable|string',
+            'labor_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'material_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'material_information' => 'nullable|string',
+            'awr' => 'nullable|string',
+            'approval_status' => 'nullable|string',
         ];
     }
 }
