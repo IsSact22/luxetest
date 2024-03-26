@@ -28,6 +28,7 @@ class CamoActivityFactory extends Factory
 
         $status = fake()->randomElement(['pending', 'in_progress', 'completed']);
         $approvalStatus = $required ? 'approved' : fake()->randomElement(['approved', 'pending']);
+
         return [
             'camo_id' => $camo->id,
             'required' => $required,

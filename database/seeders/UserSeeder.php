@@ -14,6 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Crear Super-Admin
         User::firstOrCreate([
             'email' => 'superadmin@luxeplus.com',
         ], [
@@ -25,9 +26,29 @@ class UserSeeder extends Seeder
         $superAdmin = User::find(1);
         $superAdmin->syncRoles('super-admin');
 
-        User::factory(2)
-            ->create();
-        $cams = User::whereIn('id', [2, 3])->pluck('id');
+        // Crear Admin
+        User::factory()
+            ->create([
+                'name' => 'Mara Beltran',
+                'email' => 'mara@luexplus.com',
+            ]);
+        $admin = User::find(2);
+        $admin->syncRoles('admin');
+
+        // Crear Cams
+        User::factory()
+            ->create([
+                'name' => 'Angel Contreras',
+                'email' => 'angel@luexplus.com',
+            ]);
+
+        User::factory()
+            ->create([
+                'name' => 'Oscar Rodriguez',
+                'email' => 'oscar@luexplus.com',
+            ]);
+
+        $cams = User::whereIn('id', [3, 4])->pluck('id');
         User::whereIn('id', $cams)->each(function ($admin) {
             $admin->syncRoles('cam');
         });
@@ -35,7 +56,7 @@ class UserSeeder extends Seeder
         $users = User::factory(3)
             ->create();
 
-        $ownerIds = [4, 5, 6];
+        $ownerIds = [5, 6, 7];
         $owners = $users->whereIn('id', $ownerIds);
         $owners->each(function ($user) {
             $user->syncRoles('owner');

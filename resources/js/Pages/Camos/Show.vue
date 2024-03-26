@@ -4,14 +4,18 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {route} from "ziggy-js";
 import _ from 'lodash';
 import Modal from "@/Components/Modal.vue";
-import {ref, computed, onMounted, watch} from "vue";
+import {ref, computed, onMounted, watch, watchEffect, nextTick} from "vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import Paginator2 from "@/Components/Paginator2.vue";
 import useFormatCurrency from '@/Composables/formatCurrency';
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import {useToast} from "vue-toastification";
+import AddActivityComponent from "@/Components/AddActivityComponent.vue";
 
-const { formatCurrency } = useFormatCurrency();
+const toast = useToast();
+
+const {formatCurrency} = useFormatCurrency();
 
 const props = defineProps({
     resource: {
@@ -85,6 +89,10 @@ const formActivity = useForm({
     material_information: '',
     status: '',
 })
+const closeModal = () => {
+    activityId.value = null;
+    showModal.value = false;
+}
 const handleClickTr = (obj) => {
     activityId.value = obj.id
     Object.assign(formActivity, obj);
@@ -101,6 +109,21 @@ const statusList = ref([
     {value: 'completed', label: 'Completed'},
 ])
 
+const submit = async () => {
+    try {
+        const response = await axios.patch(route('camo_activities.handle', activityId.value), formActivity.data());
+        toast.success(response.data.message)
+        await getActivities();
+        closeModal();
+
+    } catch (e) {
+        console.error(e)
+    }
+}
+const addActivity = ref(false)
+const handleAddActivity = (e) => {
+    addActivity.value = false
+}
 </script>
 <template>
     <Head title="Camos"/>
@@ -111,9 +134,18 @@ const statusList = ref([
         <div class="flex flex-col justify-items-center items-center max-w-7xl mx-auto">
             <div class="my-4 border rounded-md px-4 py-4">
                 <div class="space-x-3 my-3">
-                    <Link class="b-goto" :href="route('camos.index')">back to Camos</Link>
-                    <button type="button" @click.passive.prevent class="b-inDev" title="Under development">Camo to PDF</button>
-                    <button type="button" @click.passive.prevent class="b-inDev" title="Under development">Archive Camo</button>
+                    <Link :href="route('camos.index')" class="b-goto">back to Camos</Link>
+                    <button
+                        @click="addActivity = true"
+                        class="b-goto"
+                    >
+                        new activity for this CAMO
+                    </button>
+                    <button class="b-inDev" title="Under development" type="button" @click.passive.prevent>Camo to PDF
+                    </button>
+                    <button class="b-inDev" title="Under development" type="button" @click.passive.prevent>Archive
+                        Camo
+                    </button>
                 </div>
                 <div class="grid grid-cols-3 gap-4 my-3">
                     <div class="flex flex-col px-4 border rounded-md bg-gray-100/50">
@@ -160,18 +192,25 @@ const statusList = ref([
                                 <p>Labor Mount</p>
                                 <p>Material Mount</p>
                                 <p>Total</p>
+                                <p>Total Activities</p>
                             </div>
                             <div>
                                 <p class="text-right">{{ formatCurrency(totalLaborMount) }}</p>
                                 <p class="text-right">{{ formatCurrency(totalMaterialMount) }}</p>
                                 <hr class="h-0.5 bg-gray-300">
-                                <p class="text-right">{{ formatCurrency(Number(totalLaborMount) + Number(totalMaterialMount)) }}</p>
+                                <p class="text-right text-green-700">
+                                    {{ formatCurrency(Number(totalLaborMount) + Number(totalMaterialMount)) }}
+                                </p>
+                                <hr>
+                                <p v-if="activities && activities.total" class="text-right">
+                                    <span class="badge-info">{{activities.total}}</span>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <form class="my-2">
+                    <form v-show="!addActivity" class="my-2">
                         <input
                             id="search"
                             v-model="search"
@@ -182,142 +221,183 @@ const statusList = ref([
                             @keyup="fireSearch"
                         >
                     </form>
+                    <!-- add activity -->
+                    <Transition name="fade" appear @after-enter="addActivity">
+                        <AddActivityComponent
+                            v-show="addActivity"
+                            :camo-id="resource.data.id"
+                            @event-close="handleAddActivity"
+                            @sent-activity="getActivities"
+                            ref="addActivityComponent"
+                        />
+                    </Transition>
+                    <!-- add activity -->
                     <!-- modal -->
-                    <Transition name="fade" appear>
-                        <Modal :closeable="true" :show="showModal" @close="showModal = false">
+                    <Transition appear name="fade">
+                        <Modal :closeable="false" :show="showModal" @close="showModal = false" backdrop="static">
                             <div class="px-6 py-4 space-y-3">
-                                <div class="flex flex-row justify-items-start items-center space-x-7">
-                                    <div>
-                                        <InputLabel for="name">Activity</InputLabel>
-                                        <input class="rounded-md border-gray-100" type="text" name="name" id="name" v-model="formActivity.name" readonly disabled>
-                                    </div>
-                                    <div v-if="formActivity.date">
-                                        <InputLabel for="date">Date</InputLabel>
-                                        <input class="rounded-md border-gray-100" type="text" name="date" id="date" v-model="formActivity.date" readonly disabled>
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-row justify-around">
-                                    <div>
-                                        <InputLabel for="description">Description</InputLabel>
-                                        <textarea
-                                            id="description"
-                                            class="rounded-md border-gray-300 w-full"
-                                            cols="30"
-                                            name="description"
-                                            rows="5"
-                                            v-model="formActivity.description"
-                                        ></textarea>
-                                    </div>
-                                    <div>
-                                        <InputLabel for="comments">Comments</InputLabel>
+                                <form @submit.prevent="submit" @keydown.enter.prevent>
+                                    <div class="flex flex-row justify-items-start items-center space-x-7">
                                         <div>
+                                            <InputLabel for="name">Activity</InputLabel>
+                                            <input id="name" v-model="formActivity.name"
+                                                   class="rounded-md border-gray-100" disabled
+                                                   name="name" readonly type="text">
+                                        </div>
+                                        <div v-if="formActivity.date">
+                                            <InputLabel for="date">Date</InputLabel>
+                                            <input id="date" v-model="formActivity.date"
+                                                   class="rounded-md border-gray-100" disabled
+                                                   name="date" readonly type="text">
+                                        </div>
+                                    </div>
+
+                                    <div class="flex flex-row justify-around">
+                                        <div>
+                                            <InputLabel for="description">Description</InputLabel>
+                                            <textarea
+                                                id="description"
+                                                v-model="formActivity.description"
+                                                class="rounded-md border-gray-300 w-full"
+                                                cols="30"
+                                                name="description"
+                                                rows="5"
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <InputLabel for="comments">Comments</InputLabel>
+                                            <div>
                                         <textarea
                                             id="comments"
+                                            v-model="formActivity.comments"
                                             class="rounded-md border-gray-300 w-full"
                                             cols="30"
                                             name="comments"
                                             rows="5"
-                                            v-model="formActivity.comments"
                                         ></textarea>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="w-1/2">
-                                    <InputLabel for="material_mount">AWR</InputLabel>
-                                    <input id="awr" v-model="formActivity.awr" class="rounded-md border-gray-300 w-full" name="awr"
-                                           type="text">
-                                </div>
-
-                                <div class="flex flex-row justify-items-center space-x-3">
-                                    <div class="my-1">
-                                        <InputLabel for="labor_mount">Labor Mount</InputLabel>
-                                        <input id="labor_mount" v-model="formActivity.labor_mount"
-                                               class="text-right rounded-md border-gray-300" name="labor_mount" type="number">
+                                    <div class="w-1/2">
+                                        <InputLabel for="material_mount">AWR</InputLabel>
+                                        <input id="awr" v-model="formActivity.awr"
+                                               class="rounded-md border-gray-300 w-full"
+                                               name="awr"
+                                               type="text">
                                     </div>
-                                    <div class="my-1">
-                                        <InputLabel for="material_mount">Material Mount</InputLabel>
-                                        <input id="labor_mount" v-model="formActivity.material_mount"
-                                               class="text-right rounded-md border-gray-300" name="labor_mount" type="number">
+
+                                    <div class="flex flex-row justify-items-center space-x-3">
+                                        <div class="my-1">
+                                            <InputLabel for="labor_mount">Labor Mount</InputLabel>
+                                            <input id="labor_mount" v-model="formActivity.labor_mount" step="0.01"
+                                                   class="text-right rounded-md border-gray-300" name="labor_mount"
+                                                   type="number">
+                                        </div>
+                                        <div class="my-1">
+                                            <InputLabel for="material_mount">Material Mount</InputLabel>
+                                            <input id="labor_mount" v-model="formActivity.material_mount" step="0.01"
+                                                   class="text-right rounded-md border-gray-300" name="labor_mount"
+                                                   type="number">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div>
-                                    <InputLabel>Material Information</InputLabel>
-                                    <textarea
-                                        id="description"
-                                        class="rounded-md border-gray-300 w-full"
-                                        cols="30"
-                                        name="description"
-                                        rows="2"
-                                        v-model="formActivity.material_information"
-                                    ></textarea>
-                                </div>
+                                    <div>
+                                        <InputLabel>Material Information</InputLabel>
+                                        <textarea
+                                            id="description"
+                                            v-model="formActivity.material_information"
+                                            class="rounded-md border-gray-300 w-full"
+                                            cols="30"
+                                            name="description"
+                                            rows="2"
+                                        ></textarea>
+                                    </div>
 
-                                <div>
-                                    <InputLabel for="status">Status</InputLabel>
-                                    <select
-                                        name="status"
-                                        id="status"
-                                        class="rounded-md border-gray-300"
-                                        v-model="formActivity.status"
-                                    >
-                                        <option v-for="(status, idx) in statusList" :key="idx" :value="status.value">{{status.label}}</option>
-                                    </select>
-                                </div>
+                                    <div>
+                                        <InputLabel for="status">Status</InputLabel>
+                                        <select
+                                            id="status"
+                                            v-model="formActivity.status"
+                                            class="rounded-md border-gray-300"
+                                            name="status"
+                                        >
+                                            <option v-for="(status, idx) in statusList" :key="idx"
+                                                    :value="status.value">
+                                                {{ status.label }}
+                                            </option>
+                                        </select>
+                                    </div>
 
-                                <div class="flex justify-end space-x-4">
-                                    <PrimaryButton v-if="formActivity.isDirty">Save</PrimaryButton>
-                                    <SecondaryButton @click="showModal = false">Close</SecondaryButton>
-                                </div>
+                                    <div class="flex justify-end space-x-4">
+                                        <PrimaryButton type="submit" v-if="formActivity.isDirty">Save</PrimaryButton>
+                                        <SecondaryButton @click="closeModal">Close</SecondaryButton>
+                                    </div>
+                                </form>
                             </div>
                         </Modal>
                     </Transition>
                     <!-- modal -->
-                    <table class="table-auto w-full">
-                        <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>Date</th>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Labor/Mount</th>
-                            <th>Material/Mount</th>
-                            <th>AWR</th>
-                            <th>Approval/Status</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr v-for="(act, idx) in activities && activities.resource" :key="idx" class="cursor-pointer"
-                            @click="handleClickTr(act)">
-                            <td>{{ act.id }}</td>
-                            <td>{{ act.date }}</td>
-                            <td>{{ act.name }}</td>
-                            <td class="flex place-content-center">
-                                <span v-if="act.status === 'pending'" class="badge-pending">{{ act.status }}</span>
-                                <span v-else-if="act.status === 'in_progress'" class="badge-progress">{{ act.status }}</span>
-                                <span v-else class="badge-completed">{{ act.status }}</span>
-                            </td>
-                            <td class="text-right">{{ formatCurrency(act.labor_mount) }}</td>
-                            <td class="text-right">{{ formatCurrency(act.material_mount) }}</td>
-                            <td><span class="line-clamp-1">{{ act.awr }}</span></td>
-                            <td class="flex place-content-center">
+                    <Transition name="fade" appear @after-enter="!addActivity">
+                        <div v-show="!addActivity">
+                            <table class="table-auto w-full">
+                                <thead>
+                                <tr>
+                                    <th>id</th>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Labor/Mount</th>
+                                    <th>Material/Mount</th>
+                                    <th>AWR</th>
+                                    <th>Approval/Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(act, idx) in activities && activities.resource" :key="idx" class="cursor-pointer"
+                                    @click="handleClickTr(act)">
+                                    <td>{{ act.id }}</td>
+                                    <td class="text-xs">{{ act.date }}</td>
+                                    <td>
+                                        <div class="flex flex-row justify-items-center items-center space-x-2">
+                                    <span>
+                                    <svg class="w-4 h-4" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><g
+                                        fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round"><circle cx="8.5" cy="8.5" r="5"/><path
+                                        d="m17.571 17.5-5.571-5.5"/></g></svg>
+                                </span>
+                                            <span>{{ act.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="flex place-content-center">
+                                        <span v-if="act.status === 'pending'" class="badge-pending">{{ act.status }}</span>
+                                        <span v-else-if="act.status === 'in_progress'" class="badge-progress">{{
+                                                act.status
+                                            }}</span>
+                                        <span v-else class="badge-completed">{{ act.status }}</span>
+                                    </td>
+                                    <td class="text-right">{{ formatCurrency(act.labor_mount) }}</td>
+                                    <td class="text-right">{{ formatCurrency(act.material_mount) }}</td>
+                                    <td><span class="line-clamp-1">{{ act.awr }}</span></td>
+                                    <td class="flex place-content-center">
                                 <span v-if="act.approval_status === 'pending'"
                                       class="badge-pending">{{ act.approval_status }}</span>
-                                <span v-else class="badge-approval">{{ act.approval_status }}</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="flex float-right">
-                        <!-- Paginator -->
-                        <Paginator2
-                            :current-page="currentPage"
-                            :last-page="lastPage"
-                            @page-change="handlePageChange"
-                        />
-                    </div>
+                                        <span v-else class="badge-approval">{{ act.approval_status }}</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="flex float-right">
+                                <!-- Paginator -->
+                                <Paginator2
+                                    :current-page="currentPage"
+                                    :last-page="lastPage"
+                                    @page-change="handlePageChange"
+                                />
+                            </div>
+                        </div>
+                    </Transition>
+
                 </div>
             </div>
         </div>
@@ -328,8 +408,24 @@ const statusList = ref([
 .fade-enter, .fade-leave-to {
     opacity: 0;
 }
+
 .fade-enter-active, .fade-leave-active {
     transition: 0.2s opacity ease-out;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+    transition: transform 0.3s;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+    transform: scaleY(0);
+}
+
+.scale-enter-to,
+.scale-leave-from {
+    transform: scaleY(1);
 }
 </style>
 

@@ -17,11 +17,11 @@ return new class extends Migration
             $table->text('description');
             $table->string('status')->default('pending');
             $table->text('comments')->nullable();
-            $table->decimal('labor_mount', 8, 2)->default(0);
-            $table->decimal('material_mount', 8, 2)->default(0);
+            $table->decimal('labor_mount', 8, 2)->nullable();
+            $table->decimal('material_mount', 8, 2)->nullable();
             $table->text('material_information')->nullable();
             $table->string('awr')->nullable()->index();
-            $table->string('approval_status')->default('pending')->index();
+            $table->string('approval_status')->nullable()->default('pending')->index();
             $table->timestamps();
             $table->softDeletes();
         });

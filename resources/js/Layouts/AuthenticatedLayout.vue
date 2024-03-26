@@ -19,7 +19,7 @@ if (flash) {
 const showingNavigationDropdown = ref(false);
 const showCamos = computed(() => {
     const userRoles = usePage().props.auth.userRoles;
-    return ['super-admin', 'admin', 'cam'].includes(userRoles[0]);
+    return ['super-admin', 'admin', 'cam', 'owner', 'crew'].includes(userRoles[0]);
 })
 const showUsers = computed(() => {
     const userRoles = usePage().props.auth.userRoles;

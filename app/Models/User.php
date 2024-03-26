@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -72,6 +72,11 @@ class User extends Authenticatable implements HasMedia, JWTSubject
         return $this->id === 1;
     }
 
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
     public function crew(): HasMany
     {
         return $this->hasMany(User::class, 'owner_id');
@@ -89,31 +94,23 @@ class User extends Authenticatable implements HasMedia, JWTSubject
         return [];
     }
 
-    protected function isSuper(): Attribute
+    protected function getIsSuperAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->hasRole('super-admin')
-        );
+        return $this->hasRole('super-admin');
     }
 
-    protected function isCam(): Attribute
+    protected function getIsCamAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->hasRole('cam') && $this->owner_id === null,
-        );
+        return $this->hasRole('cam') && $this->owner_id === null;
     }
 
-    protected function isOwner(): Attribute
+    protected function getIsOwnerAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->hasRole('owner') && $this->owner_id === null,
-        );
+        return $this->hasRole('owner') && $this->owner_id === null;
     }
 
-    protected function isCrew(): Attribute
+    protected function getIsCrewAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->hasRole('crew') && $this->has('crew'),
-        );
+        return $this->hasRole('crew') && $this->has('crew');
     }
 }

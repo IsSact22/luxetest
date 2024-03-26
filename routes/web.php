@@ -20,6 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::get('cams/select', \App\Http\Controllers\Invokes\CamController::class)->name('cams.select');
     Route::get('camos/activities', \App\Http\Controllers\Invokes\ActivityController::class)
         ->name('camos.activities');
+    Route::match(['put', 'patch'], 'camo_activities/{id}/handle', \App\Http\Controllers\Invokes\HandleActivityController::class)
+        ->name('camo_activities.handle');
+    Route::post('camo_activities/add', \App\Http\Controllers\Invokes\AddActivityController::class)
+        ->name('camo_activities.add');
     Route::get('profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
     Route::patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
     Route::delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');

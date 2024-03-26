@@ -31,6 +31,11 @@ class Camo extends Model
         'location',
     ];
 
+    public function isCrewOfOwner(User $user): bool
+    {
+        return $user->isCrew() && $this->owner_id === $user->owner_id;
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
