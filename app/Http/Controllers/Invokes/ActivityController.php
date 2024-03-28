@@ -19,6 +19,12 @@ class ActivityController extends Controller
             ->when($request->get('camo_id'), function ($query, int $camoId) {
                 $query->where('camo_id', $camoId);
             })
+            ->when($request->get('filter'), function ($query, string $filter) {
+                $parts = explode('.', $filter);
+                $column = $parts[0];
+                $needle = $parts[1];
+                $query->where($column, $needle);
+            })
             ->when($request->get('search'), function ($query, string $search) {
                 $query->where('name', 'like', $search.'%')
                     ->orWhere('description', 'like', $search.'%')

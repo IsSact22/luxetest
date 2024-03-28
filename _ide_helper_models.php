@@ -70,11 +70,11 @@ namespace App\Models{
  * @property string $description
  * @property string $status
  * @property string|null $comments
- * @property string $labor_mount
- * @property string $material_mount
+ * @property string|null $labor_mount
+ * @property string|null $material_mount
  * @property string|null $material_information
  * @property string|null $awr
- * @property string $approval_status
+ * @property string|null $approval_status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

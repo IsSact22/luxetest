@@ -1,5 +1,5 @@
 <script setup>
-import {Head, Link, useForm} from "@inertiajs/vue3";
+import {Head, Link, useForm, usePage} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {route} from "ziggy-js";
 import _ from 'lodash';
@@ -23,6 +23,43 @@ const props = defineProps({
         default: () => ({})
     }
 })
+
+const waitingApproval = computed(() => {
+    if (props.resource.data && props.resource.data.activities){
+        const activities = props.resource.data.activities;
+        return activities.filter(act => {
+            return act.approval_status === 'pending'
+        })
+    } else { return [] }
+})
+
+const pendingExecution = computed(() => {
+    if (props.resource.data && props.resource.data.activities){
+        const activities = props.resource.data.activities;
+        return activities.filter(act => {
+            return act.status === 'pending'
+        })
+    } else { return [] }
+})
+
+const inProgress = computed(() => {
+    if (props.resource.data && props.resource.data.activities){
+        const activities = props.resource.data.activities;
+        return activities.filter(act => {
+            return act.status === 'in_progress'
+        })
+    } else { return [] }
+})
+
+const completed = computed(() => {
+    if (props.resource.data && props.resource.data.activities){
+        const activities = props.resource.data.activities;
+        return activities.filter(act => {
+            return act.status === 'completed'
+        })
+    } else { return [] }
+})
+
 const camoId = ref(props.resource.data.id);
 const activities = ref(null)
 const currentPage = ref(null);
@@ -32,6 +69,13 @@ const handlePageChange = (page) => {
     console.log(page)
     currentPage.value = page
 }
+
+const filter = ref(null);
+onMounted(() => {
+    if (usePage().props.auth.user.is_owner || usePage().props.auth.user.is_crew) {
+        filter.value = 'approval_status.pending'
+    }
+})
 const getActivities = async () => {
     try {
         const response = await axios.get(route('camos.activities'), {
@@ -39,6 +83,7 @@ const getActivities = async () => {
                 camo_id: camoId.value,
                 page: currentPage.value,
                 search: search.value,
+                filter: filter.value,
             }
         })
         activities.value = response.data
@@ -48,6 +93,11 @@ const getActivities = async () => {
         console.error(e);
     }
 }
+
+watch(filter, (newValue) => {
+    getActivities()
+})
+
 onMounted(getActivities);
 const fireSearch = _.throttle(function () {
     getActivities()
@@ -192,6 +242,10 @@ const handleAddActivity = (e) => {
                                 <p>Labor Mount</p>
                                 <p>Material Mount</p>
                                 <p>Total</p>
+                                <p>Waiting Approval</p>
+                                <p>Pending</p>
+                                <p>In Progress</p>
+                                <p>Completed</p>
                                 <p>Total Activities</p>
                             </div>
                             <div>
@@ -202,6 +256,18 @@ const handleAddActivity = (e) => {
                                     {{ formatCurrency(Number(totalLaborMount) + Number(totalMaterialMount)) }}
                                 </p>
                                 <hr>
+                                <p v-if="waitingApproval" class="text-right">
+                                    <span class="badge-alert">{{waitingApproval.length}}</span>
+                                </p>
+                                <p v-if="pendingExecution" class="text-right">
+                                    <span class="badge-pending">{{pendingExecution.length}}</span>
+                                </p>
+                                <p v-if="completed" class="text-right">
+                                    <span class="badge-progress">{{inProgress.length}}</span>
+                                </p>
+                                <p v-if="completed" class="text-right">
+                                    <span class="badge-completed">{{completed.length}}</span>
+                                </p>
                                 <p v-if="activities && activities.total" class="text-right">
                                     <span class="badge-info">{{activities.total}}</span>
                                 </p>
@@ -211,6 +277,7 @@ const handleAddActivity = (e) => {
                 </div>
                 <div>
                     <form v-show="!addActivity" class="my-2">
+                        <InputLabel for="search">Search</InputLabel>
                         <input
                             id="search"
                             v-model="search"
@@ -340,6 +407,40 @@ const handleAddActivity = (e) => {
                     <!-- modal -->
                     <Transition name="fade" appear @after-enter="!addActivity">
                         <div v-show="!addActivity">
+                            <!-- pending approval -->
+                            <div class="flex items-center -mx-4 space-x-2 overflow-x-auto overflow-y-hidden sm:justify-center flex-nowrap my-4">
+                                <button rel="noopener noreferrer" href="#"
+                                   :class="{ 'border-b-blue-400' : filter === null}"
+                                   class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
+                                   @click="filter = null" preserve-scroll
+                                >All</button>
+                                <button rel="noopener noreferrer" href="#"
+                                   :class="{ 'border-b-blue-400' : filter === 'approval_status.approved'}"
+                                   class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
+                                   @click="filter = 'approval_status.approved'" preserve-scroll
+                                >Approved</button>
+                                <button rel="noopener noreferrer" href="#"
+                                   :class="{ 'border-b-blue-400' : filter === 'approval_status.pending'}"
+                                   class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
+                                   @click="filter = 'approval_status.pending'" preserve-scroll
+                                >Pending Approval</button>
+                                <button rel="noopener noreferrer" href="#"
+                                   :class="{ 'border-b-blue-400' : filter === 'status.pending'}"
+                                   class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
+                                   @click="filter = 'status.pending'" preserve-scroll
+                                >Pending</button>
+                                <button rel="noopener noreferrer" href="#"
+                                   :class="{ 'border-b-blue-400' : filter === 'status.in_progress'}"
+                                   class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
+                                   @click="filter = 'status.in_progress'" preserve-scroll
+                                >In Progress</button>
+                                <button rel="noopener noreferrer" href="#"
+                                   :class="{ 'border-b-blue-400' : filter === 'status.completed'}"
+                                   class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
+                                   @click="filter = 'status.completed'" preserve-scroll
+                                >Completed</button>
+                            </div>
+                            <!-- pending approval -->
                             <table class="table-auto w-full">
                                 <thead>
                                 <tr>
@@ -371,9 +472,9 @@ const handleAddActivity = (e) => {
                                     </td>
                                     <td class="flex place-content-center">
                                         <span v-if="act.status === 'pending'" class="badge-pending">{{ act.status }}</span>
-                                        <span v-else-if="act.status === 'in_progress'" class="badge-progress">{{
-                                                act.status
-                                            }}</span>
+                                        <span v-else-if="act.status === 'in_progress'" class="badge-progress">
+                                            {{ act.status}}
+                                        </span>
                                         <span v-else class="badge-completed">{{ act.status }}</span>
                                     </td>
                                     <td class="text-right">{{ formatCurrency(act.labor_mount) }}</td>
@@ -390,6 +491,7 @@ const handleAddActivity = (e) => {
                             <div class="flex float-right">
                                 <!-- Paginator -->
                                 <Paginator2
+                                    v-if="activities && activities.total > 9"
                                     :current-page="currentPage"
                                     :last-page="lastPage"
                                     @page-change="handlePageChange"

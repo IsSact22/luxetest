@@ -1,9 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import {Head, usePage} from '@inertiajs/vue3';
 import SmallCardComponent from "@/Components/SmallCardComponent.vue";
 import {route} from "ziggy-js";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, computed} from "vue";
 
 const camos = ref({})
 const getCamos = async() => {
@@ -33,6 +33,7 @@ onMounted(getCamos)
                         Welcome {{ $page.props.auth.user.name }}
                         <small class="text-amber-700 capitalize">{{$page.props.auth.user.roles[0].name}}</small>
                     </h1>
+
                     <div class="flex flex-wrap p-2">
                         <div v-for="(camo, idx) in camos" :key="idx">
                             <a :href="route('camos.show', camo.id)">

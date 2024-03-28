@@ -13,12 +13,14 @@ class AddActivityController extends Controller
     {
         parent::__construct();
     }
+
     /**
      * Handle the incoming request.
      */
     public function __invoke(StoreCamoActivityRequest $request): \Illuminate\Http\JsonResponse
     {
         $this->activity->newActivity($request->all());
+
         return response()->json([
             'message' => 'CAMO Activity created successfully',
         ], 200);
