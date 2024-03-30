@@ -12,6 +12,16 @@ import piniaPluginPersistedState from "pinia-plugin-persistedstate"
 import {i18nVue} from 'laravel-vue-i18n'
 import VueSelect from 'vue-select'
 import "vue-select/dist/vue-select.css";
+import {
+    // Directives
+    vTooltip,
+    vClosePopper,
+    // Components
+    Dropdown,
+    Tooltip,
+    Menu
+} from 'floating-vue'
+import 'floating-vue/dist/style.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia()
@@ -25,6 +35,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(pinia)
+            .directive('tooltip', vTooltip)
             .use(Toast)
             .use(i18nVue, {
                 resolve: async lang => {

@@ -25,7 +25,7 @@ class CamoResource extends JsonResource
             'contract' => $this->contract,
             'cam' => $this->cam->name,
             'aircraft' => $this->aircraft,
-            'activities' => Route::is('camos.show') ? $this->activities : $this->activities->count(),
+            'activities' => $this->activities,
             'description' => $this->description,
             'start_date' => $this->start_date->format('Y-m-d'),
             'finish_date' => $this->finish_date->format('Y-m-d'),

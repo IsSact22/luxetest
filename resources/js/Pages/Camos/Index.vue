@@ -73,7 +73,7 @@ const destroy = (id) => {
                         <td>{{camo.contract}}</td>
                         <td>{{camo.cam}}</td>
                         <td>{{camo.aircraft}}</td>
-                        <td class="text-center">{{camo.activities}}</td>
+                        <td class="text-center">{{camo.activities.length}}</td>
                         <td>{{camo.start_date}}</td>
                         <td>{{camo.finish_date}}</td>
                         <td>{{camo.location}}</td>
