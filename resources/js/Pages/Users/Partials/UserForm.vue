@@ -36,6 +36,7 @@
                 <progress v-if="form.progress" :value="form.progress.percentage" max="100">
                     {{ form.progress.percentage }}%
                 </progress>
+                <InputError class="mt-2" :message="form.errors.avatar" />
             </div>
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>

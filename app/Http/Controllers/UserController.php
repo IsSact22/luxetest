@@ -49,7 +49,7 @@ class UserController extends Controller
     {
         $user = $this->user->newUser($request->all());
         $user->assignRole($request->get('role'));
-        if($request->hasFile('avatar')) {
+        if ($request->hasFile('avatar')) {
             $user->addMediaFromRequest('avatar')->toMediaCollection('avatars');
         }
 
@@ -66,7 +66,7 @@ class UserController extends Controller
             $resource = new UserResource($user);
 
             return InertiaResponse::content('Users/Show', ['resource' => $resource]);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error('showUser:'.$e->getMessage());
@@ -85,7 +85,7 @@ class UserController extends Controller
             $resource = new UserResource($user);
 
             return InertiaResponse::content('Users/Edit', ['resource' => $resource]);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error('editUser:'.$e->getMessage());
@@ -101,7 +101,7 @@ class UserController extends Controller
     {
         try {
             $user = $this->user->updateUser($request->all(), $id);
-            if($request->hasFile('avatar')) {
+            if ($request->hasFile('avatar')) {
                 $user->addMediaFromRequest('avatar')
                     ->toMediaCollection('avatars');
             }
@@ -110,10 +110,10 @@ class UserController extends Controller
                 'message' => [
                     'type' => 'success',
                     'message' => 'User updated successfully',
-                ]
+                ],
             ]);
 
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error('updateUser:'.$e->getMessage());
@@ -131,7 +131,7 @@ class UserController extends Controller
             $this->user->deleteUser($id);
 
             return to_route('users.index')->with('success', 'User deleted successfully');
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error('deleteUser:'.$e->getMessage());

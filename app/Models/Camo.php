@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 
@@ -30,6 +31,11 @@ class Camo extends Model
         'location',
     ];
 
+    public function isCrewOfOwner(User $user): bool
+    {
+        return $user->isCrew() && $this->owner_id === $user->owner_id;
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
@@ -38,6 +44,11 @@ class Camo extends Model
     public function cam(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cam_id');
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(CamoActivity::class);
     }
 
     #[Override]

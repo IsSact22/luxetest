@@ -21,7 +21,28 @@ class CamoRepository implements CamoRepositoryInterface
     {
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
+        $user = auth()->user();
+
         return $this->model
+            ->when($request->get('owner_id'), function ($query, int $ownerId) {
+                $query->where('owner_id', $ownerId);
+            })
+
+            ->when($user && $user->isCam, function ($query) use ($user) {
+                $query->where(function ($query) use ($user) {
+                    $query->where('cam_id', $user->id);
+                });
+            })
+
+            ->when($user && ($user->isOwner || $user->isCrew), function ($query) use ($user) {
+                $query->where(function ($query) use ($user) {
+                    $query->where('owner_id', $user->owner_id)
+                        ->orWhereHas('owner', function ($query) use ($user) {
+                            $query->where('owner_id', $user->owner_id);
+                        });
+                });
+            })
+
             ->when($request->get('search'), function ($query, string $search) {
                 $query->where('customer', 'like', $search.'%')
                     ->orWhere('contract', 'like', $search.'%')
@@ -47,7 +68,7 @@ class CamoRepository implements CamoRepositoryInterface
     #[Override]
     public function newCamo(array $data): ?Model
     {
-        return $this->model->create([
+        $camo = $this->model->create([
             'customer' => $data['customer'],
             'owner_id' => $data['owner_id'],
             'contract' => $data['contract'],
@@ -58,6 +79,12 @@ class CamoRepository implements CamoRepositoryInterface
             'finish_date' => $data['finish_date'],
             'location' => $data['location'],
         ]);
+
+        if (isset($data['activities'])) {
+            $camo->activities()->createMany($data['activities']);
+        }
+
+        return $camo;
     }
 
     #[Override]

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Route;
 use Override;
 
 class CamoResource extends JsonResource
@@ -24,12 +25,13 @@ class CamoResource extends JsonResource
             'contract' => $this->contract,
             'cam' => $this->cam->name,
             'aircraft' => $this->aircraft,
+            'activities' => $this->activities,
             'description' => $this->description,
-            'start_date' => $this->start_date,
-            'finish_date' => $this->finish_date,
+            'start_date' => $this->start_date->format('Y-m-d'),
+            'finish_date' => $this->finish_date->format('Y-m-d'),
             'location' => $this->location,
             'created_at' => $this->created_at->format('Y-m-d'),
-            'updated_at'=> $this->updated_at->format('Y-m-d'),
+            'updated_at' => $this->updated_at->format('Y-m-d'),
         ];
     }
 }

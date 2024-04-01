@@ -7,6 +7,8 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoRequest;
 use App\Http\Requests\UpdateCamoRequest;
 use App\Http\Resources\CamoResource;
+use App\Models\Camo;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,9 +26,12 @@ class CamoController extends Controller
 
     /**
      * Display a listing of the resource.
+     *
+     * @throws AuthorizationException
      */
     public function index(Request $request): Response
     {
+        $this->authorize('viewAny', Camo::class);
         $camos = $this->camo->getAll($request);
         $resource = CamoResource::collection($camos);
 
@@ -38,6 +43,8 @@ class CamoController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', Camo::class);
+
         return InertiaResponse::content('Camos/Create');
     }
 
@@ -46,9 +53,10 @@ class CamoController extends Controller
      */
     public function store(StoreCamoRequest $request): RedirectResponse
     {
+        $this->authorize('create', Camo::class);
         $this->camo->newCamo($request->all());
 
-        return to_route('users.index')->with('success', 'CAMO created successfully');
+        return to_route('camos.index')->with('success', 'CAMO created successfully');
     }
 
     /**

@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Contracts\CamoActivityRepositoryInterface;
 use App\Contracts\CamoRepositoryInterface;
+use App\Contracts\RoleRepositoryInterface;
 use App\Contracts\UserRepositoryInterface;
 use App\Repositories\CamoActivityRepository;
 use App\Repositories\CamoRepository;
+use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(CamoRepositoryInterface::class, CamoRepository::class);
         $this->app->bind(CamoActivityRepositoryInterface::class, CamoActivityRepository::class);
+        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
     }
 
     /**
