@@ -1,20 +1,9 @@
 <?php
 
-use App\Http\Controllers\ProjectTaskStatusController;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', fn () => Inertia::render('Welcome', [
     'canLogin' => Route::has('login'),
@@ -23,23 +12,33 @@ Route::get('/', fn () => Inertia::render('Welcome', [
     'phpVersion' => PHP_VERSION,
 ]));
 
-Route::get('dashboard', fn () => Inertia::render('Dashboard'))
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::get('dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function ($route) {
-    $route->get('/profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
-    $route->patch('/profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
-    $route->delete('/profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
+Route::middleware('auth')->group(function () {
+    Route::get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
+    Route::get('owners/select', \App\Http\Controllers\Invokes\OwnerController::class)->name('owners.select');
+    Route::get('cams/select', \App\Http\Controllers\Invokes\CamController::class)->name('cams.select');
+    Route::get('camos/activities', \App\Http\Controllers\Invokes\ActivityController::class)
+        ->name('camos.activities');
+    Route::match(['put', 'patch'], 'camo_activities/{id}/handle', \App\Http\Controllers\Invokes\HandleActivityController::class)
+        ->name('camo_activities.handle');
+    Route::post('camo_activities/add', \App\Http\Controllers\Invokes\AddActivityController::class)
+        ->name('camo_activities.add');
+    Route::get('profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
+    Route::patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
+    Route::delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
 
-    $route->resource('roles', \App\Http\Controllers\RoleController::class);
-    $route->resource('permissions', \App\Http\Controllers\PermissionController::class);
-    $route->resource('users', \App\Http\Controllers\UserController::class);
-    $route->resource('clients', \App\Http\Controllers\ClientController::class);
-    $route->resource('services', \App\Http\Controllers\ServiceController::class);
-    $route->resource('aircraft', \App\Http\Controllers\AircraftController::class);
-    $route->resource('projects', \App\Http\Controllers\ProjectController::class);
-    $route->patch('project_tasks/{id}/{status}/change', [ProjectTaskStatusController::class, 'change'])->name('project.tasks.changeStatus');
+    Route::resource('roles', \App\Http\Controllers\RoleController::class);
+    Route::resource('users', \App\Http\Controllers\UserController::class);
+    Route::get('camos/dashboard', [\App\Http\Controllers\DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
+    Route::resource('camos', \App\Http\Controllers\CamoController::class)->except(['store', 'update']);
+    Route::middleware(HandlePrecognitiveRequests::class)
+        ->post('camos', [\App\Http\Controllers\CamoController::class, 'store'])
+        ->name('camos.store');
+    Route::middleware(HandlePrecognitiveRequests::class)
+        ->match(['put', 'patch'], 'camos', [\App\Http\Controllers\CamoController::class, 'store'])
+        ->name('camos.update');
+    Route::resource('camo_activities', \App\Http\Controllers\CamoActivityController::class);
 });
 
 require __DIR__.'/auth.php';

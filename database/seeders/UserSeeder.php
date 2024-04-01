@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Client;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -15,40 +14,54 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Crear Super-Admin
         User::firstOrCreate([
-            'email' => 'laymont@gmail.com',
+            'email' => 'superadmin@luxeplus.com',
         ], [
-            'name' => 'Laymont Arratia',
-            'password' => Hash::make('12215358'),
+            'name' => 'LuxePlus',
+            'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
 
         $superAdmin = User::find(1);
         $superAdmin->syncRoles('super-admin');
 
-        User::factory(2)
-            ->create();
-        $adminIds = User::whereIn('id', [2, 3])->pluck('id');
-        User::whereIn('id', $adminIds)->each(function ($admin) {
-            $admin->syncRoles('admin');
+        // Crear Admin
+        User::factory()
+            ->create([
+                'name' => 'Mara Beltran',
+                'email' => 'mara@luexplus.com',
+            ]);
+        $admin = User::find(2);
+        $admin->syncRoles('admin');
+
+        // Crear Cams
+        User::factory()
+            ->create([
+                'name' => 'Angel Contreras',
+                'email' => 'angel@luexplus.com',
+            ]);
+
+        User::factory()
+            ->create([
+                'name' => 'Oscar Rodriguez',
+                'email' => 'oscar@luexplus.com',
+            ]);
+
+        $cams = User::whereIn('id', [3, 4])->pluck('id');
+        User::whereIn('id', $cams)->each(function ($admin) {
+            $admin->syncRoles('cam');
         });
 
-        User::factory(3)
+        $users = User::factory(3)
             ->create();
 
-        $userIds = User::whereIn('id', [4, 5, 6])->pluck('id');
-        User::whereIn('id', $userIds)->each(function ($user) {
-            $user->syncRoles('project-manager');
+        $ownerIds = [5, 6, 7];
+        $owners = $users->whereIn('id', $ownerIds);
+        $owners->each(function ($user) {
+            $user->syncRoles('owner');
+            $crew = User::factory()->create(['owner_id' => $user->id]);
+            $crew->syncRoles('crew');
         });
-
-        User::factory(8)
-            ->create();
-        $clientsIds = User::where('id', '>', 6)->pluck('id');
-        User::whereIn('id', $clientsIds)->each(function ($user) {
-            $user->syncRoles('client');
-            $client = Client::factory()->create();
-            $user->clients()->attach($client);
-        });
-
     }
 }

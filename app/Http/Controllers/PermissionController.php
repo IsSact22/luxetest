@@ -65,8 +65,10 @@ class PermissionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePermissionRequest $request, Permission $permission): JsonResponse|ResponseAlias|RedirectResponse
-    {
+    public function update(
+        UpdatePermissionRequest $request,
+        Permission $permission
+    ): JsonResponse|ResponseAlias|RedirectResponse {
         try {
             $permission->update($request->all());
 

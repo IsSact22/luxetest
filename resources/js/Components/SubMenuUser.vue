@@ -1,7 +1,7 @@
 <script setup>
-import { route } from 'ziggy-js';
-import { router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import {route} from 'ziggy-js';
+import {router} from '@inertiajs/vue3';
+import {ref} from 'vue';
 
 const goToUsers = () => {
     router.visit(route('users.index'));
@@ -27,30 +27,30 @@ const emitNewPermission = () => {
 <template>
     <div class="flex flex-row justify-items-center items-center space-x-4 px-4 py-2">
         <button
-            @click="goToUsers"
             :class="{ 'hidden': isUserRoute }"
             class="b-goto"
+            @click="goToUsers"
         >
             Users
         </button>
         <button
-            @click="goToRoles"
             :class="{ 'hidden': isRoleRoute }"
             class="b-goto"
+            @click="goToRoles"
         >
             Roles
         </button>
         <button
-            @click="goToPermissions"
             :class="{ 'hidden': isPermissionRoute }"
             class="b-goto"
+            @click="goToPermissions"
         >
             Permissions
         </button>
         <button
-            @click="emitNewPermission"
-            class="b-goto"
             :class="{ 'hidden': !isPermissionRoute }"
+            class="b-goto"
+            @click="emitNewPermission"
         >
             New Permission
         </button>

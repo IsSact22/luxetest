@@ -2,21 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements HasMedia, JWTSubject
 {
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, InteractsWithMedia, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -24,11 +27,13 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'type',
         'name',
         'email',
         'password',
+        'owner_id',
     ];
+
+    protected $guarded = ['disabled'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -46,17 +51,35 @@ class User extends Authenticatable implements JWTSubject
      * @var array<string, string>
      */
     protected $casts = [
-        'type' => 'string',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'owner_id' => 'integer',
+        'disabled' => 'boolean',
     ];
 
-    protected $appends = ['is_client'];
+    protected $appends = ['is_cam', 'is_owner', 'is_crew', 'is_super'];
 
-    public function clients(): BelongsToMany
+    #[Override]
+    public function registerMediaConversions(?Media $media = null): void
     {
-        return $this->belongsToMany(Client::class, 'user_client', 'user_id', 'client_id')
-            ->withTimestamps();
+        $this->addMediaConversion('thumb')
+            ->width(50)
+            ->height(50);
+    }
+
+    public function isReadOnly(): bool
+    {
+        return $this->id === 1;
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function crew(): HasMany
+    {
+        return $this->hasMany(User::class, 'owner_id');
     }
 
     #[Override]
@@ -71,10 +94,23 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    protected function isClient(): Attribute
+    protected function getIsSuperAttribute(): bool
     {
-        return Attribute::make(
-            get: fn () => $this->clients()->exists(),
-        );
+        return $this->hasRole('super-admin');
+    }
+
+    protected function getIsCamAttribute(): bool
+    {
+        return $this->hasRole('cam') && $this->owner_id === null;
+    }
+
+    protected function getIsOwnerAttribute(): bool
+    {
+        return $this->hasRole('owner') && $this->owner_id === null;
+    }
+
+    protected function getIsCrewAttribute(): bool
+    {
+        return $this->hasRole('crew') && $this->has('crew');
     }
 }

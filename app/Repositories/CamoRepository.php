@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Contracts\CamoRepositoryInterface;
+use App\Models\Camo;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Override;
+
+class CamoRepository implements CamoRepositoryInterface
+{
+    public function __construct(protected ?Camo $model)
+    {
+    }
+
+    #[Override]
+    public function getAll(Request $request): LengthAwarePaginator
+    {
+        $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
+
+        $user = auth()->user();
+
+        return $this->model
+            ->when($request->get('owner_id'), function ($query, int $ownerId) {
+                $query->where('owner_id', $ownerId);
+            })
+
+            ->when($user && $user->isCam, function ($query) use ($user) {
+                $query->where(function ($query) use ($user) {
+                    $query->where('cam_id', $user->id);
+                });
+            })
+
+            ->when($user && ($user->isOwner || $user->isCrew), function ($query) use ($user) {
+                $query->where(function ($query) use ($user) {
+                    $query->where('owner_id', $user->owner_id)
+                        ->orWhereHas('owner', function ($query) use ($user) {
+                            $query->where('owner_id', $user->owner_id);
+                        });
+                });
+            })
+
+            ->when($request->get('search'), function ($query, string $search) {
+                $query->where('customer', 'like', $search.'%')
+                    ->orWhere('contract', 'like', $search.'%')
+                    ->orWhere('aircraft', 'like', $search.'%')
+                    ->orWhere('location', 'like', $search.'%')
+                    ->orWhereHas('owner', function (Builder $query) use ($search) {
+                        $query->where('name', 'like', $search.'%');
+                    })
+                    ->orWhereHas('cam', function (Builder $query) use ($search) {
+                        $query->where('name', 'like', $search.'%');
+                    });
+            })
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
+    #[Override]
+    public function getById(int $id): ?Model
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    #[Override]
+    public function newCamo(array $data): ?Model
+    {
+        $camo = $this->model->create([
+            'customer' => $data['customer'],
+            'owner_id' => $data['owner_id'],
+            'contract' => $data['contract'],
+            'cam_id' => $data['cam_id'],
+            'aircraft' => $data['aircraft'],
+            'description' => $data['description'],
+            'start_date' => $data['start_date'],
+            'finish_date' => $data['finish_date'],
+            'location' => $data['location'],
+        ]);
+
+        if (isset($data['activities'])) {
+            $camo->activities()->createMany($data['activities']);
+        }
+
+        return $camo;
+    }
+
+    #[Override]
+    public function updateCamo(array $data, int $id): ?Model
+    {
+        $this->model->findOrFail($id)->update($data);
+
+        return $this->model->fresh();
+    }
+
+    #[Override]
+    public function deleteCamo(int $id): bool
+    {
+        return $this->model->findOrFail($id)->delete();
+    }
+}

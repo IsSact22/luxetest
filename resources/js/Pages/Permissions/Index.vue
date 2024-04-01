@@ -2,11 +2,11 @@
 import {Head, useForm, router} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
-import { Link } from '@inertiajs/vue3';
+import {Link} from '@inertiajs/vue3';
 import {ref, watch} from "vue";
 import {route} from "ziggy-js";
 import SubMenuUser from "@/Components/SubMenuUser.vue";
-import { useToast } from "vue-toastification";
+import {useToast} from "vue-toastification";
 import Swal from 'sweetalert2'
 
 const toast = useToast();
@@ -40,11 +40,11 @@ const handleEdit = (data) => {
 }
 
 const submit = () => {
-    if (editId.value){
+    if (editId.value) {
         form.submit('patch', route('permissions.update', editId.value), {
             onSuccess: (response) => {
                 closeModal();
-                toast.success('Updated register', { timeout: 2000 });
+                toast.success('Updated register', {timeout: 2000});
             },
             onError: (error) => {
                 toast.error('An error occurred while updating the record.')
@@ -55,7 +55,7 @@ const submit = () => {
         form.post(route('permissions.store'), {
             onSuccess: (response) => {
                 closeModal();
-                toast.success('Created register', { timeout: 2000 });
+                toast.success('Created register', {timeout: 2000});
             },
             onError: (error) => {
                 toast.error('An error occurred while creating the record.')
@@ -78,11 +78,11 @@ const handleDelete = (id) => {
         if (result.isConfirmed) {
             form.delete(route('permissions.destroy', id), {
                 onSuccess: (response) => {
-                    toast.success('deleted register', { timeout: 2000 });
+                    toast.success('deleted register', {timeout: 2000});
                     form.reset();
                 },
                 onError: (err) => {
-                    toast.error('An error occurred while deleting the record.', { timeout: 2000 });
+                    toast.error('An error occurred while deleting the record.', {timeout: 2000});
                 }
             });
         }
@@ -90,13 +90,12 @@ const handleDelete = (id) => {
 }
 </script>
 <template>
-    <Head title="Users" />
+    <Head title="Users"/>
     <AuthenticatedLayout>
         <template #header>
             <h2>Users</h2>
         </template>
         <div class="flex flex-col mx-auto px-4 mt-4">
-            <SubMenuUser @new-permission="openModal" />
             <!-- Modal -->
             <transition name="modal-transition">
                 <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center">
@@ -104,25 +103,29 @@ const handleDelete = (id) => {
                     <div class="relative bg-white rounded-lg p-8 sm:p-10">
                         <h2 class="my-2">Edit Permission</h2>
                         <!-- Formulario -->
-                        <form @submit.prevent="submit" class="px-4">
+                        <form class="px-4" @submit.prevent="submit">
                             <!-- Contenido del formulario -->
                             <div class="sm:col-span-4">
-                                <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
-                                <input type="text" name="name" id="name" placeholder="Permission Name" v-model="form.name" autocomplete="off">
+                                <label class="block text-sm font-medium leading-6 text-gray-900" for="name">Name</label>
+                                <input id="name" v-model="form.name" autocomplete="off" name="name"
+                                       placeholder="Permission Name" type="text">
                                 <div v-if="form.errors.name">{{ form.errors.name }}</div>
                             </div>
                             <div class="sm:col-span-4">
-                                <label for="guard_name" class="block text-sm font-medium leading-6 text-gray-900">Guard-Name</label>
-                                <input type="text" name="guard_name" id="guard_name" placeholder="Guard Name" v-model="form.guard_name" readonly>
+                                <label class="block text-sm font-medium leading-6 text-gray-900" for="guard_name">Guard-Name</label>
+                                <input id="guard_name" v-model="form.guard_name" name="guard_name" placeholder="Guard Name"
+                                       readonly type="text">
                                 <div v-if="form.errors.guard_name">{{ form.errors.guard_name }}</div>
                             </div>
                             <div class="flex justify-end mt-6">
                                 <button
                                     :disabled="form.processing"
-                                    type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    type="submit">
                                     Guardar
                                 </button>
-                                <button type="button" @click="closeModal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2">
+                                <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2" type="button"
+                                        @click="closeModal">
                                     Cancelar
                                 </button>
                             </div>
@@ -143,10 +146,10 @@ const handleDelete = (id) => {
                 </thead>
                 <tbody>
                 <tr v-for="(permission,idx) in resource.data" :key="idx">
-                    <td>{{permission.id}}</td>
-                    <td>{{permission.name}}</td>
-                    <td>{{permission.guard_name}}</td>
-                    <td class="text-center">{{permission.created_at}}</td>
+                    <td>{{ permission.id }}</td>
+                    <td>{{ permission.name }}</td>
+                    <td>{{ permission.guard_name }}</td>
+                    <td class="text-center">{{ permission.created_at }}</td>
                     <td class="col-actions">
                         <button class="b-edit" @click="handleEdit(permission)">Edit</button>
                         <button class="b-delete" @click="handleDelete(permission.id)">Delete</button>
@@ -156,7 +159,7 @@ const handleDelete = (id) => {
                 <tfoot>
                 <tr>
                     <td colspan="6">
-                        <Paginator :data="resource" />
+                        <Paginator :data="resource"/>
                     </td>
                 </tr>
                 </tfoot>

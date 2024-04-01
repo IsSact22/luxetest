@@ -4,34 +4,21 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: "Open Sans", sans-serif;
+html {
+    font-family: 'Open Sans', sans-serif;
 }
-
 h1 {
-    @apply text-2xl;
+    @apply text-xl text-neutral-600
 }
-
 h2 {
-    @apply font-semibold text-xl text-gray-800 leading-tight;
+    @apply uppercase font-semibold text-xl text-gray-800 leading-tight
 }
-
 table {
-    @apply md:w-full lg:max-w-7xl mx-auto;
+    @apply mx-auto;
 }
-
-table {
-    @apply text-base;
-}
-
-table thead tr {
-    @apply bg-blue-100;
-}
-
 table thead tr th {
-    @apply uppercase text-sm px-4 py-1;
+    @apply text-sm uppercase px-4 py-1 bg-neutral-300
 }
-
 table th:first-child {
     @apply rounded-tl-lg;
 }
@@ -39,72 +26,78 @@ table th:first-child {
 table th:last-child {
     @apply rounded-tr-lg;
 }
-
-table tbody {
-    @apply border-collapse border
-}
-
 table tbody tr td {
-    @apply text-sm border-collapse px-2 py-1
+    @apply text-sm  px-4 py-3
 }
-
+table tbody tr:hover {
+    @apply bg-neutral-200;
+}
 @layer utilities {
     tbody tr:nth-child(even) {
-        @apply bg-slate-200/50;
+        @apply bg-neutral-200/50;
     }
 }
-
 .col-actions {
-    @apply flex flex-row justify-items-center items-center space-x-2
+    @apply space-x-2
 }
-
-.button-actions {
-    @apply border rounded-md px-2 py-0.5
+.b-inDev {
+    @apply inline-flex items-center px-4 py-2 bg-gray-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-500 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-
-.b-show {
-    @apply bg-sky-500 hover:bg-sky-700 text-white font-bold py-1 px-4 rounded;
-}
-
-.b-edit {
-    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded;
-}
-
-.b-delete {
-    @apply bg-rose-500 hover:bg-rose-700 text-white font-bold py-1 px-4 rounded;
-}
-
 .b-goto {
-    @apply rounded-md px-4 py-1 text-emerald-800 bg-emerald-300;
+    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
 .b-goto:hover {
-    @apply rounded-md px-4 py-1 text-white bg-emerald-400;
+    @apply bg-blue-400
 }
-input[type="text"] {
-    @apply block flex-1 border-2 rounded-md border-gray-200 bg-transparent px-4 py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6;
+.b-show {
+    @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
+}
+.b-show:hover {
+    @apply bg-sky-300
+}
+.b-edit {
+    @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
+}
+.b-edit:hover {
+    @apply bg-amber-500
+}
+.b-delete {
+    @apply inline-flex items-center px-4 py-2 bg-neutral-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
+}
+.b-delete:hover {
+    @apply bg-red-500
+}
+.b-submit {
+    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
+}
+.b-submit:hover {
+    @apply text-emerald-700 bg-emerald-300 border-emerald-300
+}
+.b-cancel {
+    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
+}
+.b-cancel:hover {
+    @apply text-amber-700 bg-amber-300 border border-amber-300
 }
 
-.badge-gray {
-    @apply inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10;
+.badge-info {
+    @apply bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
-.badge-red {
-    @apply inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10;
+.badge-approval {
+    @apply bg-emerald-100 text-emerald-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
-.badge-yellow {
-    @apply inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20
+.badge-progress {
+    @apply bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
-.badge-green {
-    @apply inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20;
+.badge-completed {
+    @apply bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
-.badge-blue {
-    @apply inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10;
+.badge-pending {
+    @apply bg-amber-100 text-amber-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
-.badge-indigo {
-    @apply inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10;
+.badge-alert {
+    @apply bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
-.badge-purple {
-    @apply inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10;
-}
-.badge-pink {
-    @apply inline-flex items-center rounded-md bg-pink-50 px-2 py-1 text-xs font-medium text-pink-700 ring-1 ring-inset ring-pink-700/10;
+.placeholder-custom::placeholder {
+    @apply text-gray-500 text-xs
 }

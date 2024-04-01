@@ -45,7 +45,6 @@ class FlightHourController extends Controller
                 ['message' => 'flight hours updated'],
                 ResponseAlias::HTTP_ACCEPTED
             );
-
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 $e,
@@ -57,6 +56,5 @@ class FlightHourController extends Controller
 
             return AfterCatchUnknown();
         }
-
     }
 }

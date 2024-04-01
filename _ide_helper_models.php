@@ -16,28 +16,46 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $registration
- * @property string $name
+ * @property string $customer
+ * @property int $owner_id
+ * @property string $contract
+ * @property int $cam_id
+ * @property string $aircraft
+ * @property string $description
+ * @property \Illuminate\Support\Carbon $start_date
+ * @property \Illuminate\Support\Carbon $finish_date
+ * @property string|null $location
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static \Database\Factories\AircraftFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft query()
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereRegistration($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Aircraft withoutTrashed()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CamoActivity> $activities
+ * @property-read int|null $activities_count
+ * @property-read \App\Models\User|null $cam
+ * @property-read \App\Models\User $owner
+ * @method static \Database\Factories\CamoFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereAircraft($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereCamId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereContract($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereCustomer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereFinishDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Camo withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
-	class IdeHelperAircraft {}
+	class IdeHelperCamo {}
 }
 
 namespace App\Models{
@@ -45,166 +63,49 @@ namespace App\Models{
  * 
  *
  * @property int $id
- * @property string $customer_name
- * @property string $phone
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Project> $projects
- * @property-read int|null $projects_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
- * @property-read int|null $users_count
- * @method static \Database\Factories\ClientFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Client newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Client newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Client onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Client query()
- * @method static \Illuminate\Database\Eloquent\Builder|Client whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Client whereCustomerName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Client whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Client whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Client wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Client whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Client withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Client withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperClient {}
-}
-
-namespace App\Models{
-/**
- * 
- *
- * @property int $id
- * @property int $client_id
- * @property int $aircraft_id
- * @property \Illuminate\Support\Carbon $date
- * @property string $name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \App\Models\Aircraft $aircraft
- * @property-read \App\Models\Client $client
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProjectTask> $projectTasks
- * @property-read int|null $project_tasks_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $services
- * @property-read int|null $services_count
- * @method static \Database\Factories\ProjectFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Project newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Project newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Project onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Project query()
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereAircraftId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereClientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Project withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Project withoutTrashed()
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperProject {}
-}
-
-namespace App\Models{
-/**
- * 
- *
- * @property int $id
- * @property int $service_id
- * @property int $project_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Project $project
- * @property-read \App\Models\Service $service
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService query()
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService whereProjectId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService whereServiceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectService whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperProjectService {}
-}
-
-namespace App\Models{
-/**
- * 
- *
- * @property int $id
- * @property int $project_service_id
+ * @property int $camo_id
+ * @property bool $required
+ * @property \Illuminate\Support\Carbon|null $date
  * @property string $name
  * @property string $description
  * @property string $status
- * @property \Illuminate\Support\Carbon $due_date
- * @property float $position
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Project|null $project
- * @property-read \App\Models\ProjectService $projectService
- * @property-read \App\Models\Service|null $service
- * @method static \Database\Factories\ProjectTaskFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask query()
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereDueDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask wherePosition($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereProjectServiceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ProjectTask whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperProjectTask {}
-}
-
-namespace App\Models{
-/**
- * 
- *
- * @property int $id
- * @property string $name
- * @property string $description
- * @property \Illuminate\Support\Carbon $estimate_time
- * @property bool $has_material
+ * @property string|null $comments
+ * @property string|null $labor_mount
+ * @property string|null $material_mount
+ * @property string|null $material_information
+ * @property string|null $awr
+ * @property string|null $approval_status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Project> $projects
- * @property-read int|null $projects_count
- * @method static \Database\Factories\ServiceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|Service newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Service newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Service onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Service query()
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereEstimateTime($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereHasMaterial($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Service withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Service withoutTrashed()
+ * @property-read \App\Models\Camo $camo
+ * @method static \Database\Factories\CamoActivityFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereApprovalStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereAwr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereCamoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereComments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereLaborMount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereMaterialInformation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereMaterialMount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereRequired($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
-	class IdeHelperService {}
+	class IdeHelperCamoActivity {}
 }
 
 namespace App\Models{
@@ -217,13 +118,21 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property mixed $password
  * @property string|null $remember_token
+ * @property int|null $owner_id
+ * @property bool $disabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Client> $clients
- * @property-read int|null $clients_count
- * @property-read mixed $is_client
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $crew
+ * @property-read int|null $crew_count
+ * @property-read bool $is_cam
+ * @property-read bool $is_crew
+ * @property-read bool $is_owner
+ * @property-read bool $is_super
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read User|null $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
@@ -235,10 +144,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
  * @method static \Illuminate\Database\Eloquent\Builder|User role($roles, $guard = null, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereDisabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
@@ -248,26 +159,5 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperUser {}
-}
-
-namespace App\Models{
-/**
- * 
- *
- * @property int $user_id
- * @property int $client_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|UserClient newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|UserClient newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|UserClient query()
- * @method static \Illuminate\Database\Eloquent\Builder|UserClient whereClientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserClient whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserClient whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserClient whereUserId($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	class IdeHelperUserClient {}
 }
 

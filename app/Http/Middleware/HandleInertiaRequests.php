@@ -3,8 +3,10 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 use Override;
+use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -36,8 +38,16 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                'user.roles' => $request->user() ? $request->user()->roles->pluck('name') : [],
-                'user.permissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name') : [],
+                'avatarUrl' => Auth::user() ? Auth::user()->getFirstMediaUrl('avatars', 'thumb') : null,
+                'userRoles' => $request->user() ? $request->user()->roles->pluck('name') : [],
+                'userPermissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name') : [],
+            ],
+            'ziggy' => fn () => array_merge((new Ziggy)->toArray(), [
+                'location' => $request->url(),
+            ]),
+            'flash' => [
+                'message' => fn () => $request->session()->get('message'),
+                'type' => fn () => $request->session()->get('type', 'success'),
             ],
         ];
     }

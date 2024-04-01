@@ -23,33 +23,70 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'update']);
         Permission::create(['name' => 'delete']);
 
+        Permission::create(['name' => 'create-user']);
+        Permission::create(['name' => 'read-user']);
+        Permission::create(['name' => 'update-user']);
+        Permission::create(['name' => 'delete-user']);
+
+        Permission::create(['name' => 'profile-user']);
+
+        Permission::create(['name' => 'create-camo']);
+        Permission::create(['name' => 'read-camo']);
+        Permission::create(['name' => 'update-camo']);
+        Permission::create(['name' => 'delete-camo']);
+
+        Permission::create(['name' => 'create-activity']);
+        Permission::create(['name' => 'read-activity']);
+        Permission::create(['name' => 'update-activity']);
+        Permission::create(['name' => 'delete-activity']);
+
         // Create Roles
-        Role::create(['name' => 'super-admin']);
+        $superAdmin = Role::create(['name' => 'super-admin']);
+        $superAdmin->givePermissionTo(Permission::all());
 
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
+            'create-user',
+            'read-user',
+            'update-user',
+            'profile-user',
             'create',
             'read',
             'update',
             'delete',
+            'create-user',
+            'read-user',
+            'update-user',
+            'create-camo',
+            'read-camo',
+            'update-camo',
         ]);
 
-        Role::create(['name' => 'project-manager']);
+        $cam = Role::create(['name' => 'cam']);
+        $cam->givePermissionTo([
+            'profile-user',
+            'create-camo',
+            'read-camo',
+            'update-camo',
+            'create-activity',
+            'read-activity',
+            'update-activity',
+        ]);
 
-        $user = Role::create(['name' => 'user']);
+        $user = Role::create(['name' => 'owner']);
         $user->givePermissionTo([
-            'create',
-            'read',
-            'update',
-            'delete',
+            'profile-user',
+            'read-camo',
+            'update-camo',
+            'read-activity',
+            'update-activity',
         ]);
 
-        $client = Role::create(['name' => 'client']);
+        $client = Role::create(['name' => 'crew']);
         $client->givePermissionTo([
-            'create',
-            'read',
-            'update',
-            'delete',
+            'profile-user',
+            'read-camo',
+            'read-activity',
         ]);
     }
 }
