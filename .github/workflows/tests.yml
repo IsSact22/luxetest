@@ -1,5 +1,5 @@
 # GithHub Actions Workflow generated with Ghygen
-# Original configuration: https://ghygen.hi-folks.dev?code=a6468d54c02e1ff3fdfd08f31e553b41
+# Original configuration: https://ghygen.hi-folks.dev?code=e93cd12ba9136e4e5917ae77a18237f0
 name: Template - Laravel application (Mysql)
 on:
   push:
@@ -11,6 +11,24 @@ on:
 jobs:
   laravel-tests:
     runs-on: ubuntu-latest
+    # Service container Mysql mysql
+    services:
+      # Label used to access the service container
+      mysql:
+        # Docker Hub image (also with version)
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE:  db_test_laravel
+        ## map the "external" 33306 port with the "internal" 3306
+        ports:
+          - 33306:3306
+        # Set health checks to wait until mysql database has started (it takes some seconds to start)
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     strategy:
       matrix:
@@ -84,9 +102,10 @@ jobs:
       - name: Run Migrations
         # Set environment
         env:
-          SESSION_DRIVER: array
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ":memory:"
+          DB_CONNECTION: mysql
+          DB_DATABASE: db_test_laravel
+          DB_PORT: 33306
+          DB_USER: root
 
         run: php artisan migrate
 
@@ -100,14 +119,16 @@ jobs:
       - name: Execute tests (Unit and Feature tests) via PestPHP
         # Set environment
         env:
-          SESSION_DRIVER: array
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ":memory:"
+          DB_CONNECTION: mysql
+          DB_DATABASE: db_test_laravel
+          DB_PORT: 33306
+          DB_USER: root
 
         run: vendor/bin/pest
 
 
-      - name: Execute Code Sniffer via phpcs
+
+      - name: Execute Code Static Analysis (PHP Stan + Larastan)
         run: |
-          composer require --dev squizlabs/php_codesniffer
-          vendor/bin/phpcs --standard=PSR12 app
+          composer require --dev larastan/larastan
+          vendor/bin/phpstan analyse app -c ./vendor/larastan/larastan/extension.neon  --level=4 --no-progress
