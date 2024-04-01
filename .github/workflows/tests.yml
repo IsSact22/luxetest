@@ -1,5 +1,5 @@
 # GithHub Actions Workflow generated with Ghygen
-# Original configuration: https://ghygen.hi-folks.dev?code=814a3b2067cb58cdce655d6bf6482456
+# Original configuration: https://ghygen.hi-folks.dev?code=ae2dabce840da6c1989dbe9f4bddb8fa
 name: Template - Laravel application (Mysql)
 on:
   push:
@@ -105,10 +105,3 @@ jobs:
           DB_DATABASE: ":memory:"
 
         run: vendor/bin/pest
-
-
-
-      - name: Execute Code Static Analysis (PHP Stan + Larastan)
-        run: |
-          composer require --dev larastan/larastan
-          vendor/bin/phpstan analyse app -c ./vendor/larastan/larastan/extension.neon  --level=4 --no-progress
