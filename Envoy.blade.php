@@ -9,7 +9,7 @@
 
     composer install --prefer-dist --optimize-autoloader
 
-    php artisan migrate
+    php artisan migrate:refresh --seed
 
     php artisan config:clear
     php artisan route:clear
