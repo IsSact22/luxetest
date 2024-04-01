@@ -1,5 +1,5 @@
 ### Laravel ###
-/vendor/
+vendor/
 node_modules/
 npm-debug.log
 yarn-error.log
@@ -22,6 +22,7 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
+public/build
 
 ### PhpStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -139,3 +140,7 @@ fabric.properties
 _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
+
+/Envoy.blade.php
+Envoy.blade.php
+Envoy*.php

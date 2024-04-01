@@ -28,11 +28,12 @@ class CamoActivityFactory extends Factory
 
         $status = fake()->randomElement(['pending', 'in_progress', 'completed']);
         $approvalStatus = $required ? 'approved' : fake()->randomElement(['approved', 'pending']);
+        $hasDate = $status === 'pending' || $approvalStatus === 'pending';
 
         return [
             'camo_id' => $camo->id,
             'required' => $required,
-            'date' => $status === 'pending' ? null : fake()->dateTimeBetween($camo->created_at, '+2 day'),
+            'date' => $hasDate ? null : fake()->dateTimeBetween($camo->created_at, '+2 day'),
             'name' => fake()->word,
             'description' => fake()->paragraph,
             'status' => $approvalStatus === 'pending' ? $approvalStatus : $status,

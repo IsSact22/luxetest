@@ -18,27 +18,27 @@ class PermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Permissions
-        Permission::create(['name' => 'create']);
-        Permission::create(['name' => 'read']);
-        Permission::create(['name' => 'update']);
-        Permission::create(['name' => 'delete']);
+        Permission::create(['name' => 'create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'update', 'guard_name' => 'web']);
+        Permission::create(['name' => 'delete', 'guard_name' => 'web']);
 
-        Permission::create(['name' => 'create-user']);
-        Permission::create(['name' => 'read-user']);
-        Permission::create(['name' => 'update-user']);
-        Permission::create(['name' => 'delete-user']);
+        Permission::firstOrCreate(['name' => 'create-user', 'guard_name' => 'web']);
+        Permission::create(['name' => 'read-user', 'guard_name' => 'web']);
+        Permission::create(['name' => 'update-user', 'guard_name' => 'web']);
+        Permission::create(['name' => 'delete-user', 'guard_name' => 'web']);
 
-        Permission::create(['name' => 'profile-user']);
+        Permission::create(['name' => 'profile-user', 'guard_name' => 'web']);
 
-        Permission::create(['name' => 'create-camo']);
-        Permission::create(['name' => 'read-camo']);
-        Permission::create(['name' => 'update-camo']);
-        Permission::create(['name' => 'delete-camo']);
+        Permission::create(['name' => 'create-camo', 'guard_name' => 'web']);
+        Permission::create(['name' => 'read-camo', 'guard_name' => 'web']);
+        Permission::create(['name' => 'update-camo', 'guard_name' => 'web']);
+        Permission::create(['name' => 'delete-camo', 'guard_name' => 'web']);
 
-        Permission::create(['name' => 'create-activity']);
-        Permission::create(['name' => 'read-activity']);
-        Permission::create(['name' => 'update-activity']);
-        Permission::create(['name' => 'delete-activity']);
+        Permission::create(['name' => 'create-activity', 'guard_name' => 'web']);
+        Permission::create(['name' => 'read-activity', 'guard_name' => 'web']);
+        Permission::create(['name' => 'update-activity', 'guard_name' => 'web']);
+        Permission::create(['name' => 'delete-activity', 'guard_name' => 'web']);
 
         // Create Roles
         $superAdmin = Role::create(['name' => 'super-admin']);

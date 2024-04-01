@@ -30,6 +30,7 @@
         "fakerphp/faker": "^1.9.1",
         "laravel-lang/common": "^6.2",
         "laravel/breeze": "^2.0",
+        "laravel/envoy": "^2.9",
         "laravel/pint": "^1.14",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
