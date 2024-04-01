@@ -7,9 +7,11 @@
     echo "Removed vendor/ directory.."
     git pull origin develop
 
-    composer install --prefer-dist --optimize-autoloader
+    composer install --prefer-dist --optimize-autoloader --no-interaction
+    echo "Composer dependencies have been installed";
 
-    php artisan migrate:refresh --seed
+    php artisan migrate --force --no-interaction
+    php artisan db:seed
 
     php artisan config:clear
     php artisan route:clear

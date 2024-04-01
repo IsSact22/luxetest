@@ -23,7 +23,7 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'update-admin']);
         Permission::create(['name' => 'delete-admin']);
 
-        Permission::create(['name' => 'create-user']);
+        Permission::firstOrCreate(['name' => 'create-user']);
         Permission::create(['name' => 'read-user']);
         Permission::create(['name' => 'update-user']);
         Permission::create(['name' => 'delete-user']);
