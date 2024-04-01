@@ -1,5 +1,5 @@
 # GithHub Actions Workflow generated with Ghygen
-# Original configuration: https://ghygen.hi-folks.dev?code=e93cd12ba9136e4e5917ae77a18237f0
+# Original configuration: https://ghygen.hi-folks.dev?code=814a3b2067cb58cdce655d6bf6482456
 name: Template - Laravel application (Mysql)
 on:
   push:
@@ -11,24 +11,6 @@ on:
 jobs:
   laravel-tests:
     runs-on: ubuntu-latest
-    # Service container Mysql mysql
-    services:
-      # Label used to access the service container
-      mysql:
-        # Docker Hub image (also with version)
-        image: mysql:latest
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE:  db_test_laravel
-        ## map the "external" 33306 port with the "internal" 3306
-        ports:
-          - 33306:3306
-        # Set health checks to wait until mysql database has started (it takes some seconds to start)
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
 
     strategy:
       matrix:
@@ -102,10 +84,9 @@ jobs:
       - name: Run Migrations
         # Set environment
         env:
-          DB_CONNECTION: mysql
-          DB_DATABASE: db_test_laravel
-          DB_PORT: 33306
-          DB_USER: root
+          SESSION_DRIVER: array
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
 
         run: php artisan migrate
 
@@ -119,10 +100,9 @@ jobs:
       - name: Execute tests (Unit and Feature tests) via PestPHP
         # Set environment
         env:
-          DB_CONNECTION: mysql
-          DB_DATABASE: db_test_laravel
-          DB_PORT: 33306
-          DB_USER: root
+          SESSION_DRIVER: array
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ":memory:"
 
         run: vendor/bin/pest
 
