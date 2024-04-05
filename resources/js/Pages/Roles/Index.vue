@@ -47,6 +47,7 @@ const destroy = (id) => {
                             v-model="form.search"
                         >
                     </div>
+                    <Link class="b-goto">New Role</Link>
                     <Link :href="route('users.index')"
                         class="b-goto"
                     >
@@ -76,8 +77,8 @@ const destroy = (id) => {
                         <td>{{ role.name }}</td>
                         <td class="text-center">{{ role.guard_name }}</td>
                         <td class="col-actions">
-                            <Link class="b-show">Show</Link>
-                            <Link class="b-edit">Edit</Link>
+                            <Link :href="route('roles.show', role.id)" class="b-show">Show</Link>
+                            <Link :href="route('roles.edit', role.id)" class="b-edit">Edit</Link>
                             <Link class="b-delete">Delete</Link>
                         </td>
                     </tr>

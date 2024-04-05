@@ -16,6 +16,7 @@ Route::get('dashboard', fn () => Inertia::render('Dashboard'))->middleware(['aut
 
 Route::middleware('auth')->group(function () {
     Route::get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
+    Route::get('permissions/select', \App\Http\Controllers\Invokes\PermissionController::class)->name('permissions.select');
     Route::get('owners/select', \App\Http\Controllers\Invokes\OwnerController::class)->name('owners.select');
     Route::get('cams/select', \App\Http\Controllers\Invokes\CamController::class)->name('cams.select');
     Route::get('camos/activities', \App\Http\Controllers\Invokes\ActivityController::class)
@@ -28,8 +29,16 @@ Route::middleware('auth')->group(function () {
     Route::patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
     Route::delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
 
-    Route::resource('roles', \App\Http\Controllers\RoleController::class);
+    Route::resource('roles', \App\Http\Controllers\RoleController::class)->except(['store', 'update']);
+    Route::middleware(HandlePrecognitiveRequests::class)
+        ->post('roles', [\App\Http\Controllers\RoleController::class, 'store'])
+        ->name('roles.store');
+    Route::middleware(HandlePrecognitiveRequests::class)
+        ->match(['put', 'patch'], 'roles', [\App\Http\Controllers\RoleController::class, 'update'])
+        ->name('roles.update');
+
     Route::resource('users', \App\Http\Controllers\UserController::class);
+
     Route::get('camos/dashboard', [\App\Http\Controllers\DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
     Route::resource('camos', \App\Http\Controllers\CamoController::class)->except(['store', 'update']);
     Route::middleware(HandlePrecognitiveRequests::class)

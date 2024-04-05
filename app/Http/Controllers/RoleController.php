@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;
 
@@ -20,6 +21,7 @@ class RoleController extends Controller
     public function __construct(protected RoleRepositoryInterface $role)
     {
         parent::__construct();
+        $this->authorizeResource(Role::class, 'role');
     }
 
     /**
@@ -58,7 +60,7 @@ class RoleController extends Controller
     {
         try {
             $user = $this->role->getById($id);
-            $resource = new UserResource($user);
+            $resource = new RoleResource($user);
 
             return InertiaResponse::content('Roles/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
@@ -75,7 +77,7 @@ class RoleController extends Controller
     {
         try {
             $user = $this->role->getById($id);
-            $resource = new UserResource($user);
+            $resource = new RoleResource($user);
 
             return InertiaResponse::content('Roles/Edit', ['resource' => $resource]);
         } catch (ModelNotFoundException) {

@@ -7,6 +7,7 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class UserController extends Controller
     public function __construct(protected UserRepositoryInterface $user)
     {
         parent::__construct();
+        $this->authorizeResource(User::class, 'user');
     }
 
     /**
@@ -100,7 +102,9 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, int $id): Response|RedirectResponse
     {
         try {
+
             $user = $this->user->updateUser($request->all(), $id);
+
             if ($request->hasFile('avatar')) {
                 $user->addMediaFromRequest('avatar')
                     ->toMediaCollection('avatars');
