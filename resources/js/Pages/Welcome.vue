@@ -42,7 +42,7 @@ const handleLogoClick = () => {
 
 <template>
     <Head title="Welcome" />
-    <div class="bg-gray-200/50 text-black/50 dark:bg-black dark:text-white/50">
+    <div class="bg-gray-200/50 text-black/50">
         <div class="min-h-screen flex flex-col items-center justify-center">
             <div class="w-full max-w-2xl px-6 lg:max-w-7xl">
                 <main class="mt-6 flex justify-center">
