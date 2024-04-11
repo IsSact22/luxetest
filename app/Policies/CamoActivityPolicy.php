@@ -12,7 +12,7 @@ class CamoActivityPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->can('read-activity');
     }
 
     /**
@@ -20,13 +20,7 @@ class CamoActivityPolicy
      */
     public function view(User $user, CamoActivity $camoActivity): bool
     {
-        if ($user->hasAnyRole(['super-admin', 'admin', 'cam'])) {
-            return true;
-        } elseif ($user->hasAnyRole(['owner', 'crew'])) {
-            return true;
-        } else {
-            return false;
-        }
+        return $user->can('read-activity');
     }
 
     /**
@@ -34,7 +28,7 @@ class CamoActivityPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin', 'cam']);
+        return $user->can('create-activity');
     }
 
     /**
@@ -42,13 +36,7 @@ class CamoActivityPolicy
      */
     public function update(User $user, CamoActivity $camoActivity): bool
     {
-        if ($user->hasAnyRole(['super-admin', 'admin', 'cam'])) {
-            return true;
-        } elseif ($user->hasRole('owner') && $camoActivity->camo->owner_id === $user->id) {
-            return true;
-        } else {
-            return false;
-        }
+        return $user->can('update-activity');
     }
 
     /**
@@ -56,7 +44,7 @@ class CamoActivityPolicy
      */
     public function delete(User $user, CamoActivity $camoActivity): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin']);
+        return $user->can('delete-activity');
     }
 
     /**
@@ -64,7 +52,7 @@ class CamoActivityPolicy
      */
     public function restore(User $user, CamoActivity $camoActivity): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin']);
+        return $user->can('restore');
     }
 
     /**
@@ -72,6 +60,6 @@ class CamoActivityPolicy
      */
     public function forceDelete(User $user, CamoActivity $camoActivity): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin']);
+        return $user->can('force-delete');
     }
 }

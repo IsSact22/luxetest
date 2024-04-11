@@ -5,6 +5,7 @@ import { useForm as useFormInertia } from "@inertiajs/vue3";
 import {route} from "ziggy-js";
 import moment from 'moment';
 import {useToast} from "vue-toastification";
+import { router } from '@inertiajs/vue3'
 
 export const useCamoStore = defineStore('camos', () => {
     const toast = useToast();
@@ -133,7 +134,10 @@ export const useCamoStore = defineStore('camos', () => {
         camoForm.submit({
             onFinish: () => {
                 localStorage.removeItem('camos')
-                toast.success('Registered')
+                toast.success('Registered', { timeout: 2000})
+                setTimeout(() => {
+                    router.get(route('camos.index'))
+                }, 1000)
             },
         })
     }
@@ -160,5 +164,5 @@ export const useCamoStore = defineStore('camos', () => {
         finish,
     }
 }, {
-    persist: true
+    persist: false
 })

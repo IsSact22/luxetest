@@ -16,6 +16,7 @@ const title = computed(() => {
         500: '500: Server Error',
         404: '404: Page Not Found',
         403: '403: Forbidden',
+        401: '401: Unauthorized',
     }[props.status]
 })
 
@@ -24,6 +25,7 @@ const description = computed(() => {
         503: 'Sorry, we are doing some maintenance. Please check back soon.',
         500: 'Whoops, something went wrong on our servers.',
         404: 'Sorry, the page you are looking for could not be found.',
+        401: 'Sorry, you are not authorize for accessing this page.',
         403: 'Sorry, you are forbidden from accessing this page.',
         422: 'Sorry, there was an error processing your request.'
     }[props.status]

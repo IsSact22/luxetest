@@ -5,18 +5,31 @@
             Make sure the user has a role assigned.
         </p>
         <form  class="mt-6 space-y-6" @submit.prevent="submit">
-            <div>
-                <InputLabel for="role" value="Role" />
-                <select name="role" id="role" class="mt-1 rounded-md border-gray-300 block w-1/4" v-model="form.role">
-                    <option
-                        v-for="(r, idx) in roles"
-                        :key="idx"
-                        :value="r"
-                    >
-                        {{r}}
-                    </option>
-                </select>
+            <div class="flex flex-row justify-items-center items-center">
+                <div class="w-1/2">
+                    <InputLabel for="role" value="Role" />
+                    <select name="role" id="role" class="mt-1 rounded-md border-gray-300 block w-1/4" v-model="form.role">
+                        <option
+                            v-for="(r, idx) in roles"
+                            :key="idx"
+                            :value="r"
+                        >
+                            {{r}}
+                        </option>
+                    </select>
+                </div>
+                <div class="w-1/2">
+                    <h2>Permissions</h2>
+                    <ul class="flex flex-wrap">
+                        <li v-for="(p, idx) in props.user.permissions"
+                            :key="idx"
+                            class="badge-info my-2">
+                            {{p.name}}
+                        </li>
+                    </ul>
+                </div>
             </div>
+
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
 

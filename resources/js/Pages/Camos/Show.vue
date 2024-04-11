@@ -138,6 +138,7 @@ const formActivity = useForm({
     material_mount: '',
     material_information: '',
     status: '',
+    approval_status: ''
 })
 const closeModal = () => {
     activityId.value = null;
@@ -157,7 +158,12 @@ const statusList = ref([
     {value: 'pending', label: 'Pending'},
     {value: 'in_progress', label: 'in Progress'},
     {value: 'completed', label: 'Completed'},
-])
+]);
+
+const approvalStatusList = ref([
+    {value: 'pending', label: 'Pending'},
+    {value: 'approved', label: 'Approved'},
+]);
 
 const submit = async () => {
     try {
@@ -185,7 +191,7 @@ const handleAddActivity = (e) => {
             <div class="my-4 border rounded-md px-4 py-4">
                 <div class="space-x-3 my-3">
                     <Link :href="route('camos.index')" class="b-goto">back to Camos</Link>
-                    <button
+                    <button v-if="$page.props.auth.user.is_cam"
                         @click="addActivity = true"
                         class="b-goto"
                     >
@@ -388,10 +394,29 @@ const handleAddActivity = (e) => {
                                             v-model="formActivity.status"
                                             class="rounded-md border-gray-300"
                                             name="status"
+                                            :disabled="!$page.props.auth.user.is_cam"
                                         >
                                             <option v-for="(status, idx) in statusList" :key="idx"
                                                     :value="status.value">
                                                 {{ status.label }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div v-if="$page.props.auth.user.is_owner" class="my-2">
+                                        <InputLabel for="approval_status">Approval Status</InputLabel>
+                                        <select
+                                            id="status"
+                                            v-model="formActivity.status"
+                                            class="rounded-md border-gray-300"
+                                            name="status"
+                                        >
+                                            <option
+                                                v-for="(item, idx) in approvalStatusList"
+                                                :key="idx"
+                                                :value="item.value"
+                                            >
+                                                {{item.label}}
                                             </option>
                                         </select>
                                     </div>

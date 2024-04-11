@@ -7,6 +7,8 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,6 +30,8 @@ class UserController extends Controller
      */
     public function index(Request $request): Response
     {
+        $this->authorize('read-user', User::class);
+
         $users = $this->user->getAll($request);
         $resource = UserResource::collection($users);
 
@@ -39,6 +43,8 @@ class UserController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create-user', User::class);
+
         return InertiaResponse::content('Users/Create');
     }
 
@@ -47,6 +53,8 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
+        $this->authorize('create-user', User::class);
+
         $user = $this->user->newUser($request->all());
         $user->assignRole($request->get('role'));
         if ($request->hasFile('avatar')) {
@@ -62,12 +70,16 @@ class UserController extends Controller
     public function show(int $id): Response
     {
         try {
+            $this->authorize('read-user', User::class);
+
             $user = $this->user->getById($id);
             $resource = new UserResource($user);
 
             return InertiaResponse::content('Users/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (AuthorizationException $e) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
             Log::error('showUser:'.$e->getMessage());
 
@@ -81,6 +93,8 @@ class UserController extends Controller
     public function edit(int $id): Response
     {
         try {
+            $this->authorize('update-user', User::class);
+
             $user = $this->user->getById($id);
             $resource = new UserResource($user);
 
@@ -100,7 +114,10 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, int $id): Response|RedirectResponse
     {
         try {
+            $this->authorize('update-user', User::class);
+
             $user = $this->user->updateUser($request->all(), $id);
+
             if ($request->hasFile('avatar')) {
                 $user->addMediaFromRequest('avatar')
                     ->toMediaCollection('avatars');
@@ -128,6 +145,8 @@ class UserController extends Controller
     public function destroy(int $id): Response|RedirectResponse
     {
         try {
+            $this->authorize('delete-user', User::class);
+
             $this->user->deleteUser($id);
 
             return to_route('users.index')->with('success', 'User deleted successfully');

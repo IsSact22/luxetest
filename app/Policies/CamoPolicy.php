@@ -12,7 +12,7 @@ class CamoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin', 'cam', 'owner', 'crew']);
+        return $user->can('read-camo');
     }
 
     /**
@@ -20,10 +20,9 @@ class CamoPolicy
      */
     public function view(User $user, Camo $camo): bool
     {
-
-        if ($user->hasAnyRole(['super-admin', 'admin', 'cam'])) {
+        if ($user->hasAnyRole(['super-admin', 'admin'])) {
             return true;
-        } elseif (($user->hasAnyRole(['owner', 'crew']) && $user->id === $camo->owner_id) || ($user->hasRole('crew') && $user->owner->id === $camo->owner_id)) {
+        } elseif ($user->hasAnyRole(['owner', 'crew']) && $user->id === $camo->owner_id || $user->owner_id === $camo->owner_id) {
             return true;
         } else {
             return false;
@@ -35,7 +34,7 @@ class CamoPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['super-admin', 'admin', 'cam']);
+        return $user->hasRole('cam') && $user->can('create-camo');
     }
 
     /**
@@ -43,7 +42,7 @@ class CamoPolicy
      */
     public function update(User $user, Camo $camo): bool
     {
-        return $user->hasRole(['super-admin', 'admin', 'cam']);
+        return $user->can('update-camo') && $user->id === $camo->cam_id;
     }
 
     /**
@@ -51,7 +50,7 @@ class CamoPolicy
      */
     public function delete(User $user, Camo $camo): bool
     {
-        return $user->hasRole(['super-admin', 'admin']);
+        return $user->can('delete-camo');
     }
 
     /**
@@ -59,7 +58,7 @@ class CamoPolicy
      */
     public function restore(User $user, Camo $camo): bool
     {
-        return $user->hasRole(['super-admin', 'admin']);
+        return $user->can('restore');
     }
 
     /**
@@ -67,6 +66,6 @@ class CamoPolicy
      */
     public function forceDelete(User $user, Camo $camo): bool
     {
-        return $user->hasRole(['super-admin', 'admin']);
+        return $user->can('force-delete');
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCamoActivityRequest;
 use App\Http\Resources\CamoActivityResource;
 use App\Repositories\CamoActivityRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,6 +20,7 @@ class CamoActivityController extends Controller
     public function __construct(protected CamoActivityRepository $activity)
     {
         parent::__construct();
+        $this->middleware(HandlePrecognitiveRequests::class)->only(['store', 'update']);
     }
 
     /**

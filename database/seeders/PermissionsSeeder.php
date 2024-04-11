@@ -22,8 +22,20 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'read', 'guard_name' => 'web']);
         Permission::create(['name' => 'update', 'guard_name' => 'web']);
         Permission::create(['name' => 'delete', 'guard_name' => 'web']);
+        Permission::create(['name' => 'restore', 'guard_name' => 'web']);
+        Permission::create(['name' => 'force-delete', 'guard_name' => 'web']);
 
-        Permission::firstOrCreate(['name' => 'create-user', 'guard_name' => 'web']);
+        Permission::create(['name' => 'create-role', 'guard_name' => 'web']);
+        Permission::create(['name' => 'read-role', 'guard_name' => 'web']);
+        Permission::create(['name' => 'update-role', 'guard_name' => 'web']);
+        Permission::create(['name' => 'delete-role', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'create-permission', 'guard_name' => 'web']);
+        Permission::create(['name' => 'read-permission', 'guard_name' => 'web']);
+        Permission::create(['name' => 'update-permission', 'guard_name' => 'web']);
+        Permission::create(['name' => 'delete-permission', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'create-user', 'guard_name' => 'web']);
         Permission::create(['name' => 'read-user', 'guard_name' => 'web']);
         Permission::create(['name' => 'update-user', 'guard_name' => 'web']);
         Permission::create(['name' => 'delete-user', 'guard_name' => 'web']);
@@ -46,10 +58,6 @@ class PermissionsSeeder extends Seeder
 
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
-            'create-user',
-            'read-user',
-            'update-user',
-            'profile-user',
             'create',
             'read',
             'update',
@@ -57,9 +65,11 @@ class PermissionsSeeder extends Seeder
             'create-user',
             'read-user',
             'update-user',
-            'create-camo',
+            'profile-user',
             'read-camo',
             'update-camo',
+            'read-activity',
+            'update-activity',
         ]);
 
         $cam = Role::create(['name' => 'cam']);
