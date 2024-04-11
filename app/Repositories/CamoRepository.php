@@ -36,9 +36,9 @@ class CamoRepository implements CamoRepositoryInterface
 
             ->when($user && ($user->isOwner || $user->isCrew), function ($query) use ($user) {
                 $query->where(function ($query) use ($user) {
-                    $query->where('owner_id', $user->owner_id)
+                    $query->where('owner_id', $user->id)
                         ->orWhereHas('owner', function ($query) use ($user) {
-                            $query->where('owner_id', $user->owner_id);
+                            $query->where('owner_id', $user->id);
                         });
                 });
             })
