@@ -20,7 +20,13 @@ class CamoPolicy
      */
     public function view(User $user, Camo $camo): bool
     {
-        return $user->can('read-camo');
+        if ($user->hasAnyRole(['super-admin', 'admin'])) {
+            return true;
+        } elseif ($user->hasAnyRole(['owner', 'crew']) && $user->id === $camo->owner_id || $user->owner_id === $camo->owner_id) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -28,7 +34,7 @@ class CamoPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create-camo');
+        return $user->hasRole('cam') && $user->can('create-camo');
     }
 
     /**
@@ -36,7 +42,7 @@ class CamoPolicy
      */
     public function update(User $user, Camo $camo): bool
     {
-        return $user->can('update-camo');
+        return $user->can('update-camo') && $user->id === $camo->cam_id;
     }
 
     /**

@@ -58,10 +58,6 @@ class PermissionsSeeder extends Seeder
 
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
-            'create-user',
-            'read-user',
-            'update-user',
-            'profile-user',
             'create',
             'read',
             'update',
@@ -69,9 +65,11 @@ class PermissionsSeeder extends Seeder
             'create-user',
             'read-user',
             'update-user',
-            'create-camo',
+            'profile-user',
             'read-camo',
             'update-camo',
+            'read-activity',
+            'update-activity',
         ]);
 
         $cam = Role::create(['name' => 'cam']);

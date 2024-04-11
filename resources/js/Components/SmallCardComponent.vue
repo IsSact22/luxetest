@@ -27,6 +27,41 @@
             <a class="b-goto my-2" :href="route('camos.show', id)">Got to CAMO</a>
         </div>
         <div>
+            <h3 class="text-base font-semibold text-center uppercase">Progress statics</h3>
+
+            <div class="w-full bg-gray-200 overflow-hidden my-2">
+                <div class="flex">
+                    <div class="bg-violet-500 text-white py-2 text-xs text-center h-4 place-content-center" :style="{ width: `${getPercentage(statusCounts.in_progress)}%` }">{{getPercentage(statusCounts.in_progress)}}%</div>
+                    <div class="bg-green-500 text-white py-2 text-xs text-center h-4 place-content-center" :style="{ width: `${getPercentage(statusCounts.completed)}%` }">{{getPercentage(statusCounts.completed)}}%</div>
+                    <div class="bg-orange-500 text-white py-2 text-xs text-center h-4 place-content-center" :style="{ width: `${getPercentage(statusCounts.pending)}%` }">{{getPercentage(statusCounts.pending)}}%</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-1">
+                <div class="flex flex-col justify-items-center items-center border rounded-md p-4">
+                    <span class="inline-block h-8 w-8 bg-violet-500 rounded-full p-1">
+                        <svg class="h-6 w-6 stroke-white" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" transform="matrix(-1 0 0 1 19 2)"><circle cx="8.5" cy="8.5" r="8"/><path d="m8.5 5.5v4h-3.5"/></g></svg>
+                    </span>
+                    <span class="my-1 text-xl">{{statusCounts.in_progress}}</span>
+                    <span>In Progress</span>
+                </div>
+                <div class="flex flex-col justify-items-center items-center border rounded-md p-4">
+                    <span class="inline-block h-8 w-8 bg-green-500 rounded-full p-1">
+                        <svg class="h-6 w-6 stroke-white" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><circle cx="8.5" cy="8.5" r="8"/><path d="m5.5 9.5 2 2 5-5"/></g></svg>
+                    </span>
+                    <span class="my-1 text-xl">{{statusCounts.completed}}</span>
+                    <span>Completed</span>
+                </div>
+                <div class="flex flex-col justify-items-center items-center border rounded-md p-4">
+                    <span class="inline-block h-8 w-8 bg-orange-500 rounded-full p-1">
+                        <svg class="h-6 w-6 stroke-white" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 2)"><path d="m2.5.5h12c1.1045695 0 2 .8954305 2 2v12c0 1.1045695-.8954305 2-2 2h-12c-1.1045695 0-2-.8954305-2-2v-12c0-1.1045695.8954305-2 2-2z"/><path d="m.5 4.5h16"/><path d="m8.5 7.5v6.056"/><path d="m8.5 7.5v6" transform="matrix(0 1 -1 0 19 2)"/></g></svg>
+                    </span>
+                    <span class="my-1 text-xl">{{statusCounts.pending}}</span>
+                    <span>Pending</span>
+                </div>
+            </div>
+        </div>
+<!--        <div>
             <div class="flex items-center -mx-4 space-x-2 overflow-x-auto overflow-y-hidden sm:justify-center flex-nowrap my-4">
                 <button
                         :class="{ 'border-b-blue-400' : typeChart === 1}"
@@ -44,17 +79,17 @@
                         @click="typeChart = 3"
                 >BarChart</button>
             </div>
-        </div>
-        <div class="my-4">
+        </div>-->
+<!--        <div class="my-4">
             <PieChart v-if="typeChart === 1" :chartData="dataSet" :options="options" />
             <LineChart v-else-if="typeChart === 2" :chartData="dataSet" :options="options" />
             <BarChart v-else :chartData="dataSet" :options="options" />
-        </div>
+        </div>-->
     </div>
 
 </template>
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import {Chart, registerables} from "chart.js";
 import {PieChart, LineChart, BarChart} from "vue-chart-3";
 import {route} from "ziggy-js";
@@ -70,6 +105,20 @@ const props = defineProps({
     aircraft: String,
     activities: Object,
 })
+
+const statusCounts = {
+    pending: 0,
+    in_progress: 0,
+    completed: 0
+}
+props.activities.forEach(camo => {
+    statusCounts[camo.status]++;
+})
+
+const getPercentage = count => {
+    const totalCount = statusCounts.pending + statusCounts.in_progress + statusCounts.completed;
+    return Math.round((count / totalCount) * 100);
+};
 
 const typeChart = ref(1)
 

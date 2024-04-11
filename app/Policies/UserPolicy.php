@@ -14,7 +14,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasAnyRole(['super-admin', 'admin']);
     }
 
     /**
@@ -22,7 +22,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasAnyRole(['super-admin', 'admin']);
     }
 
     /**
@@ -30,7 +30,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('super-admin');
+        return $user->hasAnyRole(['super-admin', 'admin']);
     }
 
     /**
@@ -38,7 +38,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->hasRole('super-admin') || $user->hasAnyRole(['admin', 'cam', 'owner', 'crew']) && $user->id === $model->id;
+        return $user->hasAnyRole(['super-admin', 'admin']) || $user->hasAnyRole(['cam', 'owner', 'crew']) && $user->id === $model->id;
     }
 
     /**

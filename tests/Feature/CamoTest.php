@@ -14,7 +14,6 @@ it('cam user list camos', function () {
     $response->assertStatus(200);
 });
 
-it('cam user go to show camos', function () {
-    $camo = \App\Models\Camo::find(1);
-    $cam = $camo->cam_id;
+it('cam has camo', function () {
+    $user = \App\Models\User::find(3);
 });

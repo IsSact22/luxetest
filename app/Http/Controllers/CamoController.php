@@ -8,7 +8,9 @@ use App\Http\Requests\StoreCamoRequest;
 use App\Http\Requests\UpdateCamoRequest;
 use App\Http\Resources\CamoResource;
 use App\Models\Camo;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -21,7 +23,7 @@ class CamoController extends Controller
     public function __construct(protected CamoRepositoryInterface $camo)
     {
         parent::__construct();
-        $this->authorizeResource(Camo::class, 'camo');
+        $this->middleware(HandlePrecognitiveRequests::class)->only(['store', 'update']);
     }
 
     /**
@@ -29,6 +31,7 @@ class CamoController extends Controller
      */
     public function index(Request $request): Response
     {
+        $this->authorize('read-camo', Camo::class);
         $camos = $this->camo->getAll($request);
         $resource = CamoResource::collection($camos);
 
@@ -40,7 +43,14 @@ class CamoController extends Controller
      */
     public function create(): Response
     {
-        return InertiaResponse::content('Camos/Create');
+        try {
+            $this->authorize('create-camo', Camo::class);
+
+            return InertiaResponse::content('Camos/Create');
+        } catch (AuthorizationException $e) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        }
+
     }
 
     /**
@@ -48,6 +58,7 @@ class CamoController extends Controller
      */
     public function store(StoreCamoRequest $request): RedirectResponse
     {
+        $this->authorize('create-camo', Camo::class);
         $this->camo->newCamo($request->all());
 
         return to_route('camos.index')->with('success', 'CAMO created successfully');
@@ -59,6 +70,7 @@ class CamoController extends Controller
     public function show(string $id): Response
     {
         try {
+            $this->authorize('read-camo', Camo::class);
             $camo = $this->camo->getById($id);
             $resource = new CamoResource($camo);
 
@@ -76,6 +88,7 @@ class CamoController extends Controller
     public function edit(string $id): Response
     {
         try {
+            $this->authorize('update-camo', Camo::class);
             $camo = $this->camo->getById($id);
             $resource = new CamoResource($camo);
 
@@ -93,6 +106,7 @@ class CamoController extends Controller
     public function update(UpdateCamoRequest $request, string $id): Response|RedirectResponse
     {
         try {
+            $this->authorize('update-camo', Camo::class);
             $camo = $this->camo->updateCamo($request->all(), $id);
 
             return to_route('users.index')->with('success', 'CAMO created successfully');
@@ -109,6 +123,7 @@ class CamoController extends Controller
     public function destroy(string $id): Response|RedirectResponse
     {
         try {
+            $this->authorize('delete-camo', Camo::class);
             $this->camo->deleteCamo($id);
 
             return to_route('services.index')->with('success', 'CAMO deleted successfully');

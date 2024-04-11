@@ -9,6 +9,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import {createPinia} from "pinia";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate"
+import storeReset from './Stores/plugins/storeReset.js';
 import {i18nVue} from 'laravel-vue-i18n'
 import VueSelect from 'vue-select'
 import "vue-select/dist/vue-select.css";
@@ -25,6 +26,7 @@ import 'floating-vue/dist/style.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia()
+pinia.use(storeReset);
 pinia.use(piniaPluginPersistedState)
 
 createInertiaApp({

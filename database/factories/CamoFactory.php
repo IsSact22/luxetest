@@ -26,12 +26,12 @@ class CamoFactory extends Factory
         $endDate = fake()->dateTimeBetween($startDate, '+8 months');
 
         return [
-            'customer' => fake()->company,
+            'customer' => fake()->taxpayerIdentificationNumber(),
             'owner_id' => $owner->id,
             'contract' => fake()->bothify('000#####-V#'),
             'cam_id' => $cam->id,
-            'aircraft' => fake()->bothify('F900EX-0##'),
-            'description' => fake()->sentence(4),
+            'aircraft' => strtoupper(fake()->bothify('?###??-###')),
+            'description' => fake()->words(7, true),
             'start_date' => $startDate,
             'finish_date' => $endDate,
             'location' => 'OMZ',

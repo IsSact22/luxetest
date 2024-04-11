@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
         User::firstOrCreate([
             'email' => 'superadmin@luxeplus.com',
         ], [
-            'name' => 'LuxePlus',
+            'name' => 'Super Admin',
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
@@ -63,5 +63,37 @@ class UserSeeder extends Seeder
             $crew = User::factory()->create(['owner_id' => $user->id]);
             $crew->syncRoles('crew');
         });
+
+        // User Admin Test
+        $userAdminTest = User::factory()
+            ->create([
+                'name' => 'Admin Test',
+                'email' => 'admin@luexplus.com',
+            ]);
+        $userAdminTest->syncRoles('admin');
+
+        // User Cam or Project Manager Test
+        $userCamTest = User::factory()
+            ->create([
+                'name' => 'Cam Test',
+                'email' => 'cam@luexplus.com',
+            ]);
+        $userCamTest->syncRoles('cam');
+
+        // User Owner Test
+        $userOwnerTest = User::factory()
+            ->create([
+                'name' => 'Owner Test',
+                'email' => 'owner@luexplus.com',
+            ]);
+        $userOwnerTest->syncRoles('owner');
+
+        // User Crew Test
+        $userCrewTest = User::factory()
+            ->create([
+                'name' => 'Crew Test',
+                'email' => 'crew@luexplus.com',
+            ]);
+        $userCrewTest->syncRoles('crew');
     }
 }

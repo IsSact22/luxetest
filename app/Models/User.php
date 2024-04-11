@@ -19,7 +19,10 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable implements HasMedia, JWTSubject
 {
-    use HasFactory, HasRoles, InteractsWithMedia, Notifiable;
+    use HasFactory;
+    use HasRoles;
+    use InteractsWithMedia;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -57,7 +60,7 @@ class User extends Authenticatable implements HasMedia, JWTSubject
         'disabled' => 'boolean',
     ];
 
-    protected $appends = ['is_cam', 'is_owner', 'is_crew', 'is_super'];
+    protected $appends = ['is_admin', 'is_cam', 'is_owner', 'is_crew', 'is_super'];
 
     #[Override]
     public function registerMediaConversions(?Media $media = null): void
@@ -97,6 +100,11 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     protected function getIsSuperAttribute(): bool
     {
         return $this->hasRole('super-admin');
+    }
+
+    protected function getIsAdminAttribute(): bool
+    {
+        return $this->hasRole('admin');
     }
 
     protected function getIsCamAttribute(): bool
