@@ -1,5 +1,5 @@
 <script setup>
-import {Head, Link, useForm, usePage} from "@inertiajs/vue3";
+import {Head, Link, useForm, usePage, router} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {route} from "ziggy-js";
 import _ from 'lodash';
@@ -180,6 +180,10 @@ const addActivity = ref(false)
 const handleAddActivity = (e) => {
     addActivity.value = false
 }
+const goToMedia = (id) => {
+    const modelName = `CamoActivity`
+    router.visit(route('add-images'))
+}
 </script>
 <template>
     <Head title="Camos"/>
@@ -305,6 +309,7 @@ const handleAddActivity = (e) => {
                         />
                     </Transition>
                     <!-- add activity -->
+
                     <!-- modal -->
                     <Transition appear name="fade">
                         <Modal :closeable="false" :show="showModal" @close="showModal = false" backdrop="static">
@@ -423,6 +428,12 @@ const handleAddActivity = (e) => {
 
                                     <div class="flex justify-end space-x-4">
                                         <PrimaryButton type="submit" v-if="formActivity.isDirty">Save</PrimaryButton>
+                                        <SecondaryButton class="flex flex-row justify-items-center items-center space-x-1">
+                                            <span>
+                                                <svg height="21" viewBox="0 0 21 21" width="21" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd" transform="translate(2 4)"><path d="m.5 10.5v-6c0-1.1045695.8954305-2 2-2h12c1.1045695 0 2 .8954305 2 2v6c0 1.1045695-.8954305 2-2 2h-12c-1.1045695 0-2-.8954305-2-2z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="m15 5c0-.55228475-.4477153-1-1-1s-1 .44771525-1 1 .4477153 1 1 1 1-.44771525 1-1z" fill="currentColor"/><path d="m11.5 7.5c0-1.65685425-1.3431458-3-3-3-1.65685425 0-3 1.34314575-3 3s1.34314575 3 3 3c1.6568542 0 3-1.34314575 3-3zm-4-7h2c.5522847 0 1 .44771525 1 1v1h-4v-1c0-.55228475.44771525-1 1-1z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
+                                            </span>
+                                            <span>Add pictures</span>
+                                        </SecondaryButton>
                                         <SecondaryButton @click="closeModal">Close</SecondaryButton>
                                     </div>
                                 </form>
@@ -430,6 +441,7 @@ const handleAddActivity = (e) => {
                         </Modal>
                     </Transition>
                     <!-- modal -->
+
                     <Transition name="fade" appear @after-enter="!addActivity">
                         <div v-show="!addActivity">
                             <!-- pending approval -->

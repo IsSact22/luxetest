@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperCamo
@@ -15,6 +16,7 @@ use Override;
 class Camo extends Model
 {
     use HasFactory;
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $table = 'camos';

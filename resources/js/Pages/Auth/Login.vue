@@ -43,6 +43,10 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
+            <h2 class="text-center my-1">
+                Login to your account <br>
+                <small class="text-xs">Dont have account?</small>
+            </h2>
             <div>
                 <InputLabel for="email" value="Email" />
 
