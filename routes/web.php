@@ -42,13 +42,11 @@ Route::middleware('auth')->group(function ($route) {
     $route->get('camos/dashboard', [\App\Http\Controllers\DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
     $route->resource('camos', \App\Http\Controllers\CamoController::class);
 
+    // Media Camo Activities
+    $route->post('camo_activities/add-images', \App\Http\Controllers\Invokes\MediaActivityController::class)
+        ->name('camo_activities.add_images');
     // Camo Activities
     $route->resource('camo_activities', \App\Http\Controllers\CamoActivityController::class);
-
-    // Media
-    $route->get('/add-images/{modelName}', [\App\Http\Controllers\CamoActivityController::class, 'addImage'])->name('add-image');
-    $route->post('/add-images-to-model/{modelName}', [\App\Http\Controllers\MediaController::class, 'addImagesToModel'])
-        ->name('add-image-to-model');
 });
 
 require __DIR__.'/auth.php';

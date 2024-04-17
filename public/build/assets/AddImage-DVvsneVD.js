@@ -1,1 +1,0 @@
-import{m as e,T as r}from"./app-q3EnvKpE.js";const o={__name:"AddImage",props:{modalName:{type:String,required:!0}},setup(a){return e(),r({modelName:"",images:null}),(t,m)=>null}};export{o as default};

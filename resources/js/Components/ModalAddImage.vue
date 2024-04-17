@@ -58,9 +58,9 @@ const submit = () => {
                     <progress v-if="form.progress" :value="form.progress.percentage" max="100">
                         {{ form.progress.percentage }}%
                     </progress>
-                </div>
-                <div v-if="form.errors.images">
-                    <span>{{form.errors.images}}</span>
+                    <div v-if="form.errors.images">
+                        <span>{{form.errors.images}}</span>
+                    </div>
                 </div>
                 <div class="flex justify-end space-x-4">
                     <PrimaryButton type="submit">Save</PrimaryButton>

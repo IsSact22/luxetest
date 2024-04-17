@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;
@@ -89,12 +90,13 @@ class CamoActivityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCamoActivityRequest $request, string $id): \Inertia\Response|RedirectResponse
+    public function update(UpdateCamoActivityRequest $request, string $id): RedirectResponse|\Inertia\Response
     {
         try {
-            $camo = $this->activity->updateActivity($request->all(), $id);
+            $camoId = $request->get('camo_id');
+            $this->activity->updateActivity($request->all(), $id);
 
-            return to_route('camo_activities.index')->with('success', 'Activity update successfully');
+            return to_route('camos.show', $camoId)->with('success', 'Activity update successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable) {

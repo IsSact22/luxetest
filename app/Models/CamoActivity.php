@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @mixin IdeHelperCamoActivity
  */
-class CamoActivity extends Model
+class CamoActivity extends Model implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
@@ -64,15 +65,22 @@ class CamoActivity extends Model
         ];
     }
 
+    protected $appends = ['images'];
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('preview')
-            ->fit(Fit::Contain, 300, 300)
+            ->fit(Fit::Contain, 280, 280)
             ->nonQueued();
     }
 
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('image-support');
+    }
+
+    public function getImagesAttribute(): \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection
+    {
+        return $this->getMedia();
     }
 }
