@@ -42,7 +42,7 @@ const handleLogoClick = () => {
 
 <template>
     <Head title="Welcome" />
-    <div class="bg-gray-200/50">
+    <div class="welcome-background">
         <div class="min-h-screen flex flex-col items-center justify-center">
             <div class="w-full max-w-2xl px-6 lg:max-w-7xl">
                 <main class="flex justify-center">
@@ -62,5 +62,12 @@ const handleLogoClick = () => {
 <style scoped>
 .logo-transition {
     transition: transform 0.5s ease-out;
+}
+.welcome-background {
+    background-color: #f4f4fb;
+    opacity: 0.8;
+    background-image:  linear-gradient(#d9dbfd 2px, transparent 2px), linear-gradient(90deg, #d9dbfd 2px, transparent 2px), linear-gradient(#d9dbfd 1px, transparent 1px), linear-gradient(90deg, #d9dbfd 1px, #f4f4fb 1px);
+    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
 }
 </style>
