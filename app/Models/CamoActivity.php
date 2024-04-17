@@ -7,13 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @mixin IdeHelperCamoActivity
  */
-class CamoActivity extends Model
+class CamoActivity extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $table = 'camo_activities';
@@ -32,6 +37,8 @@ class CamoActivity extends Model
         'awr',
         'approval_status',
     ];
+
+    public string $mediaCollectionName = 'activity_images';
 
     public function camo(): BelongsTo
     {
@@ -58,5 +65,24 @@ class CamoActivity extends Model
             'created_at' => 'datetime:Y-m-d H:i',
             'updated_at' => 'datetime:Y-m-d H:i',
         ];
+    }
+
+    protected $appends = ['images'];
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('preview')
+            ->fit(Fit::Contain, 120, 120)
+            ->nonQueued();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection($this->mediaCollectionName);
+    }
+
+    public function getImagesAttribute(): \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection
+    {
+        return $this->getMedia($this->mediaCollectionName);
     }
 }

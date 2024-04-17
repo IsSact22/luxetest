@@ -1,5 +1,5 @@
 <script setup>
-import {Head, Link, useForm, usePage} from "@inertiajs/vue3";
+import {Head, Link, useForm, usePage, router} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {route} from "ziggy-js";
 import _ from 'lodash';
@@ -145,25 +145,8 @@ const closeModal = () => {
     showModal.value = false;
 }
 const handleClickTr = (obj) => {
-    activityId.value = obj.id
-    Object.assign(formActivity, obj);
-    formActivity.defaults(obj)
-    showModal.value = true
+    router.get(route('camo_activities.edit', obj.id))
 }
-const statusSelect = ref(false);
-const handleStatusSelect = () => {
-    statusSelect.value = !statusSelect.value
-}
-const statusList = ref([
-    {value: 'pending', label: 'Pending'},
-    {value: 'in_progress', label: 'in Progress'},
-    {value: 'completed', label: 'Completed'},
-]);
-
-const approvalStatusList = ref([
-    {value: 'pending', label: 'Pending'},
-    {value: 'approved', label: 'Approved'},
-]);
 
 const submit = async () => {
     try {
@@ -190,16 +173,16 @@ const handleAddActivity = (e) => {
         <div class="flex flex-col justify-items-center items-center max-w-7xl mx-auto">
             <div class="my-4 border rounded-md px-4 py-4">
                 <div class="space-x-3 my-3">
-                    <Link :href="route('camos.index')" class="b-goto">back to Camos</Link>
+                    <Link :href="route('camos.index')" class="btn-goto">back to Camos</Link>
                     <button v-if="$page.props.auth.user.is_cam"
                         @click="addActivity = true"
-                        class="b-goto"
+                        class="btn-goto"
                     >
                         new activity for this CAMO
                     </button>
-                    <button class="b-inDev" title="Under development" type="button" @click.passive.prevent>Camo to PDF
+                    <button class="btn-inDev" title="Under development" type="button" @click.passive.prevent>Camo to PDF
                     </button>
-                    <button class="b-inDev" title="Under development" type="button" @click.passive.prevent>Archive
+                    <button class="btn-inDev" title="Under development" type="button" @click.passive.prevent>Archive
                         Camo
                     </button>
                 </div>
@@ -305,131 +288,7 @@ const handleAddActivity = (e) => {
                         />
                     </Transition>
                     <!-- add activity -->
-                    <!-- modal -->
-                    <Transition appear name="fade">
-                        <Modal :closeable="false" :show="showModal" @close="showModal = false" backdrop="static">
-                            <div class="px-6 py-4 space-y-3">
-                                <form @submit.prevent="submit" @keydown.enter.prevent>
-                                    <div class="flex flex-row justify-items-start items-center space-x-7">
-                                        <div>
-                                            <InputLabel for="name">Activity</InputLabel>
-                                            <input id="name" v-model="formActivity.name"
-                                                   class="rounded-md border-gray-100" disabled
-                                                   name="name" readonly type="text">
-                                        </div>
-                                        <div v-if="formActivity.date">
-                                            <InputLabel for="date">Date</InputLabel>
-                                            <input id="date" v-model="formActivity.date"
-                                                   class="rounded-md border-gray-100" disabled
-                                                   name="date" readonly type="text">
-                                        </div>
-                                    </div>
 
-                                    <div class="flex flex-row justify-around">
-                                        <div>
-                                            <InputLabel for="description">Description</InputLabel>
-                                            <textarea
-                                                id="description"
-                                                v-model="formActivity.description"
-                                                class="rounded-md border-gray-300 w-full"
-                                                cols="30"
-                                                name="description"
-                                                rows="5"
-                                            ></textarea>
-                                        </div>
-                                        <div>
-                                            <InputLabel for="comments">Comments</InputLabel>
-                                            <div>
-                                        <textarea
-                                            id="comments"
-                                            v-model="formActivity.comments"
-                                            class="rounded-md border-gray-300 w-full"
-                                            cols="30"
-                                            name="comments"
-                                            rows="5"
-                                        ></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="w-1/2">
-                                        <InputLabel for="material_mount">AWR</InputLabel>
-                                        <input id="awr" v-model="formActivity.awr"
-                                               class="rounded-md border-gray-300 w-full"
-                                               name="awr"
-                                               type="text">
-                                    </div>
-
-                                    <div class="flex flex-row justify-items-center space-x-3">
-                                        <div class="my-1">
-                                            <InputLabel for="labor_mount">Labor Mount</InputLabel>
-                                            <input id="labor_mount" v-model="formActivity.labor_mount" step="0.01"
-                                                   class="text-right rounded-md border-gray-300" name="labor_mount"
-                                                   type="number">
-                                        </div>
-                                        <div class="my-1">
-                                            <InputLabel for="material_mount">Material Mount</InputLabel>
-                                            <input id="labor_mount" v-model="formActivity.material_mount" step="0.01"
-                                                   class="text-right rounded-md border-gray-300" name="labor_mount"
-                                                   type="number">
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <InputLabel>Material Information</InputLabel>
-                                        <textarea
-                                            id="description"
-                                            v-model="formActivity.material_information"
-                                            class="rounded-md border-gray-300 w-full"
-                                            cols="30"
-                                            name="description"
-                                            rows="2"
-                                        ></textarea>
-                                    </div>
-
-                                    <div>
-                                        <InputLabel for="status">Status</InputLabel>
-                                        <select
-                                            id="status"
-                                            v-model="formActivity.status"
-                                            class="rounded-md border-gray-300"
-                                            name="status"
-                                            :disabled="!$page.props.auth.user.is_cam"
-                                        >
-                                            <option v-for="(status, idx) in statusList" :key="idx"
-                                                    :value="status.value">
-                                                {{ status.label }}
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div v-if="$page.props.auth.user.is_owner" class="my-2">
-                                        <InputLabel for="approval_status">Approval Status</InputLabel>
-                                        <select
-                                            id="status"
-                                            v-model="formActivity.status"
-                                            class="rounded-md border-gray-300"
-                                            name="status"
-                                        >
-                                            <option
-                                                v-for="(item, idx) in approvalStatusList"
-                                                :key="idx"
-                                                :value="item.value"
-                                            >
-                                                {{item.label}}
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div class="flex justify-end space-x-4">
-                                        <PrimaryButton type="submit" v-if="formActivity.isDirty">Save</PrimaryButton>
-                                        <SecondaryButton @click="closeModal">Close</SecondaryButton>
-                                    </div>
-                                </form>
-                            </div>
-                        </Modal>
-                    </Transition>
-                    <!-- modal -->
                     <Transition name="fade" appear @after-enter="!addActivity">
                         <div v-show="!addActivity">
                             <!-- pending approval -->
@@ -477,11 +336,11 @@ const handleAddActivity = (e) => {
                                     <th>Material/Mount</th>
                                     <th>AWR</th>
                                     <th>Approval/Status</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="(act, idx) in activities && activities.resource" :key="idx" class="cursor-pointer"
-                                    @click="handleClickTr(act)">
+                                <tr v-for="(act, idx) in activities && activities.resource" :key="idx">
                                     <td>{{ act.id }}</td>
                                     <td class="text-xs">{{ act.date }}</td>
                                     <td>
@@ -509,6 +368,9 @@ const handleAddActivity = (e) => {
                                 <span v-if="act.approval_status === 'pending'"
                                       class="badge-pending">{{ act.approval_status }}</span>
                                         <span v-else class="badge-approval">{{ act.approval_status }}</span>
+                                    </td>
+                                    <td class="col-actions">
+                                        <Link :href="route('camo_activities.edit', act.id)" class="btn-show">Edit</Link>
                                     </td>
                                 </tr>
                                 </tbody>

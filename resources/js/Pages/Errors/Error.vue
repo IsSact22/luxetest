@@ -14,9 +14,11 @@ const title = computed(() => {
     return {
         503: '503: Service Unavailable',
         500: '500: Server Error',
+        400: '500: Bad Request',
         404: '404: Page Not Found',
         403: '403: Forbidden',
         401: '401: Unauthorized',
+        422: '422: Unprocessable entity (Validation Error)'
     }[props.status]
 })
 
@@ -24,6 +26,7 @@ const description = computed(() => {
     return {
         503: 'Sorry, we are doing some maintenance. Please check back soon.',
         500: 'Whoops, something went wrong on our servers.',
+        400: 'Sorry, your request was not valid.',
         404: 'Sorry, the page you are looking for could not be found.',
         401: 'Sorry, you are not authorize for accessing this page.',
         403: 'Sorry, you are forbidden from accessing this page.',

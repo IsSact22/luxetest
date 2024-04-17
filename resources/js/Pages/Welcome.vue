@@ -42,16 +42,16 @@ const handleLogoClick = () => {
 
 <template>
     <Head title="Welcome" />
-    <div class="bg-gray-200/50 text-black/50">
+    <div class="bg-gray-200/50">
         <div class="min-h-screen flex flex-col items-center justify-center">
             <div class="w-full max-w-2xl px-6 lg:max-w-7xl">
-                <main class="mt-6 flex justify-center">
-                    <div class="flex items-center">
-                        <div class="flex">
-                            <h1 class="text-4xl lg:text-7xl font-bold">LUXE <small class="text-amber-400">PLUS</small></h1>
-                        </div>
-                        <div class="ml-4 mt-4 lg:mt-0 logo-transition">
+                <main class="flex justify-center">
+                    <div class="flex flex-col items-center">
+                        <div class="my-3 logo-transition">
                             <ApplicationLogo @click="handleLogoClick"/>
+                        </div>
+                        <div class="flex-1">
+                            <h1 class="text-4xl lg:text-7xl font-bold">LUXE <span class="text-amber-400 font-semibold">PLUS</span></h1>
                         </div>
                     </div>
                 </main>

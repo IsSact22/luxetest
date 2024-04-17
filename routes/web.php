@@ -13,37 +13,40 @@ Route::get('/', fn () => Inertia::render('Welcome', [
 
 Route::get('dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function ($router) {
+Route::middleware('auth')->group(function ($route) {
 
     // Invokes Controllers
-    $router->get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
-    $router->get('permissions/select', \App\Http\Controllers\Invokes\PermissionController::class)->name('permissions.select');
-    $router->get('owners/select', \App\Http\Controllers\Invokes\OwnerController::class)->name('owners.select');
-    $router->get('cams/select', \App\Http\Controllers\Invokes\CamController::class)->name('cams.select');
-    $router->get('camos/activities', \App\Http\Controllers\Invokes\ActivityController::class)
+    $route->get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
+    $route->get('permissions/select', \App\Http\Controllers\Invokes\PermissionController::class)->name('permissions.select');
+    $route->get('owners/select', \App\Http\Controllers\Invokes\OwnerController::class)->name('owners.select');
+    $route->get('cams/select', \App\Http\Controllers\Invokes\CamController::class)->name('cams.select');
+    $route->get('camos/activities', \App\Http\Controllers\Invokes\ActivityController::class)
         ->name('camos.activities');
-    $router->match(['put', 'patch'], 'camo_activities/{id}/handle', \App\Http\Controllers\Invokes\HandleActivityController::class)
+    $route->match(['put', 'patch'], 'camo_activities/{id}/handle', \App\Http\Controllers\Invokes\HandleActivityController::class)
         ->name('camo_activities.handle');
-    $router->post('camo_activities/add', \App\Http\Controllers\Invokes\AddActivityController::class)
+    $route->post('camo_activities/add', \App\Http\Controllers\Invokes\AddActivityController::class)
         ->name('camo_activities.add');
 
     // Roles
-    $router->resource('roles', \App\Http\Controllers\RoleController::class);
+    $route->resource('roles', \App\Http\Controllers\RoleController::class);
 
     // Users
-    $router->resource('users', \App\Http\Controllers\UserController::class);
+    $route->resource('users', \App\Http\Controllers\UserController::class);
 
     // Profile
-    $router->get('profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
-    $router->patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
-    $router->delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
+    $route->get('profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
+    $route->patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
+    $route->delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
 
     // Camos
-    $router->get('camos/dashboard', [\App\Http\Controllers\DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
-    $router->resource('camos', \App\Http\Controllers\CamoController::class);
+    $route->get('camos/dashboard', [\App\Http\Controllers\DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
+    $route->resource('camos', \App\Http\Controllers\CamoController::class);
 
+    // Media Camo Activities
+    $route->post('camo_activities/add-images', \App\Http\Controllers\Invokes\MediaActivityController::class)
+        ->name('camo_activities.add_images');
     // Camo Activities
-    $router->resource('camo_activities', \App\Http\Controllers\CamoActivityController::class);
+    $route->resource('camo_activities', \App\Http\Controllers\CamoActivityController::class);
 });
 
 require __DIR__.'/auth.php';

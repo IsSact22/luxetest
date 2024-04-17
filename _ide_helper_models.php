@@ -31,6 +31,8 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CamoActivity> $activities
  * @property-read int|null $activities_count
  * @property-read \App\Models\User|null $cam
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @property-read \App\Models\User $owner
  * @method static \Database\Factories\CamoFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Camo newModelQuery()
@@ -79,6 +81,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Camo $camo
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
  * @method static \Database\Factories\CamoActivityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity newQuery()
@@ -124,6 +128,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $crew
  * @property-read int|null $crew_count
+ * @property-read bool $is_admin
  * @property-read bool $is_cam
  * @property-read bool $is_crew
  * @property-read bool $is_owner

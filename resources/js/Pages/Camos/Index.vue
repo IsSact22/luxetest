@@ -47,7 +47,7 @@ const destroy = (id) => {
                             v-model="form.search"
                         >
                     </div>
-                    <Link  v-if="$page.props.auth.user.is_cam" :href="route('camos.create')" class="b-goto">New CAMO</Link>
+                    <Link  v-if="$page.props.auth.user.is_cam" :href="route('camos.create')" class="btn-goto">New CAMO</Link>
                 </form>
                 <table class="table-auto">
                     <thead>
@@ -78,7 +78,7 @@ const destroy = (id) => {
                         <td>{{camo.finish_date}}</td>
                         <td>{{camo.location}}</td>
                         <td class="col-actions">
-                            <Link :href="route('camos.show', camo.id)" class="b-show">Show</Link>
+                            <Link :href="route('camos.show', camo.id)" class="btn-show">Show</Link>
                         </td>
                     </tr>
                     </tbody>

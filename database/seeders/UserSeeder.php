@@ -30,7 +30,7 @@ class UserSeeder extends Seeder
         User::factory()
             ->create([
                 'name' => 'Mara Beltran',
-                'email' => 'mara@luexplus.com',
+                'email' => 'mara@luxeplus.com',
             ]);
         $admin = User::find(2);
         $admin->syncRoles('admin');
@@ -39,13 +39,13 @@ class UserSeeder extends Seeder
         User::factory()
             ->create([
                 'name' => 'Angel Contreras',
-                'email' => 'angel@luexplus.com',
+                'email' => 'angel@luxeplus.com',
             ]);
 
         User::factory()
             ->create([
                 'name' => 'Oscar Rodriguez',
-                'email' => 'oscar@luexplus.com',
+                'email' => 'oscar@luxeplus.com',
             ]);
 
         $cams = User::whereIn('id', [3, 4])->pluck('id');
@@ -68,7 +68,7 @@ class UserSeeder extends Seeder
         $userAdminTest = User::factory()
             ->create([
                 'name' => 'Admin Test',
-                'email' => 'admin@luexplus.com',
+                'email' => 'admin@luxeplus.com',
             ]);
         $userAdminTest->syncRoles('admin');
 
@@ -76,7 +76,7 @@ class UserSeeder extends Seeder
         $userCamTest = User::factory()
             ->create([
                 'name' => 'Cam Test',
-                'email' => 'cam@luexplus.com',
+                'email' => 'cam@luxeplus.com',
             ]);
         $userCamTest->syncRoles('cam');
 
@@ -84,7 +84,7 @@ class UserSeeder extends Seeder
         $userOwnerTest = User::factory()
             ->create([
                 'name' => 'Owner Test',
-                'email' => 'owner@luexplus.com',
+                'email' => 'owner@luxeplus.com',
             ]);
         $userOwnerTest->syncRoles('owner');
 
@@ -92,7 +92,7 @@ class UserSeeder extends Seeder
         $userCrewTest = User::factory()
             ->create([
                 'name' => 'Crew Test',
-                'email' => 'crew@luexplus.com',
+                'email' => 'crew@luxeplus.com',
             ]);
         $userCrewTest->syncRoles('crew');
     }
