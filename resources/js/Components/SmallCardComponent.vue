@@ -11,7 +11,7 @@
                 </svg>
             </div>
             <div class="px-4 text-gray-700">
-                <h3 class="text-sm font-semibold tracking-wider"v-tooltip="'Customer Name'">{{title}}</h3>
+                <h3 class="text-sm font-semibold tracking-wider" v-tooltip="'Customer Name'">{{title}}</h3>
                 <p class="text-2xl text-neutral-500 font-bold" v-tooltip="'Aircraft'">{{aircraft}}</p>
                 <span class="flex items-center space-x-2">
 					<svg class="h-6 w-6 fill-blue-400" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><path d="m7.5.5c1.65685425 0 3 1.34314575 3 3v2c0 1.65685425-1.34314575 3-3 3s-3-1.34314575-3-3v-2c0-1.65685425 1.34314575-3 3-3zm7 14v-.7281753c0-3.1864098-3.6862915-5.2718247-7-5.2718247s-7 2.0854149-7 5.2718247v.7281753c0 .5522847.44771525 1 1 1h12c.5522847 0 1-.4477153 1-1z" stroke-linecap="round" stroke-linejoin="round" transform="translate(3 2)"/></svg>

@@ -38,6 +38,8 @@ class CamoActivity extends Model implements HasMedia
         'approval_status',
     ];
 
+    public string $mediaCollectionName = 'activity_images';
+
     public function camo(): BelongsTo
     {
         return $this->belongsTo(Camo::class, 'camo_id');
@@ -70,17 +72,17 @@ class CamoActivity extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('preview')
-            ->fit(Fit::Contain, 280, 280)
+            ->fit(Fit::Contain, 120, 120)
             ->nonQueued();
     }
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('image-support');
+        $this->addMediaCollection($this->mediaCollectionName);
     }
 
     public function getImagesAttribute(): \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection
     {
-        return $this->getMedia();
+        return $this->getMedia($this->mediaCollectionName);
     }
 }

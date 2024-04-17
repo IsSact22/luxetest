@@ -336,11 +336,11 @@ const handleAddActivity = (e) => {
                                     <th>Material/Mount</th>
                                     <th>AWR</th>
                                     <th>Approval/Status</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="(act, idx) in activities && activities.resource" :key="idx" class="cursor-pointer"
-                                    @click="handleClickTr(act)">
+                                <tr v-for="(act, idx) in activities && activities.resource" :key="idx">
                                     <td>{{ act.id }}</td>
                                     <td class="text-xs">{{ act.date }}</td>
                                     <td>
@@ -368,6 +368,9 @@ const handleAddActivity = (e) => {
                                 <span v-if="act.approval_status === 'pending'"
                                       class="badge-pending">{{ act.approval_status }}</span>
                                         <span v-else class="badge-approval">{{ act.approval_status }}</span>
+                                    </td>
+                                    <td class="col-actions">
+                                        <Link :href="route('camo_activities.edit', act.id)" class="btn-show">Edit</Link>
                                     </td>
                                 </tr>
                                 </tbody>

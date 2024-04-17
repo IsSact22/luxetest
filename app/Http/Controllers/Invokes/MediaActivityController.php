@@ -19,7 +19,7 @@ class MediaActivityController extends Controller
         try {
             $validated = $request->validateWithBag('post', [
                 'id' => ['required', 'exists:camo_activities,id'],
-                'images' => ['required', 'array'],
+                'images' => ['required', 'array', 'max:10'],
                 'images.*' => ['required', 'image', 'mimes:jpg,jpeg,png'],
             ]);
 
@@ -27,11 +27,11 @@ class MediaActivityController extends Controller
                 return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNPROCESSABLE_ENTITY]);
             }
 
-            $camoActivities = CamoActivity::findOrFail($validated['id']);
-            $camoActivities->addMultipleMediaFromRequest(['images'])
-                ->each(fn ($fileAdder) => $fileAdder->toMediaCollection());
+            $camoActivity = CamoActivity::findOrFail($validated['id']);
+            $camoActivity->addMultipleMediaFromRequest(['images'])
+                ->each(fn ($fileAdder) => $fileAdder->toMediaCollection($camoActivity->mediaCollectionName));
 
-            return to_route('camo_activities.edit', $camoActivities->id)
+            return to_route('camo_activities.edit', $camoActivity->id)
                 ->with(__('The images have been uploaded successfully.'));
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);

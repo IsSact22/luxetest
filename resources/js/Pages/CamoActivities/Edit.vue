@@ -59,7 +59,16 @@ const goBack = () => {
     router.get(route('camos.show', camoId), {}, {replace: false})
 }
 const handleUpload = (eventData) => {
-    console.log('Evento uploaded capturado:', eventData);
+    if (eventData) {
+        const toastOptions = {
+            timeout: 2000,
+            onClose: () => {
+                const camoId = props.resource.data.camo_id;
+                goBack();
+            }
+        }
+        toast.success('The images have been uploaded successfully.', toastOptions)
+    }
 }
 </script>
 
@@ -201,18 +210,20 @@ const handleUpload = (eventData) => {
                     </div>
                     <!-- col 2 -->
                     <div>
-                        <UploadImage :id="props.resource.data.id" @uploaded="handleUpload" />
-                    </div>
-                </div>
-                <div v-if="props.resource.data.images.length > 0">
-                    <h2>Activity Images</h2>
-                    <div class="flex flex-wrap">
-                        <div v-for="(img, index) in props.resource.data.images"
-                             :key="index"
-                             class="p-2"
-                        >
-                            <img :src="img.preview_url" class="object-contain" alt="...">
+                        <div v-if="props.resource.data.images.length > 0">
+                            <h2>Activity Images</h2>
+                            <div class="flex flex-wrap justify-items-center items-center">
+                                <div v-for="(img, index) in props.resource.data.images"
+                                     :key="index"
+                                     class="p-0.5"
+                                >
+                                    <a :href="img.original_url" target="_blank" v-tooltip="`${img.name}`">
+                                        <img :src="img.preview_url" class="object-contain rounded-md" :alt="img.file_name">
+                                    </a>
+                                </div>
+                            </div>
                         </div>
+                        <UploadImage :id="props.resource.data.id" @uploaded="handleUpload" />
                     </div>
                 </div>
             </form>
