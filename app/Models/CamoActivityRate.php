@@ -8,28 +8,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 
-/**
- * @mixin IdeHelperEngineType
- */
-class EngineType extends Model
+class CamoActivityRate extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
-    protected $table = 'engine_types';
+    protected $table = 'camo_activity_rates';
 
     protected $fillable = [
+        'code',
         'name',
+        'mount',
     ];
 
-    public function camoRate(): HasMany
+    public function camoActivityType(): HasMany
     {
-        return $this->hasMany(CamoRate::class, 'engine_type_id', 'id');
-    }
-
-    public function modelAircraft(): HasMany
-    {
-        return $this->hasMany(ModelAircraft::class, 'engine_type_id', 'id');
+        return $this->hasMany(CamoActivityType::class, 'camo_activity_rate_id', 'id');
     }
 
     #[Override]
@@ -37,7 +31,9 @@ class EngineType extends Model
     {
         return [
             'id' => 'integer',
+            'code' => 'string',
             'name' => 'string',
+            'mount' => 'decimal:2',
             'created_at' => 'datetime:Y-m-d H:i',
             'updated_at' => 'datetime:Y-m-d H:i',
             'deleted_at' => 'datetime:Y-m-d H:i',
