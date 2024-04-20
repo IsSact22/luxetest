@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Throwable;
 
 class MediaActivityController extends Controller
 {
@@ -33,9 +34,9 @@ class MediaActivityController extends Controller
 
             return to_route('camo_activities.edit', $camoActivity->id)
                 ->with(__('The images have been uploaded successfully.'));
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (\Throwable $e) {
+        } catch (Throwable) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }

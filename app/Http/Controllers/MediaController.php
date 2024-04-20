@@ -13,6 +13,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Throwable;
 
 class MediaController extends Controller
 {
@@ -27,16 +28,16 @@ class MediaController extends Controller
                 $record = $this->getModelRecord($modelName, $id);
 
                 if ($record === null) {
-                    throw new ModelNotFoundException();
+                    throw new ModelNotFoundException;
                 }
 
                 return InertiaResponse::content('Media/AddImage', ['modelName' => $modelName, 'id' => $id, 'record' => $record]);
             } else {
                 return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_BAD_REQUEST]);
             }
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (\Throwable $e) {
+        } catch (Throwable) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -76,7 +77,7 @@ class MediaController extends Controller
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 413);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
             ], 500);
@@ -87,8 +88,8 @@ class MediaController extends Controller
     private function getModelInstance(string $modelName): CamoActivity|Camo|null
     {
         return match ($modelName) {
-            'Camo' => new Camo(),
-            'CamoActivity' => new CamoActivity(),
+            'Camo' => new Camo,
+            'CamoActivity' => new CamoActivity,
             default => null,
         };
     }

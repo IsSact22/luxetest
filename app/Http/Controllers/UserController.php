@@ -78,7 +78,7 @@ class UserController extends Controller
             return InertiaResponse::content('Users/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
             Log::error('showUser:'.$e->getMessage());

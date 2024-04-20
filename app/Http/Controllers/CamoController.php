@@ -47,7 +47,7 @@ class CamoController extends Controller
             $this->authorize('create-camo', Camo::class);
 
             return InertiaResponse::content('Camos/Create');
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         }
 
