@@ -31,6 +31,10 @@ class Aircraft extends Model implements HasMedia
     {
         return $this->belongsTo(ModelAircraft::class, 'model_aircraft_id');
     }
+    public function getEngineTypeAttribute()
+    {
+        return $this->modelAircraft->engineType;
+    }
 
     #[Override]
     protected function casts(): array

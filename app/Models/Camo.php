@@ -27,7 +27,7 @@ class Camo extends Model implements HasMedia
         'owner_id',
         'contract',
         'cam_id',
-        'aircraft',
+        'aircraft_id',
         'description',
         'start_date',
         'finish_date',
@@ -53,6 +53,14 @@ class Camo extends Model implements HasMedia
     {
         return $this->hasMany(CamoActivity::class);
     }
+    public function aircraft(): BelongsTo
+    {
+        return $this->belongsTo(Aircraft::class);
+    }
+    public function getCamoRateAttribute()
+    {
+        return $this->aircraft->modelAircraft->engineType->camoRate;
+    }
 
     #[Override]
     protected function casts(): array
@@ -62,7 +70,7 @@ class Camo extends Model implements HasMedia
             'owner_id' => 'integer',
             'contract' => 'string',
             'cam_id' => 'integer',
-            'aircraft' => 'string',
+            'aircraft_id' => 'integer',
             'description' => 'string',
             'start_date' => 'datetime:Y-m-d',
             'finish_date' => 'datetime:Y-m-d',
