@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Aircraft;
 use App\Models\Camo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,18 +21,21 @@ class CamoFactory extends Factory
     #[Override]
     public function definition(): array
     {
-        $owner = User::role('owner')->where('owner_id', null)->inRandomOrder()->first();
-        $cam = User::role('cam')->where('owner_id', null)->inRandomOrder()->first();
+        $owner = User::role('owner')->inRandomOrder()->first();
+        $cam = User::role('cam')->inRandomOrder()->first();
         $startDate = fake()->dateTimeBetween('-6 months', 'now');
         $endDate = fake()->dateTimeBetween($startDate, '+8 months');
 
+        $usedAircraftIds = Camo::pluck('aircraft_id')->toArray();
+        $availableAircraftIds = Aircraft::whereNotIn('id', $usedAircraftIds)->pluck('id');
+
         return [
-            'customer' => fake()->taxpayerIdentificationNumber(),
+            'customer' => fake()->unique()->taxpayerIdentificationNumber(),
             'owner_id' => $owner->id,
-            'contract' => fake()->bothify('000#####-V#'),
+            'contract' => fake()->unique()->bothify('000#####-V#'),
             'cam_id' => $cam->id,
-            'aircraft' => strtoupper(fake()->bothify('?###??-###')),
-            'description' => fake()->words(7, true),
+            'aircraft_id' => fake()->unique()->randomElement($availableAircraftIds),
+            'description' => fake()->unique()->words(7, true),
             'start_date' => $startDate,
             'finish_date' => $endDate,
             'location' => 'OMZ',

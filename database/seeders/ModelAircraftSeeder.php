@@ -20,6 +20,10 @@ class ModelAircraftSeeder extends Seeder
                 'brand' => 'Cessna',
                 'models' => [
                     [
+                        'name' => 'Citation II',
+                        'engine_type' => 'turbo-fan',
+                    ],
+                    [
                         'name' => 'Citation CJ3+',
                         'engine_type' => 'turbo-fan',
                     ],

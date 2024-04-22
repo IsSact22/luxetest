@@ -49,7 +49,7 @@ class Camo extends Model implements HasMedia
         return $this->belongsTo(User::class, 'cam_id');
     }
 
-    public function activities(): HasMany
+    public function camoActivity(): HasMany
     {
         return $this->hasMany(CamoActivity::class);
     }

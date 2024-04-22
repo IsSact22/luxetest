@@ -15,6 +15,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionsSeeder::class,
             UserSeeder::class,
+            BrandAircraftSeeder::class,
+            EngineTypeSeeder::class,
+            CamoRateSeeder::class,
+            BrandAircraftSeeder::class,
+            ModelAircraftSeeder::class,
+            AircraftSeeder::class,
+            CamoActivityRateSeeder::class,
             CamoSeeder::class,
         ]);
     }

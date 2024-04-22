@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\EngineType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Override;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\EngineType>
+ * @extends Factory<EngineType>
  */
 class EngineTypeFactory extends Factory
 {

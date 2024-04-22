@@ -2,11 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Aircraft;
+use App\Models\ModelAircraft;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Override;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Aircraft>
+ * @extends Factory<Aircraft>
  */
 class AircraftFactory extends Factory
 {
@@ -18,8 +20,12 @@ class AircraftFactory extends Factory
     #[Override]
     public function definition(): array
     {
+        $modelAircraft = ModelAircraft::inRandomOrder()->first();
+
         return [
-            //
+            'model_aircraft_id' => $modelAircraft->id,
+            'register' => 'YV'.fake()->regexify('\d{3,4}'),
+            'serial' => fake()->bothify('???####-?#####'),
         ];
     }
 }
