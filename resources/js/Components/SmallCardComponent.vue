@@ -1,11 +1,7 @@
 <script setup>
 import {computed, onMounted, ref} from 'vue'
-import {Chart, registerables} from "chart.js";
-import {PieChart, LineChart, BarChart} from "vue-chart-3";
 import {route} from "ziggy-js";
 import {router} from "@inertiajs/vue3";
-
-Chart.register(...registerables);
 
 const props = defineProps({
     id: Number,
@@ -36,44 +32,6 @@ const getPercentage = count => {
     const totalCount = statusCounts.pending + statusCounts.in_progress + statusCounts.completed;
     return Math.round((count / totalCount) * 100);
 };
-
-const typeChart = ref(1)
-
-const options = ref({
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top',
-        },
-        title: {
-            display: true,
-            text: 'Activities Status',
-        }
-    },
-});
-
-const dataSet = computed(() => {
-    const statuses = ['pending', 'in_progress', 'completed'];
-    const statusCounts = {
-        pending: 0,
-        in_progress: 0,
-        completed: 0
-    }
-    props.activities.forEach(camo => {
-        statusCounts[camo.status]++;
-    })
-    const data = Object.values(statusCounts);
-    const total = data.reduce((sum, count) => sum + count, 0)
-    return {
-        labels: ['pending', 'in_progress', 'completed'],
-        datasets: [
-            {
-                data: data.map(count => Math.round((count / total) * 100)),
-                backgroundColor: ['#fdba74', '#818cf8', '#a3e635']
-            }
-        ],
-    }
-})
 
 const goToCamo = () => {
     router.get(route('camos.show', props.id));
@@ -138,30 +96,6 @@ const goToCamo = () => {
                 </div>
             </div>
         </div>
-<!--        <div>
-            <div class="flex items-center -mx-4 space-x-2 overflow-x-auto overflow-y-hidden sm:justify-center flex-nowrap my-4">
-                <button
-                        :class="{ 'border-b-blue-400' : typeChart === 1}"
-                        class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
-                        @click="typeChart = 1"
-                >PieChart</button>
-                <button
-                        :class="{ 'border-b-blue-400' : typeChart === 2}"
-                        class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
-                        @click="typeChart = 2"
-                >LineChart</button>
-                <button
-                        :class="{ 'border-b-blue-400' : typeChart === 3}"
-                        class="flex items-center flex-shrink-0 px-5 py-2 border-b-4"
-                        @click="typeChart = 3"
-                >BarChart</button>
-            </div>
-        </div>-->
-<!--        <div class="my-4">
-            <PieChart v-if="typeChart === 1" :chartData="dataSet" :options="options" />
-            <LineChart v-else-if="typeChart === 2" :chartData="dataSet" :options="options" />
-            <BarChart v-else :chartData="dataSet" :options="options" />
-        </div>-->
     </div>
 
 </template>
