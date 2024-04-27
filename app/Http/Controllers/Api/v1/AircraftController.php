@@ -30,11 +30,11 @@ class AircraftController extends Controller
     {
         try {
             $aircraft = Aircraft::query()
-                ->when($request->get('search'), function ($query, string $search) {
-                    $query->whereHas('owner', function (Builder $query) use ($search) {
+                ->when($request->get('search'), static function ($query, string $search) {
+                    $query->whereHas('owner', static function (Builder $query) use ($search) {
                         $query->where('name', 'LIKE', $search.'%');
                     })
-                        ->orWhereHas('aircraftModel', function (Builder $query) use ($search) {
+                        ->orWhereHas('aircraftModel', static function (Builder $query) use ($search) {
                             $query->where('name', 'LIKE', $search);
                         });
                 })
@@ -47,12 +47,12 @@ class AircraftController extends Controller
                 ['message' => 'resource '.$this->modelName],
                 ResponseAlias::HTTP_ACCEPTED
             );
-        } catch (Throwable $e) {
-            LogHelper::logError($e);
+        } catch (Throwable $throwable) {
+            LogHelper::logError($throwable);
 
             return new ApiErrorResponse(
-                $e,
-                $e->getMessage(),
+                $throwable,
+                $throwable->getMessage(),
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -61,7 +61,7 @@ class AircraftController extends Controller
     public function store(StoreAircraftRequest $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraft = Aircraft::create($request->all());
+            $aircraft = \App\Models\Aircraft::query()->create($request->all());
             $resource = new AircraftResource($aircraft);
 
             return new ApiSuccessResponse(
@@ -89,7 +89,7 @@ class AircraftController extends Controller
     public function show(string $id): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraft = Aircraft::findOrFail($id);
+            $aircraft = \App\Models\Aircraft::query()->findOrFail($id);
             $resource = new AircraftResource($aircraft);
 
             return new ApiSuccessResponse(
@@ -109,7 +109,7 @@ class AircraftController extends Controller
     public function update(UpdateAircraftRequest $request, string $id): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraft = Aircraft::findOrFail($id);
+            $aircraft = \App\Models\Aircraft::query()->findOrFail($id);
             $aircraft->update($request->all());
             $resource = new AircraftResource($aircraft);
 
@@ -130,7 +130,7 @@ class AircraftController extends Controller
     public function destroy(string $id): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $aircraftModel = Aircraft::findOrFail($id);
+            $aircraftModel = \App\Models\Aircraft::query()->findOrFail($id);
             $aircraftModel->delete();
 
             return new ApiSuccessResponse(

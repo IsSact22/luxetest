@@ -91,8 +91,8 @@ class PermissionController extends Controller
             $permission->delete();
 
             return to_route('permissions.index');
-        } catch (Throwable $e) {
-            Log::error($e->getMessage());
+        } catch (Throwable $throwable) {
+            Log::error($throwable->getMessage());
 
             return Inertia::render('Errors/Error')
                 ->toResponse(request())

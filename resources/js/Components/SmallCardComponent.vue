@@ -1,3 +1,84 @@
+<script setup>
+import {computed, onMounted, ref} from 'vue'
+import {Chart, registerables} from "chart.js";
+import {PieChart, LineChart, BarChart} from "vue-chart-3";
+import {route} from "ziggy-js";
+import {router} from "@inertiajs/vue3";
+
+Chart.register(...registerables);
+
+const props = defineProps({
+    id: Number,
+    title: String,
+    subtitle: String,
+    owner: String,
+    manager: String,
+    aircraft: {
+        type: Object,
+        required: true,
+    },
+    activities: {
+        type: Object,
+        required: true,
+    },
+});
+
+const statusCounts = {
+    pending: 0,
+    in_progress: 0,
+    completed: 0
+}
+props.activities.forEach(camo => {
+    statusCounts[camo.status]++;
+})
+
+const getPercentage = count => {
+    const totalCount = statusCounts.pending + statusCounts.in_progress + statusCounts.completed;
+    return Math.round((count / totalCount) * 100);
+};
+
+const typeChart = ref(1)
+
+const options = ref({
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'top',
+        },
+        title: {
+            display: true,
+            text: 'Activities Status',
+        }
+    },
+});
+
+const dataSet = computed(() => {
+    const statuses = ['pending', 'in_progress', 'completed'];
+    const statusCounts = {
+        pending: 0,
+        in_progress: 0,
+        completed: 0
+    }
+    props.activities.forEach(camo => {
+        statusCounts[camo.status]++;
+    })
+    const data = Object.values(statusCounts);
+    const total = data.reduce((sum, count) => sum + count, 0)
+    return {
+        labels: ['pending', 'in_progress', 'completed'],
+        datasets: [
+            {
+                data: data.map(count => Math.round((count / total) * 100)),
+                backgroundColor: ['#fdba74', '#818cf8', '#a3e635']
+            }
+        ],
+    }
+})
+
+const goToCamo = () => {
+    router.get(route('camos.show', props.id));
+}
+</script>
 <template>
     <div @click="goToCamo" class="border rounded-md p-2 shadow hover:cursor-pointer hover:drop-shadow-md">
         <div class="flex items-center bg-white border rounded-md overflow-hidden shadow">
@@ -12,7 +93,7 @@
             </div>
             <div class="px-4 text-gray-700">
                 <h3 class="text-sm font-semibold tracking-wider" v-tooltip="'Customer Name'">{{title}}</h3>
-                <p class="text-2xl text-neutral-500 font-bold" v-tooltip="'Aircraft'">{{aircraft}}</p>
+                <p class="text-xl text-neutral-500 font-bold" v-tooltip="'Aircraft'">{{aircraft.model_aircraft.name}} / {{aircraft.register}}</p>
                 <span class="flex items-center space-x-2">
 					<svg class="h-6 w-6 fill-blue-400" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><path d="m7.5.5c1.65685425 0 3 1.34314575 3 3v2c0 1.65685425-1.34314575 3-3 3s-3-1.34314575-3-3v-2c0-1.65685425 1.34314575-3 3-3zm7 14v-.7281753c0-3.1864098-3.6862915-5.2718247-7-5.2718247s-7 2.0854149-7 5.2718247v.7281753c0 .5522847.44771525 1 1 1h12c.5522847 0 1-.4477153 1-1z" stroke-linecap="round" stroke-linejoin="round" transform="translate(3 2)"/></svg>
 					<span class="text-neutral-500 font-semibold" v-tooltip="'Owner'">{{owner}}</span>
@@ -84,78 +165,3 @@
     </div>
 
 </template>
-<script setup>
-import {computed, onMounted, ref} from 'vue'
-import {Chart, registerables} from "chart.js";
-import {PieChart, LineChart, BarChart} from "vue-chart-3";
-import {route} from "ziggy-js";
-import {router} from "@inertiajs/vue3";
-
-Chart.register(...registerables);
-
-const props = defineProps({
-    id: Number,
-    title: String,
-    subtitle: String,
-    owner: String,
-    manager: String,
-    aircraft: String,
-    activities: Object,
-})
-
-const statusCounts = {
-    pending: 0,
-    in_progress: 0,
-    completed: 0
-}
-props.activities.forEach(camo => {
-    statusCounts[camo.status]++;
-})
-
-const getPercentage = count => {
-    const totalCount = statusCounts.pending + statusCounts.in_progress + statusCounts.completed;
-    return Math.round((count / totalCount) * 100);
-};
-
-const typeChart = ref(1)
-
-const options = ref({
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top',
-        },
-        title: {
-            display: true,
-            text: 'Activities Status',
-        }
-    },
-});
-
-const dataSet = computed(() => {
-    const statuses = ['pending', 'in_progress', 'completed'];
-    const statusCounts = {
-        pending: 0,
-        in_progress: 0,
-        completed: 0
-    }
-    props.activities.forEach(camo => {
-        statusCounts[camo.status]++;
-    })
-    const data = Object.values(statusCounts);
-    const total = data.reduce((sum, count) => sum + count, 0)
-    return {
-        labels: ['pending', 'in_progress', 'completed'],
-        datasets: [
-            {
-                data: data.map(count => Math.round((count / total) * 100)),
-                backgroundColor: ['#fdba74', '#818cf8', '#a3e635']
-            }
-        ],
-    }
-})
-
-const goToCamo = () => {
-    router.get(route('camos.show', props.id));
-}
-</script>

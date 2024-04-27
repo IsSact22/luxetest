@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('camo_activity_rates', function (Blueprint $table) {
+        Schema::create('camo_activity_rates', static function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
             $table->string('name')->unique();

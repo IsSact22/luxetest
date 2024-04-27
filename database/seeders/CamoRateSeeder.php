@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\CamoRate;
 use Illuminate\Database\Seeder;
 
 class CamoRateSeeder extends Seeder
@@ -33,7 +32,7 @@ class CamoRateSeeder extends Seeder
             ],
         ];
         foreach ($camoRates as $camoRate) {
-            CamoRate::create($camoRate);
+            \App\Models\CamoRate::query()->create($camoRate);
         }
     }
 }

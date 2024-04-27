@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Invokes;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -13,7 +12,7 @@ class RoleController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $roles = Role::where('name', '<>', 'super-admin')->pluck('name');
+        $roles = \Spatie\Permission\Models\Role::query()->where('name', '<>', 'super-admin')->pluck('name');
 
         return response()->json([
             'roles' => $roles,

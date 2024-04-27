@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\BrandAircraft;
 use Illuminate\Database\Seeder;
 
 class BrandAircraftSeeder extends Seeder
@@ -28,7 +27,7 @@ class BrandAircraftSeeder extends Seeder
         ];
 
         foreach ($brands as $brand) {
-            BrandAircraft::create(['name' => $brand]);
+            \App\Models\BrandAircraft::query()->create(['name' => $brand]);
         }
     }
 }

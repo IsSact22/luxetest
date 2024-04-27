@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Aircraft;
-use App\Models\ModelAircraft;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Override;
 
@@ -20,7 +19,7 @@ class AircraftFactory extends Factory
     #[Override]
     public function definition(): array
     {
-        $modelAircraft = ModelAircraft::inRandomOrder()->first();
+        $modelAircraft = \App\Models\ModelAircraft::query()->inRandomOrder()->first();
 
         return [
             'model_aircraft_id' => $modelAircraft->id,

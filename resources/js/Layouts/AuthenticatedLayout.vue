@@ -57,6 +57,12 @@ const showUsers = computed(() => {
                                     Camos
                                 </NavLink>
                                 <NavLink
+                                    :href="route('camo-rates.index')"
+                                    :active="route().current('camo-rates.index')"
+                                >
+                                    Camos Rate
+                                </NavLink>
+                                <NavLink
                                     v-show="showUsers"
                                     :href="route('users.index')"
                                     :active="route().current('users.index')"

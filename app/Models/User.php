@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -97,28 +98,38 @@ class User extends Authenticatable implements HasMedia, JWTSubject
         return [];
     }
 
-    protected function getIsSuperAttribute(): bool
+    protected function isSuper(): Attribute
     {
-        return $this->hasRole('super-admin');
+        return Attribute::make(
+            get: fn ($value) => $this->hasRole('super-admin')
+        );
     }
 
-    protected function getIsAdminAttribute(): bool
+    protected function isAdmin(): Attribute
     {
-        return $this->hasRole('admin');
+        return Attribute::make(
+            get: fn ($value) => $this->hasRole('admin')
+        );
     }
 
-    protected function getIsCamAttribute(): bool
+    protected function isCam(): Attribute
     {
-        return $this->hasRole('cam') && $this->owner_id === null;
+        return Attribute::make(
+            get: fn ($value) => $this->hasRole('cam')
+        );
     }
 
-    protected function getIsOwnerAttribute(): bool
+    protected function isOwner(): Attribute
     {
-        return $this->hasRole('owner') && $this->owner_id === null;
+        return Attribute::make(
+            get: fn ($value) => $this->hasRole('owner')
+        );
     }
 
-    protected function getIsCrewAttribute(): bool
+    protected function isCrew(): Attribute
     {
-        return $this->hasRole('crew') && $this->has('crew');
+        return Attribute::make(
+            get: fn ($value) => $this->hasRole('crew')
+        );
     }
 }

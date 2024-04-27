@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('brand_aircrafts', function (Blueprint $table) {
+        Schema::create('brand_aircrafts', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();

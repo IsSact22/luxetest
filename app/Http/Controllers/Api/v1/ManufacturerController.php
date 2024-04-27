@@ -32,7 +32,7 @@ class ManufacturerController extends Controller
     {
         try {
             $manufacturers = Manufacturer::query()
-                ->when($request->get('search'), function ($query, string $search) {
+                ->when($request->get('search'), static function ($query, string $search) {
                     $query->where('name', 'LIKE', $search.'%')
                         ->orWhere('acronym', $search);
                 })
@@ -46,11 +46,11 @@ class ManufacturerController extends Controller
                 ['message' => 'return resource '.$this->modelName],
                 ResponseAlias::HTTP_ACCEPTED
             );
-        } catch (Throwable $e) {
-            LogHelper::logError($e);
+        } catch (Throwable $throwable) {
+            LogHelper::logError($throwable);
 
             return new ApiErrorResponse(
-                $e,
+                $throwable,
                 'Error occurred while fetching manufacturers.',
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );

@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 
+/**
+ * @mixin IdeHelperCamoRate
+ */
 class CamoRate extends Model
 {
     use HasFactory;

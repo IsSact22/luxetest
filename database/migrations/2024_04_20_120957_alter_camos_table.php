@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('camos', function (Blueprint $table) {
+        Schema::table('camos', static function (Blueprint $table) {
             $table->dropColumn('aircraft');
             $table->unsignedBigInteger('aircraft_id')->after('cam_id');
             $table->foreign('aircraft_id')
@@ -19,7 +19,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('camos', function (Blueprint $table) {
+        Schema::table('camos', static function (Blueprint $table) {
             $table->dropForeign('camos_aircraft_id_foreign');
             $table->dropColumn('aircraft_id');
             $table->string('aircraft')->after('cam_id');

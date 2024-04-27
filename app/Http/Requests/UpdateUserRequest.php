@@ -23,13 +23,13 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role' => 'sometimes',
-            'owner_id' => 'sometimes|exists:users',
-            'name' => 'sometimes',
+            'role' => ['sometimes'],
+            'owner_id' => ['sometimes', 'exists:users'],
+            'name' => ['sometimes'],
             'email' => 'sometimes|email|unique:users,id,email,'.$this->id,
-            'password' => 'sometimes',
-            'confirmation_password' => 'sometimes|same:password',
-            'avatar' => 'nullable|image',
+            'password' => ['sometimes'],
+            'confirmation_password' => ['sometimes', 'same:password'],
+            'avatar' => ['nullable', 'image'],
         ];
     }
 }

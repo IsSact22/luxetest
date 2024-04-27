@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\BrandAircraft;
-use App\Models\EngineType;
-use App\Models\ModelAircraft;
 use Illuminate\Database\Seeder;
 
 class ModelAircraftSeeder extends Seeder
@@ -112,12 +109,12 @@ class ModelAircraftSeeder extends Seeder
         ];
 
         foreach ($models as $model) {
-            $brand = BrandAircraft::where('name', $model['brand'])->first();
+            $brand = \App\Models\BrandAircraft::query()->where('name', $model['brand'])->first();
 
             foreach ($model['models'] as $modelData) {
-                $engineType = EngineType::where('name', $modelData['engine_type'])->first();
+                $engineType = \App\Models\EngineType::query()->where('name', $modelData['engine_type'])->first();
 
-                ModelAircraft::create([
+                \App\Models\ModelAircraft::query()->create([
                     'name' => $modelData['name'],
                     'brand_aircraft_id' => $brand->id,
                     'engine_type_id' => $engineType->id,

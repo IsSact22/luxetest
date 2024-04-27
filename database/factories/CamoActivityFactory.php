@@ -2,9 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Camo;
 use App\Models\CamoActivity;
-use App\Models\CamoActivityRate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Override;
 
@@ -21,7 +19,7 @@ class CamoActivityFactory extends Factory
     #[Override]
     public function definition(): array
     {
-        $camo = Camo::inRandomOrder()->first();
+        $camo = \App\Models\Camo::query()->inRandomOrder()->first();
         $awrNumber = fake()->randomNumber(8);
         $awrText = fake()->bothify('V#/Airframe inspections');
         $awr = sprintf('%08d-%s', $awrNumber, $awrText);
@@ -33,7 +31,7 @@ class CamoActivityFactory extends Factory
 
         return [
             'camo_id' => $camo->id,
-            'camo_activity_rate_id' => CamoActivityRate::inRandomOrder()->first()->id,
+            'camo_activity_rate_id' => \App\Models\CamoActivityRate::query()->inRandomOrder()->first()->id,
             'required' => $required,
             'date' => $hasDate ? null : fake()->dateTimeBetween($camo->created_at, '+2 day'),
             'name' => fake()->unique()->word,

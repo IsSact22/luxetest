@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,13 +28,18 @@ class Aircraft extends Model implements HasMedia
         'serial',
     ];
 
+    protected $appends = ['engine_type'];
+
     public function modelAircraft(): BelongsTo
     {
         return $this->belongsTo(ModelAircraft::class, 'model_aircraft_id');
     }
-    public function getEngineTypeAttribute()
+
+    public function engineType(): Attribute
     {
-        return $this->modelAircraft->engineType;
+        return Attribute::make(
+            get: fn ($value) => $this->modelAircraft->engineType
+        );
     }
 
     #[Override]

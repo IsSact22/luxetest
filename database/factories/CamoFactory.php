@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Aircraft;
 use App\Models\Camo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,8 +25,8 @@ class CamoFactory extends Factory
         $startDate = fake()->dateTimeBetween('-6 months', 'now');
         $endDate = fake()->dateTimeBetween($startDate, '+8 months');
 
-        $usedAircraftIds = Camo::pluck('aircraft_id')->toArray();
-        $availableAircraftIds = Aircraft::whereNotIn('id', $usedAircraftIds)->pluck('id');
+        $usedAircraftIds = \App\Models\Camo::query()->pluck('aircraft_id')->toArray();
+        $availableAircraftIds = \App\Models\Aircraft::query()->whereNotIn('id', $usedAircraftIds)->pluck('id');
 
         return [
             'customer' => fake()->unique()->taxpayerIdentificationNumber(),

@@ -18,11 +18,11 @@ class PermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Permissions
-        Permission::create(['name' => 'create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'update', 'guard_name' => 'web']);
-        Permission::create(['name' => 'delete', 'guard_name' => 'web']);
-        Permission::create(['name' => 'restore', 'guard_name' => 'web']);
+        Permission::create(['name' => 'backoffice-create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'backoffice-read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'backoffice-update', 'guard_name' => 'web']);
+        Permission::create(['name' => 'backoffice-delete', 'guard_name' => 'web']);
+        Permission::create(['name' => 'backoffice-restore', 'guard_name' => 'web']);
         Permission::create(['name' => 'force-delete', 'guard_name' => 'web']);
 
         Permission::create(['name' => 'create-role', 'guard_name' => 'web']);
@@ -58,10 +58,10 @@ class PermissionsSeeder extends Seeder
 
         $admin = Role::create(['name' => 'admin']);
         $admin->givePermissionTo([
-            'create',
-            'read',
-            'update',
-            'delete',
+            'backoffice-create',
+            'backoffice-read',
+            'backoffice-update',
+            'backoffice-delete',
             'create-user',
             'read-user',
             'update-user',

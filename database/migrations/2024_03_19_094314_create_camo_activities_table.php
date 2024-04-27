@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('camo_activities', function (Blueprint $table) {
+        Schema::create('camo_activities', static function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Camo::class)->constrained();
             $table->boolean('required')->default(false);

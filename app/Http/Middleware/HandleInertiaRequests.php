@@ -42,12 +42,12 @@ class HandleInertiaRequests extends Middleware
                 'userRoles' => $request->user() ? $request->user()->roles->pluck('name') : [],
                 'userPermissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name') : [],
             ],
-            'ziggy' => fn () => array_merge((new Ziggy)->toArray(), [
+            'ziggy' => static fn () => array_merge((new Ziggy)->toArray(), [
                 'location' => $request->url(),
             ]),
             'flash' => [
-                'message' => fn () => $request->session()->get('message'),
-                'type' => fn () => $request->session()->get('type', 'success'),
+                'message' => static fn () => $request->session()->get('message'),
+                'type' => static fn () => $request->session()->get('type', 'success'),
             ],
         ];
     }

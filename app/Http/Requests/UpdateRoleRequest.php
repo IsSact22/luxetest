@@ -24,8 +24,8 @@ class UpdateRoleRequest extends FormRequest
     {
         return [
             'name' => 'required|string|unique:roles,name,'.$this->id,
-            'guard_name' => 'nullable|string',
-            'permissions' => 'required',
+            'guard_name' => ['nullable', 'string'],
+            'permissions' => ['required'],
         ];
     }
 }

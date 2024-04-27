@@ -29,19 +29,19 @@ class AircraftModelController extends Controller
     {
         try {
             $aircraftModels = AircraftModel::query()
-                ->when($request->get('search'), function ($query, string $search) {
+                ->when($request->get('search'), static function ($query, string $search) {
                     $query->where('name', 'LIKE', $search.'%');
                 })
-                ->when($request->get('category'), function ($query, string $category) {
+                ->when($request->get('category'), static function ($query, string $category) {
                     $query->where('category', $category);
                 })
-                ->when($request->get('class'), function ($query, string $class) {
+                ->when($request->get('class'), static function ($query, string $class) {
                     $query->where('class', $class);
                 })
-                ->when($request->get('motor_type'), function ($query, string $motorType) {
+                ->when($request->get('motor_type'), static function ($query, string $motorType) {
                     $query->where('motor_type', $motorType);
                 })
-                ->when($request->get('motor_qty'), function ($query, int $motorQty) {
+                ->when($request->get('motor_qty'), static function ($query, int $motorQty) {
                     $query->where('motor_qty', $motorQty);
                 })
                 ->paginate()
@@ -53,10 +53,10 @@ class AircraftModelController extends Controller
                 ['message' => 'resource '.$this->modelName],
                 ResponseAlias::HTTP_ACCEPTED
             );
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             return new ApiErrorResponse(
-                $e,
-                $e->getMessage(),
+                $throwable,
+                $throwable->getMessage(),
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );
         }

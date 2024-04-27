@@ -24,7 +24,7 @@ class CamoResource extends JsonResource
             'contract' => $this->contract,
             'cam' => $this->cam->name,
             'aircraft' => $this->aircraft,
-            'activities' => $this->activities,
+            'activities' => $this->camoActivity,
             'description' => $this->description,
             'start_date' => $this->start_date->format('Y-m-d'),
             'finish_date' => $this->finish_date->format('Y-m-d'),

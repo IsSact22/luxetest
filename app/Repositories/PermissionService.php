@@ -40,14 +40,14 @@ class PermissionService implements PermissionServiceInterface
     {
         try {
             return Role::query()
-                ->when($request->get('search'), function ($query, string $search) {
+                ->when($request->get('search'), static function ($query, string $search) {
                     $query->where('id', $search)
                         ->orWhere('name', 'LIKE', $search.'%');
                 })
                 ->paginate()
                 ->withQueryString();
-        } catch (Exception $e) {
-            LogHelper::logError($e);
+        } catch (Exception $exception) {
+            LogHelper::logError($exception);
 
             return AfterCatchUnknown();
         }
@@ -71,7 +71,7 @@ class PermissionService implements PermissionServiceInterface
     public function updateRole(array $data, int $id): array|ApiErrorResponse
     {
         try {
-            $role = Role::findOrFail($id);
+            $role = \Spatie\Permission\Models\Role::query()->findOrFail($id);
             $role->update($data);
 
             return HasUpdated::getModel($role);
@@ -90,7 +90,7 @@ class PermissionService implements PermissionServiceInterface
     public function deleteRole(int $id): bool|ApiErrorResponse
     {
         try {
-            $role = Role::findOrFail($id);
+            $role = \Spatie\Permission\Models\Role::query()->findOrFail($id);
             $role->delete();
 
             return true;
@@ -110,7 +110,7 @@ class PermissionService implements PermissionServiceInterface
     {
         try {
             return Permission::query()
-                ->when($request->get('search'), function ($query, string $search) {
+                ->when($request->get('search'), static function ($query, string $search) {
                     $query->where('id', $search)
                         ->orWhere('name', 'LIKE', $search.'%');
                 })
@@ -151,7 +151,7 @@ class PermissionService implements PermissionServiceInterface
     public function updatePermission(Request $request, int $id): array|ApiErrorResponse
     {
         try {
-            $permission = Permission::findOrFail($id);
+            $permission = \Spatie\Permission\Models\Permission::query()->findOrFail($id);
             $permission->update($request->all());
 
             return HasUpdated::getModel($permission);
@@ -170,7 +170,7 @@ class PermissionService implements PermissionServiceInterface
     public function deletePermission(int $id): bool|ApiErrorResponse
     {
         try {
-            $permission = Permission::findOrFail($id);
+            $permission = \Spatie\Permission\Models\Permission::query()->findOrFail($id);
             $permission->delete();
 
             return true;

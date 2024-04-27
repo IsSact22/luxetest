@@ -23,16 +23,16 @@ class StoreCamoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer' => 'required|unique:camos,customer',
-            'owner_id' => 'required|exists:users,id',
-            'contract' => 'required|unique:camos,contract',
-            'cam_id' => 'required|exists:users,id',
-            'aircraft' => 'required|unique:camos,aircraft',
-            'description' => 'required',
-            'start_date' => 'required|date|after_or_equal:today',
-            'finish_date' => 'required|date|after:today',
-            'location' => 'required',
-            'activities' => 'required|array|min:1',
+            'customer' => ['required', 'unique:camos,customer'],
+            'owner_id' => ['required', 'exists:users,id'],
+            'contract' => ['required', 'unique:camos,contract'],
+            'cam_id' => ['required', 'exists:users,id'],
+            'aircraft' => ['required', 'unique:camos,aircraft'],
+            'description' => ['required'],
+            'start_date' => ['required', 'date', 'after_or_equal:today'],
+            'finish_date' => ['required', 'date', 'after:today'],
+            'location' => ['required'],
+            'activities' => ['required', 'array', 'min:1'],
         ];
     }
 }

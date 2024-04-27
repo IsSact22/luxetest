@@ -23,18 +23,18 @@ class UpdateCamoActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'camo_id' => 'required',
-            'required' => 'sometimes|boolean',
-            'date' => 'nullable|date',
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'status' => 'required|string',
-            'comments' => 'required|string',
+            'camo_id' => ['required'],
+            'required' => ['sometimes', 'boolean'],
+            'date' => ['nullable', 'date'],
+            'name' => ['required', 'string'],
+            'description' => ['required', 'string'],
+            'status' => ['required', 'string'],
+            'comments' => ['required', 'string'],
             'labor_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
             'material_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
-            'material_information' => 'required|string',
-            'awr' => 'nullable|string',
-            'approval_status' => 'nullable|string',
+            'material_information' => ['required', 'string'],
+            'awr' => ['nullable', 'string'],
+            'approval_status' => ['nullable', 'string'],
         ];
     }
 }

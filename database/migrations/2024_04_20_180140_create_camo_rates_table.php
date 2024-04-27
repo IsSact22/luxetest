@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('camo_rates', function (Blueprint $table) {
+        Schema::create('camo_rates', static function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\EngineType::class)->constrained();
             $table->string('code')->unique();

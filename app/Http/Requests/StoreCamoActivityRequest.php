@@ -23,18 +23,18 @@ class StoreCamoActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'camo_id' => 'required',
-            'required' => 'sometimes|boolean',
-            'date' => 'nullable|date',
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'status' => 'required|string',
-            'comments' => 'nullable|string',
+            'camo_id' => ['required'],
+            'required' => ['sometimes', 'boolean'],
+            'date' => ['nullable', 'date'],
+            'name' => ['required', 'string'],
+            'description' => ['required', 'string'],
+            'status' => ['required', 'string'],
+            'comments' => ['nullable', 'string'],
             'labor_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
             'material_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
-            'material_information' => 'nullable|string',
-            'awr' => 'nullable|string',
-            'approval_status' => 'nullable|string',
+            'material_information' => ['nullable', 'string'],
+            'awr' => ['nullable', 'string'],
+            'approval_status' => ['nullable', 'string'],
         ];
     }
 }

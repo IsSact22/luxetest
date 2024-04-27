@@ -24,10 +24,14 @@ return static function (RectorConfig $rectorConfig) {
     $rectorConfig->sets([
         SetList::DEAD_CODE,
         SetList::CODE_QUALITY,
+        SetList::CODING_STYLE,
         LevelSetList::UP_TO_PHP_83,
     ]);
 
     $rectorConfig->rules([
+        \RectorLaravel\Rector\MethodCall\AssertStatusToAssertMethodRector::class,
+        \RectorLaravel\Rector\StaticCall\EloquentMagicMethodToQueryBuilderRector::class,
+        \RectorLaravel\Rector\MethodCall\ValidationRuleArrayStringValueToArrayRector::class,
         AddVoidReturnTypeWhereNoReturnRector::class,
         RedirectRouteToToRouteHelperRector::class,
         TypedPropertyFromAssignsRector::class,

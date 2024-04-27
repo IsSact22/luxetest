@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\CamoActivityRate;
 use Illuminate\Database\Seeder;
 
 class CamoActivityRateSeeder extends Seeder
@@ -65,7 +64,7 @@ class CamoActivityRateSeeder extends Seeder
             ],
         ];
         foreach ($rates as $rate) {
-            CamoActivityRate::create($rate);
+            \App\Models\CamoActivityRate::query()->create($rate);
         }
     }
 }

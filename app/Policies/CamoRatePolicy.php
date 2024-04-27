@@ -12,7 +12,7 @@ class CamoRatePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole('admin') && $user->can('backoffice-read');
     }
 
     /**
@@ -20,7 +20,7 @@ class CamoRatePolicy
      */
     public function view(User $user, CamoRate $camoRate): bool
     {
-        //
+        return $user->hasRole('admin') && $user->can('backoffice-read');
     }
 
     /**
@@ -28,7 +28,7 @@ class CamoRatePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasRole('admin') && $user->can('backoffice-create');
     }
 
     /**
@@ -36,7 +36,7 @@ class CamoRatePolicy
      */
     public function update(User $user, CamoRate $camoRate): bool
     {
-        //
+        return $user->hasRole('admin') && $user->can('backoffice-update');
     }
 
     /**
@@ -44,7 +44,7 @@ class CamoRatePolicy
      */
     public function delete(User $user, CamoRate $camoRate): bool
     {
-        //
+        return $user->hasRole('admin') && $user->can('backoffice-delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class CamoRatePolicy
      */
     public function restore(User $user, CamoRate $camoRate): bool
     {
-        //
+        return $user->hasRole('admin') && $user->can('backoffice-restore');
     }
 
     /**
@@ -60,6 +60,6 @@ class CamoRatePolicy
      */
     public function forceDelete(User $user, CamoRate $camoRate): bool
     {
-        //
+        return $user->hasRole('super-admin') && $user->can('force-delete');
     }
 }

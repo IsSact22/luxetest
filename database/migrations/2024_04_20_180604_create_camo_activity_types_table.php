@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('camo_activity_types', function (Blueprint $table) {
+        Schema::create('camo_activity_types', static function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\CamoActivityRate::class)->constrained();
             $table->string('name')->unique();

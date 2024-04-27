@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -47,8 +48,12 @@ class CamoController extends Controller
             $this->authorize('create-camo', Camo::class);
 
             return InertiaResponse::content('Camos/Create');
-        } catch (AuthorizationException) {
+        } catch (AuthorizationException $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
 
     }
@@ -67,7 +72,7 @@ class CamoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id): Response
+    public function show(int $id): Response
     {
         try {
             $this->authorize('read-camo', Camo::class);
@@ -77,7 +82,7 @@ class CamoController extends Controller
             return InertiaResponse::content('Camos/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -95,7 +100,9 @@ class CamoController extends Controller
             return InertiaResponse::content('Camos/Edit', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -107,12 +114,14 @@ class CamoController extends Controller
     {
         try {
             $this->authorize('update-camo', Camo::class);
-            $camo = $this->camo->updateCamo($request->all(), $id);
+            $this->camo->updateCamo($request->all(), $id);
 
             return to_route('users.index')->with('success', 'CAMO created successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -129,7 +138,9 @@ class CamoController extends Controller
             return to_route('services.index')->with('success', 'CAMO deleted successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }

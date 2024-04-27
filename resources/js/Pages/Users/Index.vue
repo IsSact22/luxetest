@@ -48,17 +48,17 @@ const destroy = (id) => {
                         >
                     </div>
                     <Link :href="route('users.create')"
-                        class="b-goto"
+                        class="btn-goto"
                     >
                         New User
                     </Link>
                     <Link :href="route('roles.index')"
-                        class="b-goto"
+                        class="btn-goto"
                     >
                         Roles
                     </Link>
                     <Link
-                        class="b-goto"
+                        class="btn-goto"
                     >
                         Permissions
                     </Link>
@@ -88,8 +88,8 @@ const destroy = (id) => {
                         <td>{{ user.role }}</td>
                         <td class="text-center">{{ user.created_at }}</td>
                         <td class="col-actions">
-                            <Link :href="route('users.show', user.id)" class="b-edit">Edit</Link>
-                            <Link v-if="user.id !== 1" @click="destroy(user.id)" class="b-delete">Delete</Link>
+                            <Link :href="route('users.show', user.id)" class="btn-edit">Edit</Link>
+                            <Link v-if="user.id !== 1" @click="destroy(user.id)" class="btn-delete">Delete</Link>
                         </td>
                     </tr>
                     </tbody>

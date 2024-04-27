@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('aircrafts', function (Blueprint $table) {
+        Schema::create('aircrafts', static function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\ModelAircraft::class)->constrained();
             $table->string('register')->unique();

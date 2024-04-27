@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -65,7 +66,9 @@ class CamoActivityController extends Controller
             return InertiaResponse::content('CamoActivities/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -80,9 +83,11 @@ class CamoActivityController extends Controller
             $resource = new CamoActivityResource($camo);
 
             return InertiaResponse::content('CamoActivities/Edit', ['resource' => $resource]);
-        } catch (ModelNotFoundException) {
+        } catch (ModelNotFoundException $e) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -99,7 +104,9 @@ class CamoActivityController extends Controller
             return to_route('camos.show', $camoId)->with('success', 'Activity update successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }
@@ -115,7 +122,9 @@ class CamoActivityController extends Controller
             return to_route('camo_activities.index')->with('success', 'Activity deleted successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }

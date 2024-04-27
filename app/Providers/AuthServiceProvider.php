@@ -22,7 +22,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-        Gate::before(fn ($user, $ability) => $user->hasRole('super-admin') ? true : null);
+        Gate::before(static fn ($user, $ability) => $user->hasRole('super-admin') ? true : null);
     }
 
     protected function getDefaultGuardName(): string

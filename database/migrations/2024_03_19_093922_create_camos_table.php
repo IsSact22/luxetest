@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('camos', function (Blueprint $table) {
+        Schema::create('camos', static function (Blueprint $table) {
             $table->id();
             $table->string('customer');
             $table->unsignedBigInteger('owner_id');
@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

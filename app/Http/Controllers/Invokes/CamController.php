@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Invokes;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 
 class CamController extends Controller
 {
@@ -13,7 +12,7 @@ class CamController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $camRole = Role::where('name', 'cam')->first();
+        $camRole = \Spatie\Permission\Models\Role::query()->where('name', 'cam')->first();
 
         $users = $camRole->users;
 

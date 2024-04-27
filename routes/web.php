@@ -4,44 +4,41 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn () => Inertia::render('Welcome', [
+Route::get('/', static fn () => Inertia::render('Welcome', [
     'canLogin' => Route::has('login'),
     'canRegister' => Route::has('register'),
     'laravelVersion' => Application::VERSION,
     'phpVersion' => PHP_VERSION,
 ]));
 
-Route::get('dashboard', fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('dashboard', static fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function ($route) {
-
+Route::middleware('auth')->group(static function ($route) {
     // Invokes Controllers
     $route->get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
     $route->get('permissions/select', \App\Http\Controllers\Invokes\PermissionController::class)->name('permissions.select');
     $route->get('owners/select', \App\Http\Controllers\Invokes\OwnerController::class)->name('owners.select');
     $route->get('cams/select', \App\Http\Controllers\Invokes\CamController::class)->name('cams.select');
+    $route->get('camo-rates/select', \App\Http\Controllers\Invokes\EngineTypeController::class)->name('camo-rates.select');
     $route->get('camos/activities', \App\Http\Controllers\Invokes\ActivityController::class)
         ->name('camos.activities');
     $route->match(['put', 'patch'], 'camo_activities/{id}/handle', \App\Http\Controllers\Invokes\HandleActivityController::class)
         ->name('camo_activities.handle');
     $route->post('camo_activities/add', \App\Http\Controllers\Invokes\AddActivityController::class)
         ->name('camo_activities.add');
-
     // Roles
     $route->resource('roles', \App\Http\Controllers\RoleController::class);
-
     // Users
     $route->resource('users', \App\Http\Controllers\UserController::class);
-
     // Profile
-    $route->get('profile', fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
-    $route->patch('profile', fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
-    $route->delete('profile', fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
-
+    $route->get('profile', static fn (\Illuminate\Http\Request $request): \Inertia\Response => (new \App\Http\Controllers\ProfileController)->edit($request))->name('profile.edit');
+    $route->patch('profile', static fn (\App\Http\Requests\ProfileUpdateRequest $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->update($request))->name('profile.update');
+    $route->delete('profile', static fn (\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse => (new \App\Http\Controllers\ProfileController)->destroy($request))->name('profile.destroy');
+    // Camo Rates
+    $route->resource('camo-rates', \App\Http\Controllers\CamoRateController::class);
     // Camos
     $route->get('camos/dashboard', [\App\Http\Controllers\DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
     $route->resource('camos', \App\Http\Controllers\CamoController::class);
-
     // Media Camo Activities
     $route->post('camo_activities/add-images', \App\Http\Controllers\Invokes\MediaActivityController::class)
         ->name('camo_activities.add_images');

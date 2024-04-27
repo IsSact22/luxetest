@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,13 +54,17 @@ class Camo extends Model implements HasMedia
     {
         return $this->hasMany(CamoActivity::class);
     }
+
     public function aircraft(): BelongsTo
     {
-        return $this->belongsTo(Aircraft::class);
+        return $this->belongsTo(Aircraft::class)->with('modelAircraft');
     }
-    public function getCamoRateAttribute()
+
+    public function camoRate(): Attribute
     {
-        return $this->aircraft->modelAircraft->engineType->camoRate;
+        return Attribute::make(
+            get: fn ($value) => $this->aircraft->modelAircraft->engineType->camoRate
+        );
     }
 
     #[Override]

@@ -22,6 +22,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read mixed $engine_type
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \App\Models\ModelAircraft $modelAircraft
@@ -89,9 +90,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CamoActivity> $activities
- * @property-read int|null $activities_count
+ * @property-read \App\Models\Aircraft $aircraft
  * @property-read \App\Models\User|null $cam
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CamoActivity> $camoActivity
+ * @property-read int|null $camo_activity_count
+ * @property-read mixed $camo_rate
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \App\Models\User $owner
@@ -127,6 +130,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $camo_id
+ * @property int $camo_activity_rate_id
  * @property bool $required
  * @property \Illuminate\Support\Carbon|null $date
  * @property string $name
@@ -152,6 +156,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity query()
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereApprovalStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereAwr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereCamoActivityRateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereCamoId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereComments($value)
  * @method static \Illuminate\Database\Eloquent\Builder|CamoActivity whereCreatedAt($value)
@@ -179,10 +184,113 @@ namespace App\Models{
  * 
  *
  * @property int $id
+ * @property string $code
+ * @property string $name
+ * @property string $mount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CamoActivityType> $camoActivityType
+ * @property-read int|null $camo_activity_type_count
+ * @method static \Database\Factories\CamoActivityRateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate whereMount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityRate withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCamoActivityRate {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $camo_activity_rate_id
+ * @property string $name
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\CamoActivityRate $activityRate
+ * @method static \Database\Factories\CamoActivityTypeFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType whereCamoActivityRateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoActivityType withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCamoActivityType {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $engine_type_id
+ * @property string $code
+ * @property string $name
+ * @property string $mount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\EngineType $engineType
+ * @method static \Database\Factories\CamoRateFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate query()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereEngineTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereMount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|CamoRate withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperCamoRate {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CamoRate> $camoRate
+ * @property-read int|null $camo_rate_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ModelAircraft> $modelAircraft
+ * @property-read int|null $model_aircraft_count
  * @method static \Database\Factories\EngineTypeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|EngineType newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|EngineType newQuery()
@@ -250,11 +358,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $crew
  * @property-read int|null $crew_count
- * @property-read bool $is_admin
- * @property-read bool $is_cam
- * @property-read bool $is_crew
- * @property-read bool $is_owner
- * @property-read bool $is_super
+ * @property-read mixed $is_admin
+ * @property-read mixed $is_cam
+ * @property-read mixed $is_crew
+ * @property-read mixed $is_owner
+ * @property-read mixed $is_super
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications

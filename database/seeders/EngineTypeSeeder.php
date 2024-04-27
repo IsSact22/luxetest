@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\EngineType;
 use Illuminate\Database\Seeder;
 
 class EngineTypeSeeder extends Seeder
@@ -18,7 +17,7 @@ class EngineTypeSeeder extends Seeder
             'jet',
         ];
         foreach ($motorTypes as $type) {
-            EngineType::create(['name' => $type]);
+            \App\Models\EngineType::query()->create(['name' => $type]);
         }
     }
 }
