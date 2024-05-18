@@ -11,9 +11,11 @@ use App\Models\CamoRate;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;
 
@@ -28,16 +30,16 @@ class CamoRateController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): \Inertia\Response
+    public function index(Request $request): Response
     {
         try {
 
-            $this->authorize('viewAny', request()->user());
+            $this->authorize('viewAny', $request->user());
             $camoRates = $this->camoRateRepository->getAll($request);
             $resource = CamoRateResource::collection($camoRates);
 
             return InertiaResponse::content('CamoRates/Index', ['resource' => $resource]);
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
@@ -53,13 +55,13 @@ class CamoRateController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Inertia\Response
+    public function create(Request $request): Response
     {
         try {
-            $this->authorize('create', [request()->user(), CamoRate::class]);
+            $this->authorize('create', [$request->user(), CamoRate::class]);
 
             return InertiaResponse::content('CamoRates/Create');
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
@@ -71,14 +73,14 @@ class CamoRateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCamoRateRequest $request): \Inertia\Response|\Illuminate\Http\RedirectResponse
+    public function store(StoreCamoRateRequest $request): Response|RedirectResponse
     {
         try {
             $this->authorize('create', [request()->user(), CamoRate::class]);
             $this->camoRateRepository->newCamoRate($request->all());
 
             return to_route('camo-rates.index')->with('success', 'Camo Rate has been created.');
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
@@ -90,7 +92,7 @@ class CamoRateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id): \Inertia\Response
+    public function show(int $id): Response
     {
         try {
             $camoRate = $this->camoRateRepository->getById($id);
@@ -98,9 +100,9 @@ class CamoRateController extends Controller
             $resource = new CamoRateResource($camoRate);
 
             return InertiaResponse::content('CamoRate/Show', ['resource' => $resource]);
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
@@ -112,7 +114,7 @@ class CamoRateController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id): \Inertia\Response
+    public function edit(int $id): Response
     {
         try {
             $camoRate = $this->camoRateRepository->getById($id);
@@ -121,9 +123,9 @@ class CamoRateController extends Controller
             $resource = new CamoRateResource($camoRate);
 
             return InertiaResponse::content('CamoRates/Edit', ['resource' => $resource]);
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
@@ -135,19 +137,16 @@ class CamoRateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCamoRateRequest $request, int $id): \Inertia\Response|\Illuminate\Http\RedirectResponse
+    public function update(UpdateCamoRateRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('update', [request()->user(), CamoRate::class]);
-            $payload = precognitive(function ($bail) use ($request) {
-                return $request->validated();
-            });
+            $this->authorize('update', [$request->user(), CamoRate::class]);
             $this->camoRateRepository->updateCamoRate($request->all(), $id);
 
             return to_route('camo-rates.index')->with('success', 'Camo Rate has been updated.');
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
@@ -159,7 +158,7 @@ class CamoRateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id): \Illuminate\Http\RedirectResponse|\Inertia\Response
+    public function destroy(int $id): RedirectResponse|Response
     {
         try {
             $this->authorize('delete', [request()->user(), CamoRate::class]);

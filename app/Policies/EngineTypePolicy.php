@@ -12,7 +12,7 @@ class EngineTypePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin']) && $user->can('backoffice-read');
     }
 
     /**
@@ -20,7 +20,7 @@ class EngineTypePolicy
      */
     public function view(User $user, EngineType $engineType): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin']) && $user->can('backoffice-read');
     }
 
     /**
@@ -28,7 +28,7 @@ class EngineTypePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin']) && $user->can('backoffice-create');
     }
 
     /**
@@ -36,7 +36,7 @@ class EngineTypePolicy
      */
     public function update(User $user, EngineType $engineType): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin']) && $user->can('backoffice-update');
     }
 
     /**
@@ -44,7 +44,7 @@ class EngineTypePolicy
      */
     public function delete(User $user, EngineType $engineType): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin']) && $user->can('backoffice-delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class EngineTypePolicy
      */
     public function restore(User $user, EngineType $engineType): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin']) && $user->can('backoffice-restore');
     }
 
     /**
@@ -60,6 +60,6 @@ class EngineTypePolicy
      */
     public function forceDelete(User $user, EngineType $engineType): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin']) && $user->can('force-delete');
     }
 }

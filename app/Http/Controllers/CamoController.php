@@ -48,7 +48,7 @@ class CamoController extends Controller
             $this->authorize('create-camo', Camo::class);
 
             return InertiaResponse::content('Camos/Create');
-        } catch (AuthorizationException $e) {
+        } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
@@ -82,7 +82,7 @@ class CamoController extends Controller
             return InertiaResponse::content('Camos/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
     }

@@ -83,7 +83,7 @@ class CamoActivityController extends Controller
             $resource = new CamoActivityResource($camo);
 
             return InertiaResponse::content('CamoActivities/Edit', ['resource' => $resource]);
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());

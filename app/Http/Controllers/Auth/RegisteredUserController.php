@@ -27,9 +27,7 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $payload = precognitive(function ($bail) use ($request) {
-            return $request->validated();
-        });
+        $payload = precognitive(static fn ($bail) => $request->validated());
 
         $user = \App\Models\User::query()->create([
             'name' => $payload['name'],

@@ -7,6 +7,7 @@ use App\Models\Aircraft;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Override;
 
 class AircraftRepository implements AircraftRepositoryInterface
 {
@@ -14,21 +15,25 @@ class AircraftRepository implements AircraftRepositoryInterface
     {
     }
 
+    #[Override]
     public function getAll(Request $request): LengthAwarePaginator
     {
         // TODO: Implement getAll() method.
     }
 
+    #[Override]
     public function getById(int $id): ?Model
     {
         return $this->model->findOrFail($id);
     }
 
+    #[Override]
     public function newAircraft(array $data): ?Model
     {
         return $this->model->create($data);
     }
 
+    #[Override]
     public function updateAircraft(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
@@ -36,6 +41,7 @@ class AircraftRepository implements AircraftRepositoryInterface
         return $this->model->fresh();
     }
 
+    #[Override]
     public function deleteAircraft(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();

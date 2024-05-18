@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\CamoRate;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -28,10 +27,14 @@ class UpdateCamoRateRequest extends FormRequest
         return [
             'engine_type_id' => ['required', 'integer', 'exists:engine_types,id'],
             'code' => [
-                ...$this->isPrecognitive() ? [Rule::unique(CamoRate::class)->ignore($this->id)] : ['required', 'string', Rule::unique(CamoRate::class)->ignore($this->id)],
+                'required',
+                'string',
+                Rule::unique('camo_rates', 'code')->ignore($this->camo_rate),
             ],
             'name' => [
-                ...$this->isPrecognitive() ? [Rule::unique(CamoRate::class)->ignore($this->id)] : ['required', 'string', Rule::unique(CamoRate::class)->ignore($this->id)],
+                'required',
+                'string',
+                Rule::unique('camo_rates', 'name')->ignore($this->camo_rate),
             ],
             'mount' => ['required', 'numeric'],
         ];

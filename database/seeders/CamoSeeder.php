@@ -5,19 +5,24 @@ namespace Database\Seeders;
 use App\Models\Camo;
 use App\Models\CamoActivity;
 use Illuminate\Database\Seeder;
+use Random\RandomException;
 
 class CamoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @throws RandomException
      */
     public function run(): void
     {
-        $randomNumber = random_int(25, 52);
         Camo::factory()
-            ->has(CamoActivity::factory()->count($randomNumber))
             ->count(3)
-            ->create();
+            ->create()
+            ->each(static function (Camo $camo) {
+                $randomNumber = random_int(25, 75);
+                $camo->camoActivity()->saveMany(CamoActivity::factory($randomNumber)->create());
+            });
 
         /*Camo::factory(2)->create();
         $randomNumber = random_int(25, 52);
