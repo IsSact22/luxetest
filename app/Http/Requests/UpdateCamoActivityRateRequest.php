@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCamoActivityRateRequest extends FormRequest
 {
@@ -11,18 +13,28 @@ class UpdateCamoActivityRateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'code' => [
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('camo_activity_rates', 'code')->ignore($this->camo_activity_rate)] :
+                    ['required', Rule::unique('camo_activity_rates', 'code')->ignore($this->camo_activity_rate)],
+            ],
+            'name' => [
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('camo_activity_rates', 'name')->ignore($this->camo_activity_rate)] :
+                    ['required', Rule::unique('camo_activity_rates', 'name')->ignore($this->camo_activity_rate)],
+            ],
+            'mount' => ['numeric', 'nullable'],
         ];
     }
 }

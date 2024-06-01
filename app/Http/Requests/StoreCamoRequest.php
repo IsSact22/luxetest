@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCamoRequest extends FormRequest
 {
@@ -23,16 +24,20 @@ class StoreCamoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer' => ['required', 'unique:camos,customer'],
+            'customer' => ['required'],
             'owner_id' => ['required', 'exists:users,id'],
-            'contract' => ['required', 'unique:camos,contract'],
+            'contract' => [
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('camos', 'contract')] :
+                    ['required', Rule::unique('camos', 'contract')],
+            ],
             'cam_id' => ['required', 'exists:users,id'],
-            'aircraft' => ['required', 'unique:camos,aircraft'],
-            'description' => ['required'],
-            'start_date' => ['required', 'date', 'after_or_equal:today'],
-            'finish_date' => ['required', 'date', 'after:today'],
+            'aircraft_id' => ['required'],
+            'description' => ['nullable', 'string', 'max:191'],
+            'start_date' => ['required', 'date', 'after_or_equal:today-1 month'],
+            'estimate_finish_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'finish_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'location' => ['required'],
-            'activities' => ['required', 'array', 'min:1'],
         ];
     }
 }

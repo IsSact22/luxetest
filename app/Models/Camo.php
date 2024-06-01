@@ -31,9 +31,22 @@ class Camo extends Model implements HasMedia
         'aircraft_id',
         'description',
         'start_date',
+        'estimate_finish_date',
         'finish_date',
         'location',
     ];
+
+    protected $appends = ['camo_rate'];
+
+    public static function boot(): void
+    {
+        parent::boot();
+        static::creating(static function ($model) {
+            $aircraft = Aircraft::find($model->aircraft_id);
+            $owner = User::find($model->owner_id);
+            $aircraft->aircraftOwner()->attach($owner);
+        });
+    }
 
     public function isCrewOfOwner(User $user): bool
     {
@@ -63,7 +76,7 @@ class Camo extends Model implements HasMedia
     public function camoRate(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->aircraft->modelAircraft->engineType->camoRate
+            get: fn ($value) => $this->aircraft->modelAircraft->engineType
         );
     }
 
@@ -78,6 +91,7 @@ class Camo extends Model implements HasMedia
             'aircraft_id' => 'integer',
             'description' => 'string',
             'start_date' => 'datetime:Y-m-d',
+            'estimate_finish_date' => 'datetime:Y-m-d',
             'finish_date' => 'datetime:Y-m-d',
             'location' => 'string',
             'created_at' => 'datetime:Y-m-d H:i',

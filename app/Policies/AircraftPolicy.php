@@ -12,7 +12,7 @@ class AircraftPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('read-aircraft');
     }
 
     /**
@@ -20,7 +20,7 @@ class AircraftPolicy
      */
     public function view(User $user, Aircraft $aircraft): bool
     {
-        //
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('read-aircraft');
     }
 
     /**
@@ -28,7 +28,7 @@ class AircraftPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('create-aircraft');
     }
 
     /**
@@ -36,7 +36,7 @@ class AircraftPolicy
      */
     public function update(User $user, Aircraft $aircraft): bool
     {
-        //
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('update-aircraft');
     }
 
     /**
@@ -44,7 +44,7 @@ class AircraftPolicy
      */
     public function delete(User $user, Aircraft $aircraft): bool
     {
-        //
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('delete-aircraft');
     }
 
     /**
@@ -52,7 +52,7 @@ class AircraftPolicy
      */
     public function restore(User $user, Aircraft $aircraft): bool
     {
-        //
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('delete-aircraft');
     }
 
     /**
@@ -60,6 +60,6 @@ class AircraftPolicy
      */
     public function forceDelete(User $user, Aircraft $aircraft): bool
     {
-        //
+        return $user->can('force-delete');
     }
 }

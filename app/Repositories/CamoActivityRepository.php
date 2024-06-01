@@ -38,26 +38,13 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
     }
 
     #[Override]
-    public function newActivity(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
-        return $this->model->create([
-            'camo_id' => $data['camo_id'],
-            'required' => $data['required'],
-            'date' => $data['date'],
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'status' => $data['status'],
-            'comments' => $data['comments'],
-            'labor_mount' => $data['labor_mount'],
-            'material_mount' => $data['material_mount'],
-            'material_information' => $data['material_information'],
-            'awr' => $data['awr'],
-            'approval_status' => $data['approval_status'],
-        ]);
+        return $this->model->create($data);
     }
 
     #[Override]
-    public function updateActivity(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
 
@@ -65,7 +52,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
     }
 
     #[Override]
-    public function deleteActivity(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

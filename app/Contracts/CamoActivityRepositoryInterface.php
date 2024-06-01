@@ -12,9 +12,9 @@ interface CamoActivityRepositoryInterface
 
     public function getById(int $id): ?Model;
 
-    public function newActivity(array $data): ?Model;
+    public function newModel(array $data): ?Model;
 
-    public function updateActivity(array $data, int $id): ?Model;
+    public function updateModel(array $data, int $id): ?Model;
 
-    public function deleteActivity(int $id): bool;
+    public function deleteModel(int $id): bool;
 }

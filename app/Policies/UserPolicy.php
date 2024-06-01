@@ -38,7 +38,15 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin']) || $user->hasAnyRole(['cam', 'owner', 'crew']) && $user->id === $model->id;
+        if ($user->hasAnyRole(['super-admin', 'admin'])) {
+            return true;
+        }
+
+        if ($user->hasAnyRole(['cam', 'owner', 'crew']) && $user->id === $model->id) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

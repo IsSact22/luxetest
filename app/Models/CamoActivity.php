@@ -10,6 +10,7 @@ use Override;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
@@ -27,10 +28,14 @@ class CamoActivity extends Model implements HasMedia
 
     protected $fillable = [
         'camo_id',
+        'labor_rate_id',
         'required',
         'date',
         'name',
         'description',
+        'estimate_time',
+        'started_at',
+        'completed_at',
         'status',
         'comments',
         'labor_mount',
@@ -38,6 +43,7 @@ class CamoActivity extends Model implements HasMedia
         'material_information',
         'awr',
         'approval_status',
+        'priority',
     ];
 
     protected $appends = ['images'];
@@ -61,7 +67,7 @@ class CamoActivity extends Model implements HasMedia
         $this->addMediaCollection($this->mediaCollectionName);
     }
 
-    public function getImagesAttribute(): \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection
+    public function getImagesAttribute(): MediaCollection
     {
         return $this->getMedia($this->mediaCollectionName);
     }
@@ -72,10 +78,14 @@ class CamoActivity extends Model implements HasMedia
         return [
             'id' => 'integer',
             'camo_id' => 'integer',
+            'labor_rate_id' => 'integer',
             'required' => 'boolean',
             'date' => 'datetime:Y-m-d',
             'name' => 'string',
             'description' => 'string',
+            'estimate_time' => 'decimal:2',
+            'started_at' => 'datetime:Y-m-d H:i',
+            'completed_at' => 'datetime:Y-m-d H:i',
             'status' => 'string',
             'comments' => 'string',
             'labor_mount' => 'decimal:2',
@@ -83,6 +93,7 @@ class CamoActivity extends Model implements HasMedia
             'material_information' => 'string',
             'awr' => 'string',
             'approval_status' => 'string',
+            'priority' => 'integer',
             'created_at' => 'datetime:Y-m-d H:i',
             'updated_at' => 'datetime:Y-m-d H:i',
         ];

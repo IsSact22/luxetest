@@ -17,12 +17,11 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             BrandAircraftSeeder::class,
             EngineTypeSeeder::class,
-            CamoRateSeeder::class,
-            BrandAircraftSeeder::class,
+            AdminRateSeeder::class,
+            LaborRateSeeder::class,
             ModelAircraftSeeder::class,
             AircraftSeeder::class,
-            CamoActivityRateSeeder::class,
-            CamoSeeder::class,
+            //CamoSeeder::class,
         ]);
     }
 }

@@ -12,7 +12,7 @@ class CamoActivityPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('read-activity');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('read-activity');
     }
 
     /**
@@ -20,7 +20,7 @@ class CamoActivityPolicy
      */
     public function view(User $user, CamoActivity $camoActivity): bool
     {
-        return $user->can('read-activity');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('read-activity');
     }
 
     /**
@@ -28,7 +28,7 @@ class CamoActivityPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create-activity');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('create-activity');
     }
 
     /**
@@ -36,7 +36,7 @@ class CamoActivityPolicy
      */
     public function update(User $user, CamoActivity $camoActivity): bool
     {
-        return $user->can('update-activity');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('update-activity');
     }
 
     /**
@@ -44,7 +44,7 @@ class CamoActivityPolicy
      */
     public function delete(User $user, CamoActivity $camoActivity): bool
     {
-        return $user->can('delete-activity');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('delete-activity');
     }
 
     /**
@@ -52,7 +52,7 @@ class CamoActivityPolicy
      */
     public function restore(User $user, CamoActivity $camoActivity): bool
     {
-        return $user->can('restore');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('restore');
     }
 
     /**

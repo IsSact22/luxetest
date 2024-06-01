@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Link } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 
 const props = defineProps({
@@ -30,7 +30,9 @@ const props = defineProps({
                             type="text"
                         />
                     </div>
-                    <Link class="btn-goto">New Engine Type</Link>
+                    <Link :href="route('engine-types.create')" class="btn-goto"
+                        >New Engine Type
+                    </Link>
                 </form>
                 <table class="table-auto">
                     <thead>
@@ -43,7 +45,7 @@ const props = defineProps({
                     <tbody>
                         <tr v-for="(item, idx) in resource.data" :key="idx">
                             <td>{{ item.id }}</td>
-                            <td>{{ item.name }}</td>
+                            <td class="uppercase">{{ item.name }}</td>
                             <td class="col-actions">
                                 <Link
                                     :href="route('engine-types.edit', item.id)"

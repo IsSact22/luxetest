@@ -27,14 +27,14 @@ class UpdateCamoRateRequest extends FormRequest
         return [
             'engine_type_id' => ['required', 'integer', 'exists:engine_types,id'],
             'code' => [
-                'required',
-                'string',
-                Rule::unique('camo_rates', 'code')->ignore($this->camo_rate),
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('camo_rates', 'code')->ignore($this->camo_rate)] :
+                    ['required', 'string', Rule::unique('camo_rates', 'code')->ignore($this->camo_rate)],
             ],
             'name' => [
-                'required',
-                'string',
-                Rule::unique('camo_rates', 'name')->ignore($this->camo_rate),
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('camo_rates', 'name')->ignore($this->camo_rate)] :
+                    ['required', 'string', Rule::unique('camo_rates', 'name')->ignore($this->camo_rate)],
             ],
             'mount' => ['required', 'numeric'],
         ];

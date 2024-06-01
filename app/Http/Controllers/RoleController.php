@@ -6,10 +6,12 @@ use App\Contracts\RoleRepositoryInterface;
 use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Resources\RoleResource;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
@@ -47,11 +49,24 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRoleRequest $request): RedirectResponse
+    public function store(StoreRoleRequest $request): Response|RedirectResponse
     {
-        $this->role->newRole($request->all());
+        try {
+            $this->authorize('create', Role::class);
+            $payload = precognitive(static fn ($bail) => $request->validated());
 
-        return to_route('roles.index')->with('success', 'Role created successfully');
+            $role = $this->role->newModel($payload);
+            $role->syncPermissions($payload['permissions']);
+
+            return to_route('roles.index')->with('success', 'Role created successfully');
+        } catch (AuthorizationException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        }
+
     }
 
     /**
@@ -94,7 +109,7 @@ class RoleController extends Controller
     public function update(Request $request, string $id): Response|RedirectResponse
     {
         try {
-            $this->role->updateRole($request->all(), $id);
+            $this->role->updateModel($request->all(), $id);
 
             return to_route('roles.index')->with('success', 'Role updated successfully');
         } catch (ModelNotFoundException) {
@@ -110,7 +125,7 @@ class RoleController extends Controller
     public function destroy(string $id): Response|RedirectResponse
     {
         try {
-            $this->role->deleteRole($id);
+            $this->role->deleteModel($id);
 
             return to_route('services.index')->with('success', 'Role deleted successfully');
         } catch (ModelNotFoundException) {

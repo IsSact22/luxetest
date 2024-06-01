@@ -6,12 +6,12 @@ use App\Contracts\EngineTypeRepositoryInterface;
 use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreEngineTypeRequest;
 use App\Http\Requests\UpdateEngineTypeRequest;
-use App\Http\Resources\CamoRateResource;
 use App\Http\Resources\EngineTypeResource;
+use App\Http\Resources\LaborRateResource;
 use App\Models\EngineType;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests as Precognitive;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -25,7 +25,7 @@ class EngineTypeController extends Controller
     public function __construct(protected EngineTypeRepositoryInterface $engineTypeRepository)
     {
         parent::__construct();
-        $this->middleware([HandlePrecognitiveRequests::class])->only(['store', 'update']);
+        $this->middleware(Precognitive::class)->only(['store', 'update']);
     }
 
     /**
@@ -34,7 +34,7 @@ class EngineTypeController extends Controller
     public function index(Request $request): Response
     {
         try {
-            $this->authorize('viewAny', $request->user());
+            $this->authorize('viewAny', EngineType::class);
             $engineType = $this->engineTypeRepository->getAll($request);
             $resource = EngineTypeResource::collection($engineType);
 
@@ -57,7 +57,7 @@ class EngineTypeController extends Controller
     public function create(Request $request): Response
     {
         try {
-            $this->authorize('create', [$request->user(), EngineType::class]);
+            $this->authorize('create', EngineType::class);
 
             return InertiaResponse::content('EngineTypes/Create');
         } catch (AuthorizationException) {
@@ -75,8 +75,9 @@ class EngineTypeController extends Controller
     public function store(StoreEngineTypeRequest $request): Response|RedirectResponse
     {
         try {
-            $this->authorize('create', [$request->user(), EngineType::class]);
-            $this->engineTypeRepository->newEngineType($request->all());
+            $this->authorize('create', EngineType::class);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->engineTypeRepository->newEngineType($payload);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been created.');
         } catch (AuthorizationException) {
@@ -91,11 +92,11 @@ class EngineTypeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id): Response
+    public function show(Request $request, int $id): Response
     {
         try {
             $camoRate = $this->engineTypeRepository->getById($id);
-            $this->authorize('view', [request()->user(), EngineType::class]);
+            $this->authorize('view', $camoRate);
             $resource = new EngineTypeResource($camoRate);
 
             return InertiaResponse::content('EngineTypes/Show', ['resource' => $resource]);
@@ -117,9 +118,9 @@ class EngineTypeController extends Controller
     {
         try {
             $camoRate = $this->engineTypeRepository->getById($id);
-            $this->authorize('view', [$request->user(), $camoRate]);
+            $this->authorize('update', $camoRate);
 
-            $resource = new CamoRateResource($camoRate);
+            $resource = new LaborRateResource($camoRate);
 
             return InertiaResponse::content('EngineTypes/Edit', ['resource' => $resource]);
         } catch (AuthorizationException) {
@@ -139,7 +140,7 @@ class EngineTypeController extends Controller
     public function update(UpdateEngineTypeRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('update', [$request->user(), EngineType::class]);
+            $this->authorize('update', EngineType::class);
             $this->engineTypeRepository->updateEngineType($request->all(), $id);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been updated.');
@@ -160,7 +161,7 @@ class EngineTypeController extends Controller
     public function destroy(Request $request, int $id): RedirectResponse|Response
     {
         try {
-            $this->authorize('delete', [$request->user(), EngineType::class]);
+            $this->authorize('delete', EngineType::class);
             $this->engineTypeRepository->deleteEngineType($id);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been deleted.');

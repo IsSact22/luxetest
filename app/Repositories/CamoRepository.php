@@ -27,13 +27,11 @@ class CamoRepository implements CamoRepositoryInterface
             ->when($request->get('owner_id'), static function ($query, int $ownerId) {
                 $query->where('owner_id', $ownerId);
             })
-
             ->when($user && $user->isCam, static function ($query) use ($user) {
                 $query->where(static function ($query) use ($user) {
                     $query->where('cam_id', $user->id);
                 });
             })
-
             ->when($user && ($user->isOwner || $user->isCrew), static function ($query) use ($user) {
                 $query->where(static function ($query) use ($user) {
                     $query->where('owner_id', $user->id)
@@ -42,7 +40,6 @@ class CamoRepository implements CamoRepositoryInterface
                         });
                 });
             })
-
             ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('customer', 'like', $search.'%')
                     ->orWhere('contract', 'like', $search.'%')
@@ -68,19 +65,13 @@ class CamoRepository implements CamoRepositoryInterface
     }
 
     #[Override]
-    public function newCamo(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
-        $camo = $this->model->create($data);
-
-        if (isset($data['activities'])) {
-            $camo->camoActivity()->createMany($data['activities']);
-        }
-
-        return $camo;
+        return $this->model->create($data);
     }
 
     #[Override]
-    public function updateCamo(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
 
@@ -88,7 +79,7 @@ class CamoRepository implements CamoRepositoryInterface
     }
 
     #[Override]
-    public function deleteCamo(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

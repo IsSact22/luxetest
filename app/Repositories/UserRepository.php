@@ -75,7 +75,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     #[Override]
-    public function newUser(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
         $user = $this->model->create([
             'name' => $data['name'],
@@ -90,7 +90,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     #[Override]
-    public function updateUser(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $user = $this->model->findOrFail($id);
         $user->update($data);
@@ -103,7 +103,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     #[Override]
-    public function deleteUser(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

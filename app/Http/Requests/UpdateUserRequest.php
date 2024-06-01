@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -26,9 +27,17 @@ class UpdateUserRequest extends FormRequest
             'role' => ['sometimes'],
             'owner_id' => ['sometimes', 'exists:users'],
             'name' => ['sometimes'],
-            'email' => 'sometimes|email|unique:users,id,email,'.$this->id,
+            'email' => [
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('users', 'email')->ignore($this->id)] :
+                    ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
+            ],
             'password' => ['sometimes'],
-            'confirmation_password' => ['sometimes', 'same:password'],
+            'password_confirmation' => [
+                ...$this->isPrecognitive() ?
+                    ['present_if:password', 'same:password'] :
+                    ['present_if:password', 'same:password'],
+            ],
             'avatar' => ['nullable', 'image'],
         ];
     }

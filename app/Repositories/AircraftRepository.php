@@ -18,7 +18,14 @@ class AircraftRepository implements AircraftRepositoryInterface
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
     {
-        // TODO: Implement getAll() method.
+        $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
+
+        return $this->model
+            ->when($request->get('search'), static function ($query, string $search) {
+                $query->where('name', 'like', $search.'%');
+            })
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     #[Override]
@@ -28,13 +35,13 @@ class AircraftRepository implements AircraftRepositoryInterface
     }
 
     #[Override]
-    public function newAircraft(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
         return $this->model->create($data);
     }
 
     #[Override]
-    public function updateAircraft(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
 
@@ -42,7 +49,7 @@ class AircraftRepository implements AircraftRepositoryInterface
     }
 
     #[Override]
-    public function deleteAircraft(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

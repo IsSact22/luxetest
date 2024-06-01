@@ -68,6 +68,7 @@ const destroy = (id) => {
                             <th>Aircraft</th>
                             <th>Activities</th>
                             <th>Start Date</th>
+                            <th>Estimate Finish Date</th>
                             <th>Finish Date</th>
                             <th>Location</th>
                             <th>Actions</th>
@@ -76,7 +77,7 @@ const destroy = (id) => {
                     <tbody>
                         <tr v-for="(camo, idx) in resource.data" :key="idx">
                             <td>{{ camo.id }}</td>
-                            <td>{{ camo.customer }}</td>
+                            <td class="uppercase">{{ camo.customer }}</td>
                             <td>{{ camo.owner }}</td>
                             <td>{{ camo.contract }}</td>
                             <td>{{ camo.cam }}</td>
@@ -87,9 +88,12 @@ const destroy = (id) => {
                             <td class="text-center">
                                 {{ camo.activities.length }}
                             </td>
-                            <td>{{ camo.start_date }}</td>
-                            <td>{{ camo.finish_date }}</td>
-                            <td>{{ camo.location }}</td>
+                            <td class="text-center">{{ camo.start_date }}</td>
+                            <td class="text-center">
+                                {{ camo.estimate_finish_date }}
+                            </td>
+                            <td class="text-center">{{ camo.finish_date }}</td>
+                            <td class="text-center">{{ camo.location }}</td>
                             <td class="col-actions">
                                 <Link
                                     :href="route('camos.show', camo.id)"

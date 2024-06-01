@@ -35,7 +35,7 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     #[Override]
-    public function newRole(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
         return $this->model->create([
             'name' => $data['name'],
@@ -44,7 +44,7 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     #[Override]
-    public function updateRole(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
 
@@ -52,7 +52,7 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     #[Override]
-    public function deleteRole(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

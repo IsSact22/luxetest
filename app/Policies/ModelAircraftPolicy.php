@@ -12,7 +12,7 @@ class ModelAircraftPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('read-model-aircraft');
     }
 
     /**
@@ -20,7 +20,7 @@ class ModelAircraftPolicy
      */
     public function view(User $user, ModelAircraft $modelAircraft): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('read-model-aircraft');
     }
 
     /**
@@ -28,7 +28,7 @@ class ModelAircraftPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('create-model-aircraft');
     }
 
     /**
@@ -36,7 +36,7 @@ class ModelAircraftPolicy
      */
     public function update(User $user, ModelAircraft $modelAircraft): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('update-model-aircraft');
     }
 
     /**
@@ -44,7 +44,7 @@ class ModelAircraftPolicy
      */
     public function delete(User $user, ModelAircraft $modelAircraft): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('delete-model-aircraft');
     }
 
     /**
@@ -52,7 +52,7 @@ class ModelAircraftPolicy
      */
     public function restore(User $user, ModelAircraft $modelAircraft): bool
     {
-        //
+        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('delete-model-aircraft');
     }
 
     /**
@@ -60,6 +60,6 @@ class ModelAircraftPolicy
      */
     public function forceDelete(User $user, ModelAircraft $modelAircraft): bool
     {
-        //
+        return $user->can('force-delete');
     }
 }

@@ -12,9 +12,9 @@ interface AircraftRepositoryInterface
 
     public function getById(int $id): ?Model;
 
-    public function newAircraft(array $data): ?Model;
+    public function newModel(array $data): ?Model;
 
-    public function updateAircraft(array $data, int $id): ?Model;
+    public function updateModel(array $data, int $id): ?Model;
 
-    public function deleteAircraft(int $id): bool;
+    public function deleteModel(int $id): bool;
 }

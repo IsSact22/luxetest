@@ -6,14 +6,16 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoActivityRequest;
 use App\Http\Requests\UpdateCamoActivityRequest;
 use App\Http\Resources\CamoActivityResource;
+use App\Models\CamoActivity;
 use App\Repositories\CamoActivityRepository;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;
 
@@ -28,38 +30,73 @@ class CamoActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): \Inertia\Response
+    public function index(Request $request): Response
     {
-        $activities = $this->activity->getAll($request);
-        $resource = CamoActivityResource::collection($activities);
+        try {
+            $this->authorize('viewAny', CamoActivity::class);
+            $activities = $this->activity->getAll($request);
+            $resource = CamoActivityResource::collection($activities);
 
-        return InertiaResponse::content('CamoActivities/Index', ['resource' => $resource]);
+            return InertiaResponse::content('CamoActivities/Index', ['resource' => $resource]);
+        } catch (AuthorizationException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'description' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Inertia\Response
+    public function create(Request $request): Response
     {
-        return InertiaResponse::content('CamoActivities/Create');
+        try {
+            $this->authorize('create', CamoActivity::class);
+
+            return InertiaResponse::content('CamoActivities/Create');
+        } catch (AuthorizationException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        }
+
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCamoActivityRequest $request): RedirectResponse
+    public function store(StoreCamoActivityRequest $request): Response|RedirectResponse
     {
-        $this->activity->newActivity($request->all());
+        try {
+            $this->authorize('create', CamoActivity::class);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->activity->newModel($payload);
 
-        return to_route('camo_activities.index')->with('success', 'CAMO Activity created successfully');
+            return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
+        } catch (AuthorizationException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        }
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id): \Inertia\Response
+    public function show(string $id): Response
     {
         try {
+            $this->authorize('view', CamoActivity::class);
             $camo = $this->activity->getById($id);
             $resource = new CamoActivityResource($camo);
 
@@ -76,9 +113,10 @@ class CamoActivityController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id): \Inertia\Response
+    public function edit(string $id): Response
     {
         try {
+            $this->authorize('update', CamoActivity::class);
             $camo = $this->activity->getById($id);
             $resource = new CamoActivityResource($camo);
 
@@ -95,11 +133,12 @@ class CamoActivityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCamoActivityRequest $request, string $id): RedirectResponse|\Inertia\Response
+    public function update(UpdateCamoActivityRequest $request, string $id): RedirectResponse|Response
     {
         try {
+            $this->authorize('update', CamoActivity::class);
             $camoId = $request->get('camo_id');
-            $this->activity->updateActivity($request->all(), $id);
+            $this->activity->updateModel($request->all(), $id);
 
             return to_route('camos.show', $camoId)->with('success', 'Activity update successfully');
         } catch (ModelNotFoundException) {
@@ -114,10 +153,11 @@ class CamoActivityController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): \Inertia\Response|RedirectResponse
+    public function destroy(string $id): Response|RedirectResponse
     {
         try {
-            $this->activity->deleteActivity($id);
+            $this->authorize('delete', CamoActivity::class);
+            $this->activity->deleteModel($id);
 
             return to_route('camo_activities.index')->with('success', 'Activity deleted successfully');
         } catch (ModelNotFoundException) {

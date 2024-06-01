@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -24,11 +25,19 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'role' => ['required'],
-            'owner_id' => ['sometimes', 'exists:users'],
+            'owner_id' => ['sometimes', 'exists:users,id'],
             'name' => ['required'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'email' => [
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('users', 'email')] :
+                    ['required', 'email', Rule::unique('users', 'email')],
+            ],
             'password' => ['required'],
-            'password_confirmation' => ['required', 'same:password'],
+            'password_confirmation' => [
+                ...$this->isPrecognitive() ?
+                    ['same:password'] :
+                    ['required', 'same:password'],
+            ],
             'avatar' => ['nullable', 'image'],
         ];
     }

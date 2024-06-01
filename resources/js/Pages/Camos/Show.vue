@@ -8,7 +8,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import Paginator2 from "@/Components/Paginator2.vue";
 import useFormatCurrency from "@/Composables/formatCurrency";
 import { useToast } from "vue-toastification";
-import AddActivityComponent from "@/Components/AddActivityComponent.vue";
+import CamoActivityForm from "@/Pages/CamoActivities/Partials/CamoActivityForm.vue";
 
 const toast = useToast();
 
@@ -171,7 +171,7 @@ const submit = async () => {
 };
 const addActivity = ref(false);
 const handleAddActivity = (e) => {
-    addActivity.value = false;
+    addActivity.value = e;
 };
 </script>
 <template>
@@ -243,7 +243,7 @@ const handleAddActivity = (e) => {
                                 <p>Aircraft</p>
                                 <p>Description</p>
                                 <p>Start Date</p>
-                                <p>Finish Date</p>
+                                <p>Estimate Finish Date</p>
                             </div>
                             <div>
                                 <p class="text-right">
@@ -254,13 +254,13 @@ const handleAddActivity = (e) => {
                                     / {{ resource.data.aircraft.register }}
                                 </p>
                                 <p class="text-right line-clamp-1">
-                                    {{ resource.data.description }}
+                                    {{ resource.data.description }} &nbsp;
                                 </p>
                                 <p class="text-right">
                                     {{ resource.data.start_date }}
                                 </p>
                                 <p class="text-right">
-                                    {{ resource.data.finish_date }}
+                                    {{ resource.data.estimate_finish_date }}
                                 </p>
                             </div>
                         </div>
@@ -345,13 +345,19 @@ const handleAddActivity = (e) => {
                     </form>
                     <!-- add activity -->
                     <Transition appear name="fade" @after-enter="addActivity">
-                        <AddActivityComponent
+                        <CamoActivityForm
                             v-show="addActivity"
-                            ref="addActivityComponent"
-                            :camo-id="resource.data.id"
-                            @event-close="handleAddActivity"
-                            @sent-activity="getActivities"
+                            :camo="props.resource.data"
+                            :user="usePage().props.auth.user"
+                            @add-activity="handleAddActivity"
                         />
+                        <!--                        <AddActivityComponent
+                                                    v-show="addActivity"
+                                                    ref="addActivityComponent"
+                                                    :camo-id="resource.data.id"
+                                                    @event-close="handleAddActivity"
+                                                    @sent-activity="getActivities"
+                                                />-->
                     </Transition>
                     <!-- add activity -->
 

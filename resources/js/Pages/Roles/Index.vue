@@ -1,98 +1,146 @@
 <script setup>
-import {Head, useForm} from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
-import {Link} from '@inertiajs/vue3';
-import {route} from "ziggy-js";
-import _ from 'lodash';
+import { route } from "ziggy-js";
+import _ from "lodash";
+import RoleForm from "@/Pages/Roles/Partials/RoleForm.vue";
+import { ref } from "vue";
 
 const props = defineProps({
     resource: {
         type: Object,
-        default: () => ({})
-    }
-})
-
+        default: () => ({}),
+    },
+});
 const form = useForm({
-    search: ''
-})
+    search: "",
+});
 const fireSearch = _.throttle(function () {
-    form.get(route('roles.index'), {preserveState: true})
+    form.get(route("roles.index"), { preserveState: true });
 }, 200);
-
 const destroy = (id) => {
     if (confirm("Seguro desea eliminar el Usuario")) {
-        form.delete(route('roles.destroy', id), {preserveState: true});
+        form.delete(route("roles.destroy", id), { preserveState: true });
     }
-}
-
+};
+const newRole = ref(false);
+const editRole = ref(false);
+const roleToEdit = ref(null);
+const setRoleToEdit = (obj) => {
+    roleToEdit.value = obj;
+    editRole.value = true;
+};
+const toggleNewRole = () => {
+    if (editRole.value === true) {
+        editRole.value = false;
+    }
+    newRole.value = !newRole.value;
+};
+const toggleEditRole = () => {
+    if (newRole.value === true) {
+        newRole.value = false;
+    }
+    editRole.value = !editRole.value;
+};
 </script>
 <template>
-    <Head title="Roles"/>
+    <Head title="Roles" />
     <AuthenticatedLayout>
         <template #header>
             <h2>Roles</h2>
         </template>
-        <div class="flex flex-col justify-items-center items-center">
+        <div class="flex flex-col justify-items-center items-center py-12">
             <div class="my-4 border rounded-md px-4 py-4">
-                <form class="my-2 flex flex-row justify-items-center items-center space-x-7">
+                <form
+                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                >
                     <div>
                         <input
-                            type="text"
+                            id="search"
+                            v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300"
                             name="search"
-                            id="search"
                             placeholder="search"
+                            type="text"
                             @keyup="fireSearch"
-                            v-model="form.search"
-                        >
+                        />
                     </div>
-                    <Link class="b-goto">New Role</Link>
-                    <Link :href="route('users.index')"
-                        class="b-goto"
+                    <button
+                        class="btn-goto"
+                        type="button"
+                        @click="toggleNewRole"
                     >
+                        New Role
+                    </button>
+                    <Link :href="route('users.index')" class="btn-goto">
                         Users
                     </Link>
-                    <Link
-                        class="b-goto"
-                    >
-                        Permissions
-                    </Link>
+                    <Link class="btn-goto"> Permissions</Link>
                 </form>
-                <div>
 
+                <!-- new role -->
+                <div v-if="newRole">
+                    <RoleForm @cancel-new-role="toggleNewRole" />
                 </div>
+                <!-- edit role -->
+                <div v-if="editRole">
+                    <RoleForm
+                        :role="roleToEdit"
+                        @cancel-edit-role="toggleEditRole"
+                    />
+                </div>
+
                 <table class="table-auto">
                     <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Guard name</th>
-                        <th>Actions</th>
-                    </tr>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Guard name</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(role,idx) in resource.data" :key="idx">
-                        <td>{{ role.id }}</td>
-                        <td>{{ role.name }}</td>
-                        <td class="text-center">{{ role.guard_name }}</td>
-                        <td class="col-actions">
-                            <Link :href="route('roles.show', role.id)" class="b-show">Show</Link>
-                            <Link :href="route('roles.edit', role.id)" class="b-edit">Edit</Link>
-                            <Link class="b-delete">Delete</Link>
-                        </td>
-                    </tr>
+                        <tr v-for="(role, idx) in resource.data" :key="idx">
+                            <td>{{ role.id }}</td>
+                            <td>{{ role.name }}</td>
+                            <td class="text-center">{{ role.guard_name }}</td>
+                            <td class="col-actions">
+                                <Link
+                                    v-if="role.name !== `super-admin`"
+                                    :href="route('roles.show', role.id)"
+                                    class="btn-show"
+                                    >Show
+                                </Link>
+                                <button
+                                    v-if="role.name !== `super-admin`"
+                                    class="btn-edit"
+                                    @click="setRoleToEdit(role)"
+                                >
+                                    Edit
+                                </button>
+                                <Link
+                                    v-if="role.name !== `super-admin`"
+                                    class="btn-delete"
+                                    >Delete
+                                </Link>
+                                <span
+                                    v-if="role.name === `super-admin`"
+                                    class="font-bold text-red-800"
+                                    >Actions not allowed</span
+                                >
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
-                    <tr>
-                        <td colspan="6">
-                            <Paginator :data="resource"/>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="6">
+                                <Paginator :data="resource" />
+                            </td>
+                        </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
     </AuthenticatedLayout>
 </template>
-

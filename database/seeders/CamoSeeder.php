@@ -5,14 +5,11 @@ namespace Database\Seeders;
 use App\Models\Camo;
 use App\Models\CamoActivity;
 use Illuminate\Database\Seeder;
-use Random\RandomException;
 
 class CamoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @throws RandomException
      */
     public function run(): void
     {

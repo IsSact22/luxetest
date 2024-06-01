@@ -12,9 +12,9 @@ interface CamoRepositoryInterface
 
     public function getById(int $id): ?Model;
 
-    public function newCamo(array $data): ?Model;
+    public function newModel(array $data): ?Model;
 
-    public function updateCamo(array $data, int $id): ?Model;
+    public function updateModel(array $data, int $id): ?Model;
 
-    public function deleteCamo(int $id): bool;
+    public function deleteModel(int $id): bool;
 }

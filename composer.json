@@ -15,9 +15,10 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
-        "opcodesio/log-viewer": "^3.6",
+        "opcodesio/log-viewer": "^3.10",
         "php-ffmpeg/php-ffmpeg": "^1.2",
         "php-open-source-saver/jwt-auth": "^2.2",
+        "spatie/laravel-ignition": "^2.7",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-permission": "^6.4",
         "tightenco/ziggy": "^2.0"
@@ -40,7 +41,6 @@
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/phpstan": "^1.10",
         "rector/rector": "^1.0",
-        "spatie/laravel-ignition": "^2.0",
         "tightenco/duster": "^2.7"
     },
     "autoload": {

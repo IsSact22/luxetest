@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAircraftRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreAircraftRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,13 @@ class StoreAircraftRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'model_aircraft_id' => ['required', 'integer', 'exists:aircrafts,id'],
+            'register' => [
+                ...$this->isPrecognitive() ?
+                    [Rule::unique('aircrafts', 'register')] :
+                    ['required', 'unique:aircrafts,register'],
+            ],
+            'serial' => ['required'],
         ];
     }
 }

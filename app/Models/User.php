@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -96,6 +97,11 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    public function ownerAircraft(): BelongsToMany
+    {
+        return $this->belongsToMany(OwnerAircraft::class, 'owner_aircraft', 'owner_id', 'aircraft_id', 'user_id')->withTimestamps();
     }
 
     protected function isSuper(): Attribute

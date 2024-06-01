@@ -12,9 +12,9 @@ interface RoleRepositoryInterface
 
     public function getById(int $id): ?Model;
 
-    public function newRole(array $data): ?Model;
+    public function newModel(array $data): ?Model;
 
-    public function updateRole(array $data, int $id): ?Model;
+    public function updateModel(array $data, int $id): ?Model;
 
-    public function deleteRole(int $id): bool;
+    public function deleteModel(int $id): bool;
 }
