@@ -54,7 +54,7 @@ const form = useForm(method, url, {
     customer: props.camo?.customer ?? "",
     owner_id: props.camo?.owner_id ?? null,
     contract: props.camo?.contract ?? "",
-    cam_id: props?.camId ?? null,
+    cam_id: props.camId ?? null,
     aircraft_id: props.camo?.aircraft ?? null,
     description: props.camo?.description ?? "",
     start_date: props.camo?.start_date ?? null,
@@ -62,6 +62,7 @@ const form = useForm(method, url, {
     finish_date: props.camo?.finish_date ?? null,
     location: props.camo?.location ?? "OMZ",
 });
+
 const submit = async () => {
     console.log("click");
     form.submit();

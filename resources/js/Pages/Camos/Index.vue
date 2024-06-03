@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
+import DashboardButton from "@/Components/DashboardButton.vue";
 
 const props = defineProps({
     resource: {
@@ -30,6 +31,7 @@ const destroy = (id) => {
     <AuthenticatedLayout>
         <template #header>
             <h2>Camos</h2>
+            <DashboardButton />
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div

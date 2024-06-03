@@ -173,6 +173,16 @@ const addActivity = ref(false);
 const handleAddActivity = (e) => {
     addActivity.value = e;
 };
+const badgeClass = (priority) => {
+    switch (priority) {
+        case 3:
+            return "badge-info";
+        case 2:
+            return "badge-pending";
+        case 1:
+            return "badge-alert";
+    }
+};
 </script>
 <template>
     <Head title="Camos" />
@@ -180,9 +190,7 @@ const handleAddActivity = (e) => {
         <template #header>
             <h2>Camos</h2>
         </template>
-        <div
-            class="flex flex-col justify-items-center items-center max-w-7xl mx-auto"
-        >
+        <div class="flex flex-col justify-items-center items-center mx-auto">
             <div class="my-4 border rounded-md px-4 py-4">
                 <div class="space-x-3 my-3">
                     <Link :href="route('camos.index')" class="btn-goto"
@@ -452,7 +460,10 @@ const handleAddActivity = (e) => {
                                 <thead>
                                     <tr>
                                         <th>id</th>
+                                        <th>Priority</th>
                                         <th>Date</th>
+                                        <th>Start at</th>
+                                        <th>Estimate Time</th>
                                         <th>Name</th>
                                         <th>Status</th>
                                         <th>Labor/Mount</th>
@@ -469,7 +480,24 @@ const handleAddActivity = (e) => {
                                         :key="idx"
                                     >
                                         <td>{{ act.id }}</td>
+                                        <td>
+                                            <span
+                                                :class="
+                                                    badgeClass(act.priority)
+                                                "
+                                            >
+                                                {{ act.priority }}
+                                            </span>
+                                        </td>
                                         <td class="text-xs">{{ act.date }}</td>
+                                        <td class="text-xs">
+                                            <span v-if="act.started_at"></span>
+                                            {{ act.started_at ?? "undefined" }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ act.estimate_time }}
+                                            <small>H/m</small>
+                                        </td>
                                         <td>
                                             <div
                                                 class="flex flex-row justify-items-center items-center space-x-2"

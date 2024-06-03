@@ -67,13 +67,6 @@ const showUsers = computed(() => {
                                 >
                                     Camos
                                 </NavLink>
-                                <NavLink
-                                    v-show="showUsers"
-                                    :active="route().current('users.index')"
-                                    :href="route('users.index')"
-                                >
-                                    Users
-                                </NavLink>
                                 <div
                                     class="hidden sm:flex sm:items-center sm:ml-6"
                                 >

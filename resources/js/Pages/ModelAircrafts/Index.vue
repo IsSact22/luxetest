@@ -2,6 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import Paginator from "@/Components/Paginator.vue";
+import DashboardButton from "@/Components/DashboardButton.vue";
 
 const props = defineProps({
     resource: {
@@ -15,6 +16,7 @@ const props = defineProps({
     <AuthenticatedLayout>
         <template #header>
             <h2>Model Aircrafts</h2>
+            <DashboardButton />
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
             <div class="my-4 border rounded-md p-4">

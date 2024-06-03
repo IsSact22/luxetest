@@ -76,7 +76,7 @@ class CamoActivityController extends Controller
     {
         try {
             $this->authorize('create', CamoActivity::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->activity->newModel($payload);
 
             return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
@@ -116,9 +116,9 @@ class CamoActivityController extends Controller
     public function edit(string $id): Response
     {
         try {
-            $this->authorize('update', CamoActivity::class);
-            $camo = $this->activity->getById($id);
-            $resource = new CamoActivityResource($camo);
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('update', $camoActivity);
+            $resource = new CamoActivityResource($camoActivity);
 
             return InertiaResponse::content('CamoActivities/Edit', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
@@ -136,11 +136,12 @@ class CamoActivityController extends Controller
     public function update(UpdateCamoActivityRequest $request, string $id): RedirectResponse|Response
     {
         try {
-            $this->authorize('update', CamoActivity::class);
-            $camoId = $request->get('camo_id');
+
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('update', $camoActivity);
             $this->activity->updateModel($request->all(), $id);
 
-            return to_route('camos.show', $camoId)->with('success', 'Activity update successfully');
+            return to_route('camos.show', $id)->with('success', 'Activity update successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {

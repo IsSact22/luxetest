@@ -21,7 +21,11 @@ const props = defineProps({
         <div class="flex flex-col justify-items-center items-center py-12">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <h2>Camo {{ props.camo.id }}</h2>
-                <CamoActivityForm :cam-id="usePage().props.auth.user.id" />
+                <CamoActivityForm
+                    :cam-id="usePage().props.auth.user.id"
+                    :camo="props.camo"
+                    :user="usePage().props.auth.user"
+                />
             </div>
         </div>
     </AuthenticatedLayout>

@@ -5,6 +5,7 @@ import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import { onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
+import DashboardButton from "@/Components/DashboardButton.vue";
 
 const toast = useToast();
 const props = defineProps({
@@ -56,6 +57,7 @@ const submit = async () => {
     <AuthenticatedLayout>
         <template #header>
             <h2>Aircraft</h2>
+            <DashboardButton />
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
             <div class="my-4 border rounded-md p-4">
@@ -71,8 +73,22 @@ const submit = async () => {
                             type="text"
                         />
                     </div>
-                    <Link :href="route('aircrafts.create')" class="btn-goto"
-                        >New Aircraft
+                    <Link :href="route('aircrafts.create')" class="btn-goto">
+                        <svg
+                            class="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                        <span class="ml-1">New Aircraft</span>
                     </Link>
                 </form>
                 <table class="table-auto">

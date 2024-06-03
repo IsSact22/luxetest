@@ -8,6 +8,8 @@ import moment from "moment";
 import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { router } from "@inertiajs/vue3";
+import UploadImage from "@/Components/UploadImage.vue";
 
 const now = ref(moment().format("YYYY-MM-DD"));
 const props = defineProps({
@@ -22,6 +24,21 @@ const props = defineProps({
         required: true,
     },
 });
+onMounted(() => {
+    if (!props.camo) {
+        getCamo();
+    }
+});
+const getCamo = async () => {
+    try {
+        const response = await axios.get(
+            route("camos.select", props.camoActivity.id),
+        );
+        props.camo = response.data;
+    } catch (e) {
+        console.error(e);
+    }
+};
 const method = props.camoActivity ? "put" : "post";
 const url = props.camoActivity
     ? `/camo_activities/${props.camoActivity.id}`
@@ -45,6 +62,19 @@ const form = useForm(method, url, {
     approval_status: props.camoActivity?.approval_status ?? "pending",
     priority: props.camoActivity?.priority ?? 3,
 });
+const estimateDuration = computed(() => {
+    if (props.camo) {
+        return Math.ceil(
+            moment(props.camo.estimate_finish_date).diff(
+                props.camo.start_date,
+                "days",
+            ),
+        );
+    } else {
+        return null;
+    }
+});
+
 watch(
     () => form.required,
     (newValue) => {
@@ -96,6 +126,21 @@ const laborMount = computed(() => {
     return 0;
 });
 const emit = defineEmits(["addActivity"]);
+const handleUpload = (eventData) => {
+    if (eventData) {
+        const toastOptions = {
+            timeout: 2000,
+            onClose: () => {
+                const camoId = props.resource.data.camo_id;
+                goBack();
+            },
+        };
+        toast.success(
+            "The images have been uploaded successfully.",
+            toastOptions,
+        );
+    }
+};
 const handleCancel = () => {
     form.reset();
     emit("addActivity", false);
@@ -106,12 +151,16 @@ const submit = async () => {
         onSuccess: () => {
             form.reset();
             emit("addActivity", false);
+            router.get(route("camos.show", props.camo.id));
         },
     });
 };
 </script>
 <template>
     <div class="py-12 bg-white rounded-md p-4">
+        <h3 class="text-right">
+            CAMO Estimate Duration {{ estimateDuration }} days
+        </h3>
         <form @submit.prevent="submit">
             <input id="camo_id" name="camo_id" type="hidden" />
 
@@ -315,10 +364,10 @@ const submit = async () => {
                     <InputLabel :value="`Start Date`" for="start_date" />
                     <input
                         id="start_date"
-                        v-model="form.start_date"
+                        v-model="form.started_at"
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="start_date"
-                        type="date"
+                        type="datetime-local"
                     />
                     <InputError
                         :message="form.errors.start_date"
@@ -407,6 +456,7 @@ const submit = async () => {
                 />
                 <InputError :message="form.errors.completed_at" class="mt-2" />
             </div>
+            <UploadImage :id="props.camoActivity.id" @uploaded="handleUpload" />
             <div
                 class="flex flex-row justify-items-center items-center space-x-7 my-4"
             >

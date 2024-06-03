@@ -2,6 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import DashboardButton from "@/Components/DashboardButton.vue";
 
 const props = defineProps({
     resource: {
@@ -15,6 +16,7 @@ const props = defineProps({
     <AuthenticatedLayout>
         <template #header>
             <h2>Engine Types</h2>
+            <DashboardButton />
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 border rounded-md p-4">

@@ -47,7 +47,7 @@ class CamoController extends Controller
     public function create(): Response
     {
         try {
-            $this->authorize('view', Camo::class);
+            $this->authorize('create', Camo::class);
 
             return InertiaResponse::content('Camos/Create');
         } catch (AuthorizationException) {
@@ -67,7 +67,7 @@ class CamoController extends Controller
     {
         try {
             $this->authorize('create', Camo::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
 
             $camo = $this->camo->newModel($payload);
 
@@ -87,8 +87,8 @@ class CamoController extends Controller
     public function show(int $id): Response
     {
         try {
-            $this->authorize('view', Camo::class);
             $camo = $this->camo->getById($id);
+            $this->authorize('view', $camo);
             $resource = new CamoResource($camo);
 
             return InertiaResponse::content('Camos/Show', ['resource' => $resource]);

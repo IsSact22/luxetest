@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
+import DashboardButton from "@/Components/DashboardButton.vue";
 
 const props = defineProps({
     resource: {
@@ -30,8 +31,9 @@ const destroy = (id) => {
     <AuthenticatedLayout>
         <template #header>
             <h2>Users</h2>
+            <DashboardButton />
         </template>
-        <div class="flex flex-col justify-items-center items-center">
+        <div class="flex flex-col justify-items-center items-center py-12">
             <div class="my-4 border rounded-md px-4 py-4">
                 <form
                     class="my-2 flex flex-row justify-items-center items-center space-x-7"
@@ -53,7 +55,9 @@ const destroy = (id) => {
                     <Link :href="route('roles.index')" class="btn-goto">
                         Roles
                     </Link>
-                    <Link class="btn-goto"> Permissions</Link>
+                    <Link :href="route('permissions.index')" class="btn-goto">
+                        Permissions
+                    </Link>
                 </form>
                 <table class="table-auto">
                     <thead>
@@ -88,6 +92,7 @@ const destroy = (id) => {
                             <td class="text-center">{{ user.created_at }}</td>
                             <td class="col-actions">
                                 <Link
+                                    v-if="user.id !== 1"
                                     :href="route('users.show', user.id)"
                                     class="btn-edit"
                                     >Edit
@@ -98,6 +103,11 @@ const destroy = (id) => {
                                     @click="destroy(user.id)"
                                     >Delete
                                 </Link>
+                                <span
+                                    v-if="user.id === 1"
+                                    class="font-bold text-red-800"
+                                    >Actions not allowed</span
+                                >
                             </td>
                         </tr>
                     </tbody>

@@ -76,7 +76,9 @@ const toggleEditRole = () => {
                     <Link :href="route('users.index')" class="btn-goto">
                         Users
                     </Link>
-                    <Link class="btn-goto"> Permissions</Link>
+                    <Link :href="route('permissions.index')" class="btn-goto">
+                        Permissions</Link
+                    >
                 </form>
 
                 <!-- new role -->

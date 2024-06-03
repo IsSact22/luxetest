@@ -25,14 +25,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', static fn () => Inertia::render('Welcome', [
+Route::get('/', static fn() => Inertia::render('Welcome', [
     'canLogin' => Route::has('login'),
     'canRegister' => Route::has('register'),
     'laravelVersion' => Application::VERSION,
     'phpVersion' => PHP_VERSION,
 ]));
 
-Route::get('dashboard', static fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('dashboard', static fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(static function ($route) {
     // Invokes Controllers
@@ -45,6 +45,7 @@ Route::middleware('auth')->group(static function ($route) {
     $route->get('model-aircrafts/select', \App\Http\Controllers\Invokes\ModelAircraftController::class)->name('model-aircrafts.select');
     $route->get('aircrafts/select', \App\Http\Controllers\Invokes\AircraftController::class)->name('aircrafts.select');
     $route->get('labor-rates/select', \App\Http\Controllers\Invokes\LaborRateController::class)->name('labor-rates.select');
+    $route->get('camos/{id?}/select', \App\Http\Controllers\Invokes\CamoController::class)->name('camos.select');
     $route->get('camos/activities', ActivityController::class)->name('camos.activities');
     $route->match(['put', 'patch'], 'camo_activities/{id}/handle', HandleActivityController::class)
         ->name('camo_activities.handle');
@@ -53,12 +54,14 @@ Route::middleware('auth')->group(static function ($route) {
     $route->post('set-owner-aircraft', SetOwnerAircraftController::class)->name('set-owner-aircraft');
     // Roles
     $route->resource('roles', RoleController::class);
+    // Permissions
+    $route->resource('permissions', \App\Http\Controllers\PermissionController::class);
     // Users
     $route->resource('users', UserController::class);
     // Profile
-    $route->get('profile', static fn (\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)->edit($request))->name('profile.edit');
-    $route->patch('profile', static fn (ProfileUpdateRequest $request): RedirectResponse => (new ProfileController)->update($request))->name('profile.update');
-    $route->delete('profile', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new ProfileController)->destroy($request))->name('profile.destroy');
+    $route->get('profile', static fn(\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)->edit($request))->name('profile.edit');
+    $route->patch('profile', static fn(ProfileUpdateRequest $request): RedirectResponse => (new ProfileController)->update($request))->name('profile.update');
+    $route->delete('profile', static fn(\Illuminate\Http\Request $request): RedirectResponse => (new ProfileController)->destroy($request))->name('profile.destroy');
     // Labor Rates
     $route->resource('labor-rates', LaborRateController::class);
     // Engine Types
@@ -81,4 +84,4 @@ Route::middleware('auth')->group(static function ($route) {
     $route->resource('camo_activities', CamoActivityController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
