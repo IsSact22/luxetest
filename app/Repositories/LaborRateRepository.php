@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Contracts\LaborRateRepositoryInterface;
 use App\Models\LaborRate;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -23,11 +22,8 @@ class LaborRateRepository implements LaborRateRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('code', $search)
-                    ->orWhere('name', 'like', $search.'%')
-                    ->orWhereHas('engineType', static function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search.'%');
-                    });
+                $query->where('code', 'like', $search.'%')
+                    ->orWhere('name', 'like', '%'.$search.'%');
             })
             ->paginate($perPage)
             ->withQueryString();

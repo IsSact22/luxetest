@@ -21,7 +21,7 @@ class EngineTypeRepository implements EngineTypeRepositoryInterface
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
         return $this->model
-            ->when($request->has('search'), static function ($query, string $search) {
+            ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('name', 'like', $search.'%');
             })
             ->paginate($perPage)

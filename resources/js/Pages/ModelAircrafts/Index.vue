@@ -1,8 +1,10 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import Paginator from "@/Components/Paginator.vue";
 import DashboardButton from "@/Components/DashboardButton.vue";
+import _ from "lodash";
+import { route } from "ziggy-js";
 
 const props = defineProps({
     resource: {
@@ -10,6 +12,12 @@ const props = defineProps({
         default: () => ({}),
     },
 });
+const form = useForm({
+    search: "",
+});
+const fireSearch = _.throttle(function () {
+    form.get(route("model-aircrafts.index"), { preserveState: true });
+}, 200);
 </script>
 <template>
     <Head title="Model Aircrafts" />
@@ -26,10 +34,12 @@ const props = defineProps({
                     <div>
                         <input
                             id="search"
-                            class="px-2 py-1 rounded-md border-gray-300"
+                            v-model="form.search"
+                            class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
                             placeholder="search"
                             type="text"
+                            @keyup="fireSearch"
                         />
                     </div>
                     <Link
@@ -59,7 +69,7 @@ const props = defineProps({
                                     :href="
                                         route('model-aircrafts.edit', item.id)
                                     "
-                                    class="btn-goto"
+                                    class="btn-edit"
                                 >
                                     Edit
                                 </Link>

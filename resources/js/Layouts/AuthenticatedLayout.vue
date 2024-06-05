@@ -25,6 +25,10 @@ const showUsers = computed(() => {
     const userRoles = usePage().props.auth.userRoles;
     return ["super-admin", "admin"].includes(userRoles[0]);
 });
+const showBackoffice = computed(() => {
+    const user = usePage().props.auth.user;
+    return user.is_super || user.is_admin || user.is_cam;
+});
 </script>
 
 <template>
@@ -55,19 +59,21 @@ const showUsers = computed(() => {
                                     Dashboard
                                 </NavLink>
                                 <NavLink
+                                    v-show="showBackoffice"
                                     :active="route().current('aircrafts.index')"
                                     :href="route('aircrafts.index')"
                                 >
                                     Aircraft
                                 </NavLink>
                                 <NavLink
-                                    v-show="showCamos"
+                                    v-show="showBackoffice && showCamos"
                                     :active="route().current('camos.index')"
                                     :href="route('camos.index')"
                                 >
                                     Camos
                                 </NavLink>
                                 <div
+                                    v-show="showBackoffice"
                                     class="hidden sm:flex sm:items-center sm:ml-6"
                                 >
                                     <!-- Settings Dropdown -->

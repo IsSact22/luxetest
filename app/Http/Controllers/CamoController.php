@@ -34,11 +34,23 @@ class CamoController extends Controller
      */
     public function index(Request $request): Response
     {
-        $this->authorize('viewAny', Camo::class);
-        $camos = $this->camo->getAll($request);
-        $resource = CamoResource::collection($camos);
+        try {
+            $this->authorize('viewAny', Camo::class);
+            $camos = $this->camo->getAll($request);
+            $resource = CamoResource::collection($camos);
 
-        return InertiaResponse::content('Camos/Index', ['resource' => $resource]);
+            return InertiaResponse::content('Camos/Index', ['resource' => $resource]);
+        } catch (AuthorizationException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'description' => $e->getMessage(),
+            ]);
+        }
+
     }
 
     /**
@@ -67,7 +79,7 @@ class CamoController extends Controller
     {
         try {
             $this->authorize('create', Camo::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
 
             $camo = $this->camo->newModel($payload);
 
@@ -127,7 +139,7 @@ class CamoController extends Controller
         try {
             $camo = $this->camo->getById($id);
             $this->authorize('update', $camo);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->camo->updateModel($payload, $id);
 
             return to_route('camos.index')->with('success', 'CAMO created successfully');
