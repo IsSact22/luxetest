@@ -102,7 +102,8 @@ class PermissionController extends Controller
         int $id
     ): Response|RedirectResponse {
         try {
-            $this->authorize('update', Permission::class);
+            $permission = $this->permissionRepository->getById($id);
+            $this->authorize('update', $permission);
             $payload = precognitive(static fn ($bail) => $request->validated());
             $this->permissionRepository->updateModel($payload, $id);
 
@@ -124,7 +125,8 @@ class PermissionController extends Controller
     public function destroy(Request $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('delete', Permission::class);
+            $permission = $this->permissionRepository->getById($id);
+            $this->authorize('delete', $permission);
             $this->permissionRepository->deleteModel($id);
 
             return to_route('permissions.index')->with('success', 'Permission has been deleted.');

@@ -24,9 +24,9 @@ class LaborRateRepository implements LaborRateRepositoryInterface
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('code', $search)
-                    ->orWhere('name', 'like', $search . '%')
+                    ->orWhere('name', 'like', $search.'%')
                     ->orWhereHas('engineType', static function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search . '%');
+                        $query->where('name', 'like', $search.'%');
                     });
             })
             ->paginate($perPage)

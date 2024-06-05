@@ -53,6 +53,11 @@ class CamoActivity extends Model implements HasMedia
         return $this->belongsTo(Camo::class, 'camo_id');
     }
 
+    public function laborRate(): BelongsTo
+    {
+        return $this->belongsTo(LaborRate::class, 'labor_rate_id');
+    }
+
     #[Override]
     public function registerMediaConversions(?Media $media = null): void
     {

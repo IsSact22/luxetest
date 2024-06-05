@@ -38,12 +38,13 @@ class Camo extends Model implements HasMedia
 
     protected $appends = ['camo_rate'];
 
-    public static function boot(): void
+    #[Override]
+    protected static function boot(): void
     {
         parent::boot();
         static::creating(static function ($model) {
-            $aircraft = Aircraft::find($model->aircraft_id);
-            $owner = User::find($model->owner_id);
+            $aircraft = \App\Models\Aircraft::query()->find($model->aircraft_id);
+            $owner = \App\Models\User::query()->find($model->owner_id);
             $aircraft->aircraftOwner()->attach($owner);
         });
     }

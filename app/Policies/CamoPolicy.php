@@ -24,15 +24,11 @@ class CamoPolicy
             return true;
         }
 
-        if ($user->hasRole('cam') && $camo->cam_id === $user->id && $user->can('read-camo')) {
+        if ($user->hasRole('cam') && ($camo->cam_id === $user->id) && $user->can('read-camo')) {
             return true;
         }
 
-        if ($user->hasAnyRole(['owner', 'crew']) && ($user->id === $camo->owner_id || $user->owner_id === $camo->owner_id)) {
-            return true;
-        }
-
-        return false;
+        return $user->hasAnyRole(['owner', 'crew']) && ($user->id === $camo->owner_id || $user->owner_id === $camo->owner_id);
     }
 
     /**

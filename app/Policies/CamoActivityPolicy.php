@@ -20,6 +20,10 @@ class CamoActivityPolicy
      */
     public function view(User $user, CamoActivity $camoActivity): bool
     {
+        if (($camoActivity->owner_id === $user->id || $camoActivity->owner_id === $user->owner_id) && $user->can('read-activity')) {
+            return true;
+        }
+
         return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('read-activity');
     }
 
@@ -36,6 +40,10 @@ class CamoActivityPolicy
      */
     public function update(User $user, CamoActivity $camoActivity): bool
     {
+        if (($camoActivity->owner_id === $user->id || $camoActivity->owner_id === $user->owner_id) && $user->can('read-activity')) {
+            return true;
+        }
+
         return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('update-activity');
     }
 

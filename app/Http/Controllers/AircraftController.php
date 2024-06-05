@@ -50,7 +50,7 @@ class AircraftController extends Controller
     public function create(Request $request): Response
     {
         try {
-            $this->authorize('view', Aircraft::class);
+            $this->authorize('create', Aircraft::class);
 
             return InertiaResponse::content('Aircrafts/Create');
         } catch (AuthorizationException) {
@@ -90,8 +90,7 @@ class AircraftController extends Controller
     {
         try {
             $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('update-aircraft', $aircraft);
-
+            $this->authorize('update', $aircraft);
             $resource = new AircraftResource($aircraft);
 
             return InertiaResponse::content('Aircrafts/Edit', ['resource' => $resource]);
@@ -109,7 +108,8 @@ class AircraftController extends Controller
     public function update(UpdateAircraftRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('update', Aircraft::class);
+            $aircraft = $this->aircraftRepository->getById($id);
+            $this->authorize('update', $aircraft);
             $this->aircraftRepository->updateModel($request->all(), $id);
 
             return to_route('aircrafts.index')->with('success', 'Aircraft has been updated.');

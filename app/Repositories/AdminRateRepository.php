@@ -2,18 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Contracts\CamoActivityRateRepositoryInterface;
-use App\Models\CamoActivityRate;
+use App\Contracts\AdminRateRepositoryInterface;
+use App\Models\AdminRate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Override;
 
-class CamoActivityRateRepository implements CamoActivityRateRepositoryInterface
+class AdminRateRepository implements AdminRateRepositoryInterface
 {
-    public function __construct(protected CamoActivityRate $model)
+    public function __construct(protected AdminRate $model)
     {
     }
 
+    #[Override]
     public function getAll(Request $request): LengthAwarePaginator
     {
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
@@ -26,24 +28,28 @@ class CamoActivityRateRepository implements CamoActivityRateRepositoryInterface
             ->withQueryString();
     }
 
+    #[Override]
     public function getById(int $id): ?Model
     {
         return $this->model->findOrFail($id);
     }
 
-    public function newModel(array $array): ?Model
+    #[Override]
+    public function newModel(array $attributes): ?Model
     {
-        return $this->model->create($array);
+        return $this->model->create($attributes);
     }
 
-    public function updateModel(array $array, int $id): ?Model
+    #[Override]
+    public function updateModel(array $attributes, int $id): ?Model
     {
-        $this->model->findOrFail($id)->update($array);
+        $this->model->findOrFail($id)->update($attributes);
 
         return $this->model->fresh();
     }
 
-    public function deleteModel(int $id): bool
+    #[Override]
+    public function deleteModel(int $id): ?bool
     {
         return $this->model->findOrFail($id)->delete();
     }

@@ -77,7 +77,7 @@ class LaborRateController extends Controller
     {
         try {
             $this->authorize('create', LaborRate::class);
-            $payload = precognitive(static fn($bail) => $request->validated());
+            $payload = precognitive(static fn ($bail) => $request->validated());
             $this->laborRateRepository->newModel($payload);
 
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been created.');
@@ -96,9 +96,9 @@ class LaborRateController extends Controller
     public function show(Request $request, int $id): Response
     {
         try {
-            $camoRate = $this->laborRateRepository->getById($id);
-            $this->authorize('view', LaborRate::class);
-            $resource = new LaborRateResource($camoRate);
+            $laborRate = $this->laborRateRepository->getById($id);
+            $this->authorize('view', $laborRate);
+            $resource = new LaborRateResource($laborRate);
 
             return InertiaResponse::content('LaborRates/Show', ['resource' => $resource]);
         } catch (AuthorizationException) {
@@ -118,10 +118,10 @@ class LaborRateController extends Controller
     public function edit(Request $request, int $id): Response
     {
         try {
-            $camoRate = $this->laborRateRepository->getById($id);
-            $this->authorize('view', $camoRate);
+            $laborRate = $this->laborRateRepository->getById($id);
+            $this->authorize('view', $laborRate);
 
-            $resource = new LaborRateResource($camoRate);
+            $resource = new LaborRateResource($laborRate);
 
             return InertiaResponse::content('LaborRates/Edit', ['resource' => $resource]);
         } catch (AuthorizationException) {
@@ -141,8 +141,10 @@ class LaborRateController extends Controller
     public function update(UpdateCamoRateRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('update', LaborRate::class);
-            $this->laborRateRepository->updateModel($request->all(), $id);
+            $laborRate = $this->laborRateRepository->getById($id);
+            $this->authorize('update', $laborRate);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->laborRateRepository->updateModel($payload, $id);
 
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been updated.');
         } catch (AuthorizationException) {
@@ -162,7 +164,8 @@ class LaborRateController extends Controller
     public function destroy(Request $request, int $id): RedirectResponse|Response
     {
         try {
-            $this->authorize('delete', LaborRate::class);
+            $laborRate = $this->laborRateRepository->getById($id);
+            $this->authorize('delete', $laborRate);
             $this->laborRateRepository->deleteModel($id);
 
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been deleted.');

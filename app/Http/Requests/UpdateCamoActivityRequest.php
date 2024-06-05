@@ -29,10 +29,10 @@ class UpdateCamoActivityRequest extends FormRequest
             'name' => ['required', 'string'],
             'description' => ['required', 'string'],
             'status' => ['required', 'string'],
-            'comments' => ['required', 'string'],
+            'comments' => ['nullable', 'string'],
             'labor_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
             'material_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
-            'material_information' => ['required', 'string'],
+            'material_information' => ['nullable', 'string'],
             'awr' => ['nullable', 'string'],
             'approval_status' => ['nullable', 'string'],
         ];

@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
@@ -18,7 +19,7 @@ use Throwable;
 
 class MediaController extends Controller
 {
-    public function addImages(Request $request): \Inertia\Response
+    public function addImages(Request $request): Response
     {
         try {
             if ($request->has('model_id') && $request->has('model_name')) {
@@ -47,9 +48,9 @@ class MediaController extends Controller
 
     public function getModelRecord($modelName, $id)
     {
-        $modelClass = 'App\\Models\\'.$modelName;
+        $modelClass = 'App\\Models\\' . $modelName;
 
-        if (! class_exists($modelClass)) {
+        if (!class_exists($modelClass)) {
             return null;
         }
 
@@ -95,5 +96,35 @@ class MediaController extends Controller
             'CamoActivity' => new CamoActivity,
             default => null,
         };
+    }
+
+    /**
+     * @throws FileDoesNotExist
+     */
+    public function getMedia(Camo $camo): Response
+    {
+        $results = collect();
+        $camoId = $camo->id;
+        $activities = CamoActivity::query()
+            ->where('camo_id', $camoId)
+            ->get();
+        foreach ($activities as $activity) {
+            if ($activity instanceof CamoActivity && $activity->getMedia('*')) {
+                foreach ($activity->getMedia('*') as $key => $media) {
+                    $results->push([
+                        'id' => $media->id,
+                        'camo_id' => $camoId,
+                        'title' => $media->name,
+                        'file_name' => $media->file_name,
+                        'mime_type' => $media->mime_type,
+                        'size' => $media->size,
+                        'url' => $media->getUrl(),
+                    ]);
+                }
+            } else {
+                throw new FileDoesNotExist;
+            }
+        }
+        return InertiaResponse::content('Camos/Gallery', ['resource' => $results]);
     }
 }

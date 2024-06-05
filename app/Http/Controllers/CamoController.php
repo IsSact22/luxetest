@@ -67,7 +67,7 @@ class CamoController extends Controller
     {
         try {
             $this->authorize('create', Camo::class);
-            $payload = precognitive(static fn($bail) => $request->validated());
+            $payload = precognitive(static fn ($bail) => $request->validated());
 
             $camo = $this->camo->newModel($payload);
 
@@ -105,8 +105,8 @@ class CamoController extends Controller
     public function edit(string $id): Response
     {
         try {
-            $this->authorize('update', Camo::class);
             $camo = $this->camo->getById($id);
+            $this->authorize('update', $camo);
             $resource = new CamoResource($camo);
 
             return InertiaResponse::content('Camos/Edit', ['resource' => $resource]);
@@ -125,10 +125,12 @@ class CamoController extends Controller
     public function update(UpdateCamoRequest $request, string $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('update', Camo::class);
-            $this->camo->updateModel($request->all(), $id);
+            $camo = $this->camo->getById($id);
+            $this->authorize('update', $camo);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->camo->updateModel($payload, $id);
 
-            return to_route('users.index')->with('success', 'CAMO created successfully');
+            return to_route('camos.index')->with('success', 'CAMO created successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
@@ -144,10 +146,11 @@ class CamoController extends Controller
     public function destroy(string $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('delete', Camo::class);
+            $camo = $this->camo->getById($id);
+            $this->authorize('delete', $camo);
             $this->camo->deleteModel($id);
 
-            return to_route('services.index')->with('success', 'CAMO deleted successfully');
+            return to_route('camos.index')->with('success', 'CAMO deleted successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {

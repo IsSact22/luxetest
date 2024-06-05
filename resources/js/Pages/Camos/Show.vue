@@ -203,14 +203,14 @@ const badgeClass = (priority) => {
                     >
                         new activity for this CAMO
                     </button>
-                    <button
-                        class="btn-inDev"
-                        title="Under development"
-                        type="button"
+                    <Link
+                        :href="route('camos.images', props.resource.data.id)"
+                        class="btn-goto"
+                        title="Gallery of Camo"
                         @click.passive.prevent
                     >
-                        Camo to PDF
-                    </button>
+                        View Media
+                    </Link>
                     <button
                         class="btn-inDev"
                         title="Under development"
@@ -354,7 +354,7 @@ const badgeClass = (priority) => {
                     <!-- add activity -->
                     <Transition appear name="fade" @after-enter="addActivity">
                         <CamoActivityForm
-                            v-show="addActivity"
+                            v-if="addActivity"
                             :camo="props.resource.data"
                             :user="usePage().props.auth.user"
                             @add-activity="handleAddActivity"
@@ -370,7 +370,7 @@ const badgeClass = (priority) => {
                     <!-- add activity -->
 
                     <Transition appear name="fade" @after-enter="!addActivity">
-                        <div v-show="!addActivity">
+                        <div v-if="!addActivity">
                             <!-- pending approval -->
                             <div
                                 class="flex items-center -mx-4 space-x-2 overflow-x-auto overflow-y-hidden sm:justify-center flex-nowrap my-4"

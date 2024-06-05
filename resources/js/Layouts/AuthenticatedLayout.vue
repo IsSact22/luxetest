@@ -137,6 +137,16 @@ const showUsers = computed(() => {
                                                 <DropdownLink
                                                     :href="
                                                         route(
+                                                            'admin-rates.index',
+                                                        )
+                                                    "
+                                                >
+                                                    Admin Rates
+                                                </DropdownLink>
+                                                <hr />
+                                                <DropdownLink
+                                                    :href="
+                                                        route(
                                                             'labor-rates.index',
                                                         )
                                                     "

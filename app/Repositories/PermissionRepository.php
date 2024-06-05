@@ -15,23 +15,24 @@ class PermissionRepository implements PermissionRepositoryInterface
     {
     }
 
+    #[Override]
     public function getAll(Request $request): LengthAwarePaginator
     {
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search . '%');
+                $query->where('name', 'like', $search.'%');
             })
             ->paginate($perPage)
             ->withQueryString();
     }
 
+    #[Override]
     public function getById(int $id): ?Model
     {
         return $this->model->findOrFail($id);
     }
-
 
     #[Override]
     public function newModel(array $attributes): ?Model
@@ -42,7 +43,7 @@ class PermissionRepository implements PermissionRepositoryInterface
     #[Override]
     public function updateModel(array $attributes, int $id): ?Model
     {
-        $permission = $this->model->findOrFail($id)->update($attributes);
+        $this->model->findOrFail($id)->update($attributes);
 
         return $this->model->fresh();
     }

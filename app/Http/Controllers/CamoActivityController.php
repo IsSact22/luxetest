@@ -6,6 +6,7 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoActivityRequest;
 use App\Http\Requests\UpdateCamoActivityRequest;
 use App\Http\Resources\CamoActivityResource;
+use App\Models\Camo;
 use App\Models\CamoActivity;
 use App\Repositories\CamoActivityRepository;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -76,7 +77,7 @@ class CamoActivityController extends Controller
     {
         try {
             $this->authorize('create', CamoActivity::class);
-            $payload = precognitive(static fn($bail) => $request->validated());
+            $payload = precognitive(static fn ($bail) => $request->validated());
             $this->activity->newModel($payload);
 
             return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
@@ -96,9 +97,9 @@ class CamoActivityController extends Controller
     public function show(string $id): Response
     {
         try {
-            $this->authorize('view', CamoActivity::class);
-            $camo = $this->activity->getById($id);
-            $resource = new CamoActivityResource($camo);
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('view', $camoActivity);
+            $resource = new CamoActivityResource($camoActivity);
 
             return InertiaResponse::content('CamoActivities/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
@@ -118,9 +119,14 @@ class CamoActivityController extends Controller
         try {
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
+            $camo = Camo::query()->findOrFail($camoActivity->camo_id);
+            $camoResource = new CamoActivityResource($camo);
             $resource = new CamoActivityResource($camoActivity);
 
-            return InertiaResponse::content('CamoActivities/Edit', ['resource' => $resource]);
+            return InertiaResponse::content('CamoActivities/Edit', [
+                'resource' => $resource,
+                'camo' => $camoResource,
+            ]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
@@ -139,7 +145,8 @@ class CamoActivityController extends Controller
 
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
-            $this->activity->updateModel($request->all(), $id);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->activity->updateModel($payload, $id);
 
             return to_route('camos.show', $id)->with('success', 'Activity update successfully');
         } catch (ModelNotFoundException) {
@@ -157,7 +164,8 @@ class CamoActivityController extends Controller
     public function destroy(string $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('delete', CamoActivity::class);
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('delete', $camoActivity);
             $this->activity->deleteModel($id);
 
             return to_route('camo_activities.index')->with('success', 'Activity deleted successfully');

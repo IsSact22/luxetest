@@ -15,7 +15,7 @@ class CamoController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $camo = Camo::query()
-            ->when($request->get('search'), function ($query, $search) {
+            ->when($request->get('search'), static function ($query, $search) {
                 $query->where('id', $search);
             })
             ->orderBy('id', 'desc')

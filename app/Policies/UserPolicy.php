@@ -42,11 +42,7 @@ class UserPolicy
             return true;
         }
 
-        if ($user->hasAnyRole(['cam', 'owner', 'crew']) && $user->id === $model->id) {
-            return true;
-        }
-
-        return false;
+        return $user->hasAnyRole(['cam', 'owner', 'crew']) && $user->id === $model->id;
     }
 
     /**

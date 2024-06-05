@@ -18,6 +18,7 @@ class PermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Force-delete
+        Permission::create(['name' => 'restore', 'guard_name' => 'web']);
         Permission::create(['name' => 'force-delete', 'guard_name' => 'web']);
 
         // Role

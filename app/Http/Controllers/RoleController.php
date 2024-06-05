@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\RoleRepositoryInterface;
 use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -75,8 +76,9 @@ class RoleController extends Controller
     public function show(string $id): Response
     {
         try {
-            $user = $this->role->getById($id);
-            $resource = new RoleResource($user);
+            $role = $this->role->getById($id);
+            $this->authorize('view', $role);
+            $resource = new RoleResource($role);
 
             return InertiaResponse::content('Roles/Show', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
@@ -92,8 +94,9 @@ class RoleController extends Controller
     public function edit(string $id): Response
     {
         try {
-            $user = $this->role->getById($id);
-            $resource = new RoleResource($user);
+            $role = $this->role->getById($id);
+            $this->authorize('view', $role);
+            $resource = new RoleResource($role);
 
             return InertiaResponse::content('Roles/Edit', ['resource' => $resource]);
         } catch (ModelNotFoundException) {
@@ -106,10 +109,13 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): Response|RedirectResponse
+    public function update(UpdateRoleRequest $request, string $id): Response|RedirectResponse
     {
         try {
-            $this->role->updateModel($request->all(), $id);
+            $role = $this->role->getById($id);
+            $this->authorize('update', $role);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->role->updateModel($payload, $id);
 
             return to_route('roles.index')->with('success', 'Role updated successfully');
         } catch (ModelNotFoundException) {
@@ -125,9 +131,11 @@ class RoleController extends Controller
     public function destroy(string $id): Response|RedirectResponse
     {
         try {
+            $role = $this->role->getById($id);
+            $this->authorize('delete', $role);
             $this->role->deleteModel($id);
 
-            return to_route('services.index')->with('success', 'Role deleted successfully');
+            return to_route('roles.index')->with('success', 'Role deleted successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable) {

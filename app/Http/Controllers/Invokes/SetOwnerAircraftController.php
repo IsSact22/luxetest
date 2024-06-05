@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Invokes;
 
 use App\Http\Controllers\Controller;
-use App\Models\Aircraft;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +16,7 @@ class SetOwnerAircraftController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         try {
-            $aircraft = Aircraft::find($request->get('aircraft_id'));
+            $aircraft = \App\Models\Aircraft::query()->find($request->get('aircraft_id'));
             $owner = $request->get('owner_id');
             $aircraft->aircraftOwner()->attach($owner);
 
@@ -25,8 +24,8 @@ class SetOwnerAircraftController extends Controller
                 'message' => 'Owner assigned correctly',
                 'aircraft' => $aircraft,
             ], 201);
-        } catch (Throwable $exception) {
-            Log::error($exception->getMessage());
+        } catch (Throwable $throwable) {
+            Log::error($throwable->getMessage());
 
             return response()->json([
                 'message' => 'Impossible to assign owner',

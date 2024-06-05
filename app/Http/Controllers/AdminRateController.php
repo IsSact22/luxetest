@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\BrandAircraftRepositoryInterface;
+use App\Contracts\AdminRateRepositoryInterface;
 use App\Helpers\InertiaResponse;
-use App\Http\Requests\StoreBrandAircraftRequest;
-use App\Http\Requests\UpdateBrandAircraftRequest;
-use App\Http\Resources\BrandAircraftResource;
-use App\Models\BrandAircraft;
+use App\Http\Requests\StoreAdminRateRequest;
+use App\Http\Requests\UpdateAdminRateRequest;
+use App\Http\Resources\AdminRateResource;
+use App\Models\AdminRate;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests as Precognitive;
@@ -19,25 +19,22 @@ use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;
 
-class BrandAircraftController extends Controller
+class AdminRateController extends Controller
 {
-    public function __construct(protected BrandAircraftRepositoryInterface $brandAircraftRepository)
+    public function __construct(protected AdminRateRepositoryInterface $adminRateRepository)
     {
         parent::__construct();
         $this->middleware(Precognitive::class)->only(['store', 'update']);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): Response
     {
         try {
-            $this->authorize('viewAny', BrandAircraft::class);
-            $engineType = $this->brandAircraftRepository->getAll($request);
-            $resource = BrandAircraftResource::collection($engineType);
+            $this->authorize('viewAny', AdminRate::class);
+            $adminRates = $this->adminRateRepository->getAll($request);
+            $resource = AdminRateResource::collection($adminRates);
 
-            return InertiaResponse::content('BrandAircrafts/Index', ['resource' => $resource]);
+            return InertiaResponse::content('AdminRates/Index', ['resource' => $resource]);
         } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
@@ -50,15 +47,12 @@ class BrandAircraftController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request): Response
     {
         try {
-            $this->authorize('create', BrandAircraft::class);
+            $this->authorize('create', AdminRate::class);
 
-            return InertiaResponse::content('BrandAircrafts/Create');
+            return InertiaResponse::content('AdminRates/Create');
         } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
@@ -68,17 +62,14 @@ class BrandAircraftController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBrandAircraftRequest $request): Response|RedirectResponse
+    public function store(StoreAdminRateRequest $request): Response|RedirectResponse
     {
         try {
-            $this->authorize('create', BrandAircraft::class);
+            $this->authorize('create', AdminRate::class);
             $payload = precognitive(static fn ($bail) => $request->validated());
-            $this->brandAircraftRepository->newBrandAircraft($payload);
+            $this->adminRateRepository->newModel($payload);
 
-            return to_route('brand-aircrafts.index')->with('success', 'Brand Aircraft has been created.');
+            return to_route('admin-rates.index')->with('success', 'Rate has been created.');
         } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
@@ -88,40 +79,21 @@ class BrandAircraftController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Request $request, int $id): Response
+    public function show(AdminRate $adminRate): Response
     {
-        try {
-            $brandAircraft = $this->brandAircraftRepository->getById($id);
-            $this->authorize('view', $brandAircraft);
-            $resource = new BrandAircraftResource($brandAircraft);
-
-            return InertiaResponse::content('BrandAircrafts/Show', ['resource' => $resource]);
-        } catch (AuthorizationException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable $e) {
-            Log::error($e->getMessage());
-
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
-        }
+        return Inertia::render('Errors/error', [
+            'status' => ResponseAlias::HTTP_NOT_FOUND,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Request $request, int $id): Response
     {
         try {
-            $brandAircraft = $this->brandAircraftRepository->getById($id);
-            $this->authorize('view', $brandAircraft);
+            $adminRate = $this->adminRateRepository->getById($id);
+            $this->authorize('update', $adminRate);
+            $resource = new AdminRateResource($adminRate);
 
-            $resource = new BrandAircraftResource($brandAircraft);
-
-            return InertiaResponse::content('BrandAircrafts/Edit', ['resource' => $resource]);
+            return InertiaResponse::content('AdminRates/Edit', ['resource' => $resource]);
         } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (ModelNotFoundException) {
@@ -133,18 +105,15 @@ class BrandAircraftController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBrandAircraftRequest $request, int $id): Response|RedirectResponse
+    public function update(UpdateAdminRateRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $brandAircraft = $this->brandAircraftRepository->getById($id);
-            $this->authorize('update', $brandAircraft);
+            $adminRate = $this->adminRateRepository->getById($id);
+            $this->authorize('update', $adminRate);
             $payload = precognitive(static fn ($bail) => $request->validated());
-            $this->brandAircraftRepository->updateBrandAircraft($payload, $id);
+            $this->adminRateRepository->updateModel($payload, $id);
 
-            return to_route('brand-aircrafts.index')->with('success', 'Brand Aircraft has been updated.');
+            return to_route('admin-rates.index')->with('success', 'Rate has been updated.');
         } catch (AuthorizationException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (ModelNotFoundException) {
@@ -156,17 +125,14 @@ class BrandAircraftController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $request, int $id): Response|RedirectResponse
     {
         try {
-            $brandAircraft = $this->brandAircraftRepository->getById($id);
-            $this->authorize('delete', $brandAircraft);
-            $this->brandAircraftRepository->deleteBrandAircraft($id);
+            $adminRate = $this->adminRateRepository->getById($id);
+            $this->authorize('delete', $adminRate);
+            $this->adminRateRepository->deleteModel($id);
 
-            return to_route('brand-aircrafts.index')->with('success', 'Brand Aircraft has been deleted.');
+            return to_route('admin-rates.index')->with('success', 'Rate has been deleted.');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable) {

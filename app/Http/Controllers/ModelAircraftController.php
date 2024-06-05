@@ -136,8 +136,10 @@ class ModelAircraftController extends Controller
     public function update(UpdateModelAircraftRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('update', ModelAircraft::class);
-            $this->modelAircraftRepository->updateModelAircraft($request->validated(), $id);
+            $modelAircraft = $this->modelAircraftRepository->getById($id);
+            $this->authorize('update', $modelAircraft);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->modelAircraftRepository->updateModelAircraft($payload, $id);
 
             return to_route('model-aircrafts.index')->with('success', 'Model Aircraft has been updated.');
         } catch (AuthorizationException) {
@@ -157,7 +159,8 @@ class ModelAircraftController extends Controller
     public function destroy(int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('delete', ModelAircraft::class);
+            $modelAircraft = $this->modelAircraftRepository->getById($id);
+            $this->authorize('delete', $modelAircraft);
             $this->modelAircraftRepository->deleteModelAircraft($id);
 
             return to_route('model-aircrafts.index')->with('success', 'Model Aircraft has been deleted.');

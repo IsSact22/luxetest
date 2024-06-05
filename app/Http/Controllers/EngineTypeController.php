@@ -140,8 +140,10 @@ class EngineTypeController extends Controller
     public function update(UpdateEngineTypeRequest $request, int $id): Response|RedirectResponse
     {
         try {
-            $this->authorize('update', EngineType::class);
-            $this->engineTypeRepository->updateEngineType($request->all(), $id);
+            $engineType = $this->engineTypeRepository->getById($id);
+            $this->authorize('update', $engineType);
+            $payload = precognitive(static fn ($bail) => $request->validated());
+            $this->engineTypeRepository->updateEngineType($payload, $id);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been updated.');
         } catch (AuthorizationException) {
@@ -161,7 +163,8 @@ class EngineTypeController extends Controller
     public function destroy(Request $request, int $id): RedirectResponse|Response
     {
         try {
-            $this->authorize('delete', EngineType::class);
+            $engineType = $this->engineTypeRepository->getById($id);
+            $this->authorize('delete', $engineType);
             $this->engineTypeRepository->deleteEngineType($id);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been deleted.');

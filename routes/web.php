@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminRateController;
 use App\Http\Controllers\AircraftController;
 use App\Http\Controllers\CamoActivityController;
 use App\Http\Controllers\CamoController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Invokes\CamController;
 use App\Http\Controllers\Invokes\HandleActivityController;
 use App\Http\Controllers\Invokes\MediaActivityController;
 use App\Http\Controllers\Invokes\OwnerController;
+use App\Http\Controllers\Invokes\PendingRateController;
 use App\Http\Controllers\Invokes\PermissionController;
 use App\Http\Controllers\Invokes\SetOwnerAircraftController;
 use App\Http\Controllers\LaborRateController;
@@ -52,6 +54,7 @@ Route::middleware('auth')->group(static function ($route) {
     $route->post('camo_activities/add', AddActivityController::class)
         ->name('camo_activities.add');
     $route->post('set-owner-aircraft', SetOwnerAircraftController::class)->name('set-owner-aircraft');
+    $route->get('has-pending-rates', PendingRateController::class)->name('has-pending-rates');
     // Roles
     $route->resource('roles', RoleController::class);
     // Permissions
@@ -62,6 +65,8 @@ Route::middleware('auth')->group(static function ($route) {
     $route->get('profile', static fn(\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)->edit($request))->name('profile.edit');
     $route->patch('profile', static fn(ProfileUpdateRequest $request): RedirectResponse => (new ProfileController)->update($request))->name('profile.update');
     $route->delete('profile', static fn(\Illuminate\Http\Request $request): RedirectResponse => (new ProfileController)->destroy($request))->name('profile.destroy');
+    // Admin Rate
+    $route->resource('admin-rates', AdminRateController::class);
     // Labor Rates
     $route->resource('labor-rates', LaborRateController::class);
     // Engine Types
@@ -74,12 +79,12 @@ Route::middleware('auth')->group(static function ($route) {
     $route->resource('aircrafts', AircraftController::class);
     // Camos
     $route->get('camos/dashboard', [DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
+
+    $route->get('camos/{camo}/get-images', [App\Http\Controllers\MediaController::class, 'getMedia'])->name('camos.images');
     $route->resource('camos', CamoController::class);
     // Media Camo Activities
-    $route->post('camo-activities/add-images', MediaActivityController::class)
-        ->name('camo-activities.add_images');
-    // Camo Rate Activities
-    //$route->resource('camo-activity-rates', CamoActivityRateController::class);
+    $route->post('camo_activities/add-images', MediaActivityController::class)
+        ->name('camo_activities.add_images');
     // Camo Activities
     $route->resource('camo_activities', CamoActivityController::class);
 });
