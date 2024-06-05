@@ -27,7 +27,7 @@ class FlightHourController extends Controller
         try {
             $flightHours = null;
             DB::transaction(function () use ($id, $date, $time) {
-                $this->aircraft = Aircraft::findOrFail($id);
+                $this->aircraft = \App\Models\Aircraft::query()->findOrFail($id);
                 $flightDate = Carbon::parse($date);
 
                 $flightHours = new FlightHour;

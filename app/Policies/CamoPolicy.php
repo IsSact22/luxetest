@@ -12,7 +12,7 @@ class CamoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('read-camo');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('read-camo');
     }
 
     /**
@@ -20,13 +20,15 @@ class CamoPolicy
      */
     public function view(User $user, Camo $camo): bool
     {
-        if ($user->hasAnyRole(['super-admin', 'admin'])) {
+        if ($user->hasAnyRole(['super-admin', 'admin']) && $user->can('read-camo')) {
             return true;
-        } elseif ($user->hasAnyRole(['owner', 'crew']) && $user->id === $camo->owner_id || $user->owner_id === $camo->owner_id) {
-            return true;
-        } else {
-            return false;
         }
+
+        if ($user->hasRole('cam') && ($camo->cam_id === $user->id) && $user->can('read-camo')) {
+            return true;
+        }
+
+        return $user->hasAnyRole(['owner', 'crew']) && ($user->id === $camo->owner_id || $user->owner_id === $camo->owner_id);
     }
 
     /**
@@ -50,7 +52,7 @@ class CamoPolicy
      */
     public function delete(User $user, Camo $camo): bool
     {
-        return $user->can('delete-camo');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('delete-camo');
     }
 
     /**
@@ -58,7 +60,7 @@ class CamoPolicy
      */
     public function restore(User $user, Camo $camo): bool
     {
-        return $user->can('restore');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('delete-camo') && $user->id === $camo->cam_id;
     }
 
     /**

@@ -14,20 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('v1', fn () => response()->json(['message' => 'welcome'], 200));
+Route::get('v1', static fn () => response()->json(['message' => 'welcome'], 200));
 
-Route::group(['namespace' => 'api', 'prefix' => 'v1'], function () {
+Route::group(['namespace' => 'api', 'prefix' => 'v1'], static function () {
     Route::post(
         'login',
-        fn (\Illuminate\Http\Request $request
-        ): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\AuthController)->login(
+        static fn (\Illuminate\Http\Request $request): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\AuthController)->login(
             $request
         )
     )->name('api.v1.login');
     Route::post(
         'logout',
-        fn (\Illuminate\Http\Request $request
-        ): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\AuthController)->logout(
+        static fn (\Illuminate\Http\Request $request): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\AuthController)->logout(
             $request
         )
     )->name('api.v1.logout');
@@ -37,35 +35,29 @@ Route::group([
     'namespace' => 'api',
     'prefix' => 'v1',
     'middleware' => 'auth:api',
-], function () {
+], static function () {
     Route::get(
         'users/{role}/byRole',
-        fn ($role
-        ): \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\RoleFilterController)->filterByRole(
+        static fn ($role): \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\RoleFilterController)->filterByRole(
             $role
         )
     )
         ->name('api.v1.users.byRole');
     Route::get(
         'users',
-        fn (\Illuminate\Http\Request $request
-        ): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\UserController)->index(
+        static fn (\Illuminate\Http\Request $request): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\UserController)->index(
             $request
         )
     )->name('api.v1.users');
     Route::post(
         'users',
-        fn (\Illuminate\Http\Request $request
-        ): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\UserController)->store(
+        static fn (\Illuminate\Http\Request $request): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\UserController)->store(
             $request
         )
     )->name('api.v1.users.store');
     Route::match(['put', 'patch'],
         'users',
-        fn (
-            \Illuminate\Http\Request $request,
-            $id
-        ): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\UserController)->update(
+        static fn (\Illuminate\Http\Request $request, $id): \App\Http\Responses\ApiSuccessResponse|\App\Http\Responses\ApiErrorResponse => (new \App\Http\Controllers\Api\v1\UserController)->update(
             $request,
             $id
         ))

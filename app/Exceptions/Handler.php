@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
     #[Override]
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
+        $this->reportable(static function (Throwable $e) {
             //
         });
     }

@@ -10,23 +10,25 @@
     "require": {
         "php": "^8.3",
         "guzzlehttp/guzzle": "^7.2",
-        "inertiajs/inertia-laravel": "^1.0",
+        "inertiajs/inertia-laravel": "^1.1.0",
         "laravel-lang/locales": "^2.6",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
-        "opcodesio/log-viewer": "^3.6",
+        "opcodesio/log-viewer": "^3.10",
         "php-ffmpeg/php-ffmpeg": "^1.2",
         "php-open-source-saver/jwt-auth": "^2.2",
+        "spatie/laravel-ignition": "^2.7",
         "spatie/laravel-medialibrary": "^11.0.0",
         "spatie/laravel-permission": "^6.4",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "barryvdh/laravel-debugbar": "^3.12",
         "barryvdh/laravel-ide-helper": "^3.0",
         "deployer/deployer": "^7.3",
-        "driftingly/rector-laravel": "^1.0",
+        "driftingly/rector-laravel": "^1.1",
         "fakerphp/faker": "^1.9.1",
         "laravel-lang/common": "^6.2",
         "laravel/breeze": "^2.0",
@@ -39,7 +41,6 @@
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/phpstan": "^1.10",
         "rector/rector": "^1.0",
-        "spatie/laravel-ignition": "^2.0",
         "tightenco/duster": "^2.7"
     },
     "autoload": {
@@ -63,16 +64,13 @@
             "@php artisan ide-helper:meta",
             "@php artisan ide-helper:models --write-mixin"
         ],
-        "post-install-cmd": [
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models --write-mixin"
-        ],
+        "post-install-cmd": [],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
             "@php artisan lang:update",
             "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta"
+            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:models --write-mixin"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

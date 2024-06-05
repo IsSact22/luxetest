@@ -24,7 +24,7 @@ class UpdatePermissionRequest extends FormRequest
     {
         return [
             'name' => 'nullable|string|unique:roles,name,'.$this->id,
-            'guard_name' => 'nullable|string',
+            'guard_name' => ['nullable', 'string'],
         ];
     }
 }

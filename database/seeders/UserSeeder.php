@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Crear Super-Admin
-        User::firstOrCreate([
+        \App\Models\User::query()->firstOrCreate([
             'email' => 'superadmin@luxeplus.com',
         ], [
             'name' => 'Super Admin',
@@ -23,33 +23,33 @@ class UserSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        $superAdmin = User::find(1);
+        $superAdmin = \App\Models\User::query()->find(1);
         $superAdmin->syncRoles('super-admin');
 
         // Crear Admin
         User::factory()
             ->create([
                 'name' => 'Mara Beltran',
-                'email' => 'mara@luexplus.com',
+                'email' => 'mara@luxeplus.com',
             ]);
-        $admin = User::find(2);
+        $admin = \App\Models\User::query()->find(2);
         $admin->syncRoles('admin');
 
         // Crear Cams
         User::factory()
             ->create([
                 'name' => 'Angel Contreras',
-                'email' => 'angel@luexplus.com',
+                'email' => 'angel@luxeplus.com',
             ]);
 
         User::factory()
             ->create([
                 'name' => 'Oscar Rodriguez',
-                'email' => 'oscar@luexplus.com',
+                'email' => 'oscar@luxeplus.com',
             ]);
 
-        $cams = User::whereIn('id', [3, 4])->pluck('id');
-        User::whereIn('id', $cams)->each(function ($admin) {
+        $cams = \App\Models\User::query()->whereIn('id', [3, 4])->pluck('id');
+        \App\Models\User::query()->whereIn('id', $cams)->each(static function ($admin) {
             $admin->syncRoles('cam');
         });
 
@@ -58,7 +58,7 @@ class UserSeeder extends Seeder
 
         $ownerIds = [5, 6, 7];
         $owners = $users->whereIn('id', $ownerIds);
-        $owners->each(function ($user) {
+        $owners->each(static function ($user) {
             $user->syncRoles('owner');
             $crew = User::factory()->create(['owner_id' => $user->id]);
             $crew->syncRoles('crew');
@@ -68,7 +68,7 @@ class UserSeeder extends Seeder
         $userAdminTest = User::factory()
             ->create([
                 'name' => 'Admin Test',
-                'email' => 'admin@luexplus.com',
+                'email' => 'admin@luxeplus.com',
             ]);
         $userAdminTest->syncRoles('admin');
 
@@ -76,7 +76,7 @@ class UserSeeder extends Seeder
         $userCamTest = User::factory()
             ->create([
                 'name' => 'Cam Test',
-                'email' => 'cam@luexplus.com',
+                'email' => 'cam@luxeplus.com',
             ]);
         $userCamTest->syncRoles('cam');
 
@@ -84,7 +84,7 @@ class UserSeeder extends Seeder
         $userOwnerTest = User::factory()
             ->create([
                 'name' => 'Owner Test',
-                'email' => 'owner@luexplus.com',
+                'email' => 'owner@luxeplus.com',
             ]);
         $userOwnerTest->syncRoles('owner');
 
@@ -92,7 +92,7 @@ class UserSeeder extends Seeder
         $userCrewTest = User::factory()
             ->create([
                 'name' => 'Crew Test',
-                'email' => 'crew@luexplus.com',
+                'email' => 'crew@luxeplus.com',
             ]);
         $userCrewTest->syncRoles('crew');
     }

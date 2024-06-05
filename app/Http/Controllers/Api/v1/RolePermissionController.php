@@ -11,13 +11,13 @@ use App\Http\Resources\PermissionResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
-use App\Repositories\PermissionService;
+use App\Repositories\PermissionRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class RolePermissionController extends Controller
 {
-    public function __construct(protected PermissionService $permissionService)
+    public function __construct(protected PermissionRepository $permissionService)
     {
         parent::__construct();
     }

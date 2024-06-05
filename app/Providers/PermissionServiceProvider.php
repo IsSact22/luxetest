@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Contracts\PermissionServiceInterface;
-use App\Repositories\PermissionService;
+use App\Contracts\PermissionRepositoryInterface;
+use App\Repositories\PermissionRepository;
 use Illuminate\Support\ServiceProvider;
 use Override;
 
@@ -15,7 +15,7 @@ class PermissionServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void
     {
-        $this->app->bind(PermissionServiceInterface::class, PermissionService::class);
+        $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
     }
 
     /**

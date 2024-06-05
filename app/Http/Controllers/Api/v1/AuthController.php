@@ -58,8 +58,8 @@ class AuthController extends Controller
                 ['message' => 'login successfully'],
                 ResponseAlias::HTTP_ACCEPTED
             );
-        } catch (Exception $e) {
-            LogHelper::logError($e);
+        } catch (Exception $exception) {
+            LogHelper::logError($exception);
 
             return AfterCatchUnknown();
         }
@@ -80,8 +80,8 @@ class AuthController extends Controller
                 ['message' => 'login successfully'],
                 ResponseAlias::HTTP_ACCEPTED
             );
-        } catch (Exception $e) {
-            LogHelper::logError($e);
+        } catch (Exception $exception) {
+            LogHelper::logError($exception);
 
             return AfterCatchUnknown();
         }

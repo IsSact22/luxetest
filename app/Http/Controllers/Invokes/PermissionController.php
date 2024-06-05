@@ -15,7 +15,7 @@ class PermissionController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         return response()->json([
-            'permissions' => Permission::pluck('name'),
+            'permissions' => Permission::query()->orderBy('name', 'asc')->pluck('name'),
         ], 200);
     }
 }

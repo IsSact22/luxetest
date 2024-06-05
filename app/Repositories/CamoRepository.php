@@ -24,34 +24,33 @@ class CamoRepository implements CamoRepositoryInterface
         $user = auth()->user();
 
         return $this->model
-            ->when($request->get('owner_id'), function ($query, int $ownerId) {
+            ->when($request->get('owner_id'), static function ($query, int $ownerId) {
                 $query->where('owner_id', $ownerId);
             })
-
-            ->when($user && $user->isCam, function ($query) use ($user) {
-                $query->where(function ($query) use ($user) {
+            ->when($user && $user->isCam, static function ($query) use ($user) {
+                $query->where(static function ($query) use ($user) {
                     $query->where('cam_id', $user->id);
                 });
             })
-
-            ->when($user && ($user->isOwner || $user->isCrew), function ($query) use ($user) {
-                $query->where(function ($query) use ($user) {
+            ->when($user && ($user->isOwner || $user->isCrew), static function ($query) use ($user) {
+                $query->where(static function ($query) use ($user) {
                     $query->where('owner_id', $user->id)
-                        ->orWhereHas('owner', function ($query) use ($user) {
+                        ->orWhereHas('owner', static function ($query) use ($user) {
                             $query->where('owner_id', $user->id);
                         });
                 });
             })
-
-            ->when($request->get('search'), function ($query, string $search) {
+            ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('customer', 'like', $search.'%')
                     ->orWhere('contract', 'like', $search.'%')
-                    ->orWhere('aircraft', 'like', $search.'%')
                     ->orWhere('location', 'like', $search.'%')
-                    ->orWhereHas('owner', function (Builder $query) use ($search) {
+                    ->orWhereHas('aircraft', static function (Builder $query) use ($search) {
+                        $query->where('register', 'like', $search.'%');
+                    })
+                    ->orWhereHas('owner', static function (Builder $query) use ($search) {
                         $query->where('name', 'like', $search.'%');
                     })
-                    ->orWhereHas('cam', function (Builder $query) use ($search) {
+                    ->orWhereHas('cam', static function (Builder $query) use ($search) {
                         $query->where('name', 'like', $search.'%');
                     });
             })
@@ -66,29 +65,13 @@ class CamoRepository implements CamoRepositoryInterface
     }
 
     #[Override]
-    public function newCamo(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
-        $camo = $this->model->create([
-            'customer' => $data['customer'],
-            'owner_id' => $data['owner_id'],
-            'contract' => $data['contract'],
-            'cam_id' => $data['cam_id'],
-            'aircraft' => $data['aircraft'],
-            'description' => $data['description'],
-            'start_date' => $data['start_date'],
-            'finish_date' => $data['finish_date'],
-            'location' => $data['location'],
-        ]);
-
-        if (isset($data['activities'])) {
-            $camo->activities()->createMany($data['activities']);
-        }
-
-        return $camo;
+        return $this->model->create($data);
     }
 
     #[Override]
-    public function updateCamo(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
 
@@ -96,7 +79,7 @@ class CamoRepository implements CamoRepositoryInterface
     }
 
     #[Override]
-    public function deleteCamo(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

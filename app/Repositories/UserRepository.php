@@ -22,9 +22,9 @@ class UserRepository implements UserRepositoryInterface
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
         return $this->model
-            ->when($request->get('search'), function ($query, string $search) {
+            ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('name', 'like', $search.'%')
-                    ->orWhereHas('roles', function ($query) use ($search) {
+                    ->orWhereHas('roles', static function ($query) use ($search) {
                         $query->where('name', 'like', $search.'%');
                     });
             })
@@ -75,7 +75,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     #[Override]
-    public function newUser(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
         $user = $this->model->create([
             'name' => $data['name'],
@@ -90,7 +90,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     #[Override]
-    public function updateUser(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $user = $this->model->findOrFail($id);
         $user->update($data);
@@ -103,7 +103,7 @@ class UserRepository implements UserRepositoryInterface
     }
 
     #[Override]
-    public function deleteUser(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

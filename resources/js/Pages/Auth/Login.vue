@@ -38,11 +38,15 @@ const submit = () => {
     <GuestLayout class="login-transition" id="login">
         <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+        <div v-if="status" class="font-medium text-sm text-green-600">
             {{ status }}
         </div>
 
         <form @submit.prevent="submit">
+            <h2 class="text-center my-1">
+                Login to your account <br>
+                <small class="text-xs">Dont have account?</small>
+            </h2>
             <div>
                 <InputLabel for="email" value="Email" />
 

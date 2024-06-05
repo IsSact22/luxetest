@@ -21,7 +21,7 @@ class RoleRepository implements RoleRepositoryInterface
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
         return $this->model
-            ->when($request->get('search'), function ($query, string $search) {
+            ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('name', 'like', $search.'%');
             })
             ->paginate($perPage)
@@ -35,7 +35,7 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     #[Override]
-    public function newRole(array $data): ?Model
+    public function newModel(array $data): ?Model
     {
         return $this->model->create([
             'name' => $data['name'],
@@ -44,7 +44,7 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     #[Override]
-    public function updateRole(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?Model
     {
         $this->model->findOrFail($id)->update($data);
 
@@ -52,7 +52,7 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     #[Override]
-    public function deleteRole(int $id): bool
+    public function deleteModel(int $id): bool
     {
         return $this->model->findOrFail($id)->delete();
     }

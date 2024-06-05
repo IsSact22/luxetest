@@ -9,7 +9,7 @@ beforeEach(function () {
 //uses(RefreshDatabase::class);
 
 it('admin go to users page', function () {
-    $user = \App\Models\User::find(1);
+    $user = \App\Models\User::query()->find(1);
 
     $this->assertDatabaseHas('users', [
         'email' => 'superadmin@luxeplus.com',
@@ -21,7 +21,7 @@ it('admin go to users page', function () {
 });
 
 it('user cant go to users page', function () {
-    $user = \App\Models\User::find(4);
+    $user = \App\Models\User::query()->find(4);
 
     $response = $this->actingAs($user)->get(route('users.index'));
 
@@ -29,7 +29,7 @@ it('user cant go to users page', function () {
 });
 
 it('admin go to show user', function () {
-    $user = \App\Models\User::find(1);
+    $user = \App\Models\User::query()->find(1);
 
     $this->assertDatabaseHas('users', [
         'email' => 'superadmin@luxeplus.com',
@@ -55,7 +55,7 @@ it('admin go to show user', function () {
 });*/
 
 it('admin can update any user', function () {
-    $user = \App\Models\User::find(1);
+    $user = \App\Models\User::query()->find(1);
 
     $this->assertTrue($user->hasRole('super-admin'));
     $this->assertDatabaseHas('users', [

@@ -34,10 +34,10 @@ class UserController extends Controller
     {
         try {
             $users = User::query()
-                ->when($request->get('search'), function ($query, string $search) {
+                ->when($request->get('search'), static function ($query, string $search) {
                     $query->where('id', $search)
                         ->orWhere('name', 'LIKE', $search.'%')
-                        ->orWhereHas('roles', function (Builder $query) use ($search) {
+                        ->orWhereHas('roles', static function (Builder $query) use ($search) {
                             $query->where('name', 'LIKE', $search.'%');
                         });
                 })
@@ -50,11 +50,11 @@ class UserController extends Controller
                 ['message' => 'return resource '.$this->modelName],
                 ResponseAlias::HTTP_ACCEPTED
             );
-        } catch (Throwable $e) {
-            LogHelper::logError($e);
+        } catch (Throwable $throwable) {
+            LogHelper::logError($throwable);
 
             return new ApiErrorResponse(
-                $e,
+                $throwable,
                 'Error occurred while fetching users.',
                 ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
             );
@@ -64,7 +64,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $user = User::create($request->all());
+            $user = \App\Models\User::query()->create($request->all());
             $credentials = $user->only('email', 'password');
 
             if (! $token = auth('api')->attempt($credentials)) {
@@ -117,8 +117,8 @@ class UserController extends Controller
     public function update(Request $request, $id): ApiSuccessResponse|ApiErrorResponse
     {
         $validatedData = Validator::make($request->all(), [
-            'name' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:8|confirmed',
+            'name' => ['nullable', 'string', 'max:255'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
         if ($validatedData->fails()) {
@@ -130,7 +130,7 @@ class UserController extends Controller
         }
 
         try {
-            $user = User::findOrFail($id);
+            $user = \App\Models\User::query()->findOrFail($id);
 
             if ($request->has('name') && ! empty($validatedData['name'])) {
                 $user->name = $validatedData['name'];
@@ -170,7 +170,7 @@ class UserController extends Controller
     public function delete(int $id): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            $user = User::findOrFail($id);
+            $user = \App\Models\User::query()->findOrFail($id);
             $user->deleteOrFail();
 
             return new ApiSuccessResponse(

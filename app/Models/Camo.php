@@ -2,19 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperCamo
  */
-class Camo extends Model
+class Camo extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $table = 'camos';
@@ -24,12 +28,26 @@ class Camo extends Model
         'owner_id',
         'contract',
         'cam_id',
-        'aircraft',
+        'aircraft_id',
         'description',
         'start_date',
+        'estimate_finish_date',
         'finish_date',
         'location',
     ];
+
+    protected $appends = ['camo_rate'];
+
+    #[Override]
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::creating(static function ($model) {
+            $aircraft = \App\Models\Aircraft::query()->find($model->aircraft_id);
+            $owner = \App\Models\User::query()->find($model->owner_id);
+            $aircraft->aircraftOwner()->attach($owner);
+        });
+    }
 
     public function isCrewOfOwner(User $user): bool
     {
@@ -46,9 +64,21 @@ class Camo extends Model
         return $this->belongsTo(User::class, 'cam_id');
     }
 
-    public function activities(): HasMany
+    public function camoActivity(): HasMany
     {
         return $this->hasMany(CamoActivity::class);
+    }
+
+    public function aircraft(): BelongsTo
+    {
+        return $this->belongsTo(Aircraft::class)->with('modelAircraft');
+    }
+
+    public function camoRate(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->aircraft->modelAircraft->engineType
+        );
     }
 
     #[Override]
@@ -59,9 +89,10 @@ class Camo extends Model
             'owner_id' => 'integer',
             'contract' => 'string',
             'cam_id' => 'integer',
-            'aircraft' => 'string',
+            'aircraft_id' => 'integer',
             'description' => 'string',
             'start_date' => 'datetime:Y-m-d',
+            'estimate_finish_date' => 'datetime:Y-m-d',
             'finish_date' => 'datetime:Y-m-d',
             'location' => 'string',
             'created_at' => 'datetime:Y-m-d H:i',

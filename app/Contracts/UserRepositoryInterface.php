@@ -18,9 +18,9 @@ interface UserRepositoryInterface
 
     public function getById(int $id): ?Model;
 
-    public function newUser(array $data): ?Model;
+    public function newModel(array $data): ?Model;
 
-    public function updateUser(array $data, int $id): ?Model;
+    public function updateModel(array $data, int $id): ?Model;
 
-    public function deleteUser(int $id): bool;
+    public function deleteModel(int $id): bool;
 }

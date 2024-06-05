@@ -17,17 +17,17 @@ class DashboardInfoController extends Controller
     {
         $user = auth()->user();
 
-        $camos = Camo::orderByDesc('id')
-            ->when($user && $user->isCam, function ($query) use ($user) {
-                $query->where(function ($query) use ($user) {
+        $camos = \App\Models\Camo::query()->orderByDesc('id')
+            ->when($user && $user->isCam, static function ($query) use ($user) {
+                $query->where(static function ($query) use ($user) {
                     $query->where('cam_id', $user->id);
                 });
             })
 
-            ->when($user && ($user->isOwner || $user->isCrew), function ($query) use ($user) {
-                $query->where(function ($query) use ($user) {
+            ->when($user && ($user->isOwner || $user->isCrew), static function ($query) use ($user) {
+                $query->where(static function ($query) use ($user) {
                     $query->where('owner_id', $user->id)
-                        ->orWhereHas('owner', function ($query) use ($user) {
+                        ->orWhereHas('owner', static function ($query) use ($user) {
                             $query->where('owner_id', $user->id);
                         });
                 });

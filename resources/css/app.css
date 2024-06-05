@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('upload.css');
 
 @tailwind base;
 @tailwind components;
@@ -7,18 +8,23 @@
 html {
     font-family: 'Open Sans', sans-serif;
 }
+
 h1 {
     @apply text-xl text-neutral-600
 }
+
 h2 {
     @apply uppercase font-semibold text-xl text-gray-800 leading-tight
 }
+
 table {
     @apply mx-auto;
 }
+
 table thead tr th {
     @apply text-sm uppercase px-4 py-1 bg-neutral-300
 }
+
 table th:first-child {
     @apply rounded-tl-lg;
 }
@@ -26,78 +32,113 @@ table th:first-child {
 table th:last-child {
     @apply rounded-tr-lg;
 }
+
 table tbody tr td {
     @apply text-sm  px-4 py-3
 }
+
 table tbody tr:hover {
     @apply bg-neutral-200;
 }
+
 @layer utilities {
     tbody tr:nth-child(even) {
         @apply bg-neutral-200/50;
     }
 }
+
 .col-actions {
     @apply space-x-2
 }
-.b-inDev {
+
+.btn-inDev {
     @apply inline-flex items-center px-4 py-2 bg-gray-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-500 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-.b-goto {
-    @apply inline-flex items-center px-4 py-2 bg-brand-black border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
+
+.btn-goto {
+    @apply inline-flex items-center px-4 py-2 bg-brand-blue-dark border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-.b-goto:hover {
+
+.btn-goto:hover {
     @apply bg-brand-accent
 }
-.b-show {
+
+.btn-show {
     @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-.b-show:hover {
+
+.btn-show:hover {
     @apply bg-sky-300
 }
-.b-edit {
+
+.btn-edit {
     @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-.b-edit:hover {
+
+.btn-edit:hover {
     @apply bg-amber-500
 }
-.b-delete {
+
+.btn-delete {
     @apply inline-flex items-center px-4 py-2 bg-neutral-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-.b-delete:hover {
+
+.btn-delete:hover {
     @apply bg-red-500
 }
-.b-submit {
+
+.btn-submit {
     @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-.b-submit:hover {
+
+.btn-submit:hover {
     @apply text-emerald-700 bg-emerald-300 border-emerald-300
 }
-.b-cancel {
+
+.btn-cancel {
     @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
 }
-.b-cancel:hover {
+
+.btn-cancel:hover {
     @apply text-amber-700 bg-amber-300 border border-amber-300
 }
 
 .badge-info {
-    @apply bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
 }
+
 .badge-approval {
-    @apply bg-emerald-100 text-emerald-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-emerald-100 text-emerald-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
 }
+
 .badge-progress {
-    @apply bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
 }
+
+.badge-in_progress {
+    @apply bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+}
+
+.badge-approved {
+    @apply bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+}
+
 .badge-completed {
-    @apply bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
 }
+
 .badge-pending {
-    @apply bg-amber-100 text-amber-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-amber-100 text-amber-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
 }
+
 .badge-alert {
-    @apply bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
 }
+
 .placeholder-custom::placeholder {
     @apply text-gray-500 text-xs
+}
+
+.input-not-allowed {
+    @apply bg-cyan-100 cursor-not-allowed
 }

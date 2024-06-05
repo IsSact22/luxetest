@@ -13,7 +13,15 @@ class CamoSeeder extends Seeder
      */
     public function run(): void
     {
-        Camo::factory(2)->create();
+        Camo::factory()
+            ->count(3)
+            ->create()
+            ->each(static function (Camo $camo) {
+                $randomNumber = random_int(25, 75);
+                $camo->camoActivity()->saveMany(CamoActivity::factory($randomNumber)->create());
+            });
+
+        /*Camo::factory(2)->create();
         $randomNumber = random_int(25, 52);
         CamoActivity::factory($randomNumber)->create();
 
@@ -22,6 +30,6 @@ class CamoSeeder extends Seeder
             'cam_id' => 12,
         ]);
         $randomNumber = random_int(25, 52);
-        CamoActivity::factory($randomNumber)->create();
+        CamoActivity::factory($randomNumber)->create();*/
     }
 }

@@ -1,13 +1,11 @@
 <?php
 
-use App\Models\User;
-
 beforeEach(function () {
     $this->seed();
 });
 
 it('Access Admin Dashboard', function () {
-    $user = User::find(2);
+    $user = \App\Models\User::query()->find(2);
     $this->assertTrue($user->hasRole('admin'));
     $response = $this
         ->actingAs($user)
@@ -17,7 +15,7 @@ it('Access Admin Dashboard', function () {
 });
 
 it('Access Admin Camos', function () {
-    $user = User::find(2);
+    $user = \App\Models\User::query()->find(2);
     $this->assertTrue($user->hasRole('admin'));
     $response = $this
         ->actingAs($user)
@@ -27,7 +25,7 @@ it('Access Admin Camos', function () {
 });
 
 it('Access Admin Show Camo', function () {
-    $user = User::find(2);
+    $user = \App\Models\User::query()->find(2);
     $this->assertTrue($user->hasRole('admin'));
     $this->assertTrue($user->can('read-camo'));
 
@@ -39,7 +37,7 @@ it('Access Admin Show Camo', function () {
 });
 
 it('Admin cant Update Camo', function () {
-    $user = User::find(2);
+    $user = \App\Models\User::query()->find(2);
     $this->assertTrue($user->hasRole('admin'));
     $response = $this
         ->actingAs($user)
@@ -50,7 +48,7 @@ it('Admin cant Update Camo', function () {
 });
 
 it('Admin can view Users', function () {
-    $user = User::find(2);
+    $user = \App\Models\User::query()->find(2);
     $this->assertTrue($user->hasRole('admin'));
     $response = $this
         ->actingAs($user)
@@ -59,7 +57,7 @@ it('Admin can view Users', function () {
 });
 
 it('Admin can view User', function () {
-    $user = User::find(2);
+    $user = \App\Models\User::query()->find(2);
     $this->assertTrue($user->hasRole('admin'));
     $response = $this
         ->actingAs($user)
