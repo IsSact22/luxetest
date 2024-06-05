@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\AircraftRepositoryInterface;
 use App\Models\Aircraft;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -22,7 +23,11 @@ class AircraftRepository implements AircraftRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search.'%');
+                $query->where('register', 'like', $search.'%')
+                    ->orWhere('serial', 'like', $search.'%')
+                    ->orWhereHas('modelAircraft', function (Builder $query) use ($search) {
+                        $query->where('name', 'like', $search.'%');
+                    });
             })
             ->paginate($perPage)
             ->withQueryString();

@@ -22,7 +22,8 @@ class AdminRateRepository implements AdminRateRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search.'%');
+                $query->where('name', 'like', $search.'%')
+                    ->orWhere('description', 'like', $search.'%');
             })
             ->paginate($perPage)
             ->withQueryString();

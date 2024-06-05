@@ -1,9 +1,10 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import Paginator from "@/Components/Paginator.vue";
 import DashboardButton from "@/Components/DashboardButton.vue";
+import _ from "lodash";
 
 const props = defineProps({
     resource: {
@@ -11,6 +12,12 @@ const props = defineProps({
         default: () => ({}),
     },
 });
+const form = useForm({
+    search: "",
+});
+const fireSearch = _.throttle(function () {
+    form.get(route("labor-rates.index"), { preserveState: true });
+}, 200);
 </script>
 <template>
     <Head title="Labor Rates" />
@@ -27,10 +34,12 @@ const props = defineProps({
                     <div>
                         <input
                             id="search"
-                            class="px-2 py-1 rounded-md border-gray-300"
+                            v-model="form.search"
+                            class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
                             placeholder="search"
                             type="text"
+                            @keyup="fireSearch"
                         />
                     </div>
                     <Link :href="route('labor-rates.create')" class="btn-goto"
@@ -58,7 +67,7 @@ const props = defineProps({
                             <td class="col-actions">
                                 <Link
                                     :href="route('labor-rates.edit', item.id)"
-                                    class="btn-goto"
+                                    class="btn-edit"
                                 >
                                     Edit
                                 </Link>

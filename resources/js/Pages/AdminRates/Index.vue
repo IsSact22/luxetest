@@ -1,10 +1,12 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import Paginator from "@/Components/Paginator.vue";
 import DashboardButton from "@/Components/DashboardButton.vue";
 import AdminRateForm from "@/Pages/AdminRates/Partials/AdminRateForm.vue";
 import { ref } from "vue";
+import _ from "lodash";
+import { route } from "ziggy-js";
 
 const props = defineProps({
     resource: {
@@ -15,9 +17,7 @@ const props = defineProps({
 const showForm = ref(false);
 const selectedRate = ref(null);
 const setSelectedRate = (item) => {
-    console.log("selectedRate", item);
     selectedRate.value = item;
-    console.log("selectedRate", selectedRate.value);
     toggleShowForm();
 };
 const toggleShowForm = () => {
@@ -26,6 +26,12 @@ const toggleShowForm = () => {
     }
     showForm.value = !showForm.value;
 };
+const form = useForm({
+    search: "",
+});
+const fireSearch = _.throttle(function () {
+    form.get(route("admin-rates.index"), { preserveState: true });
+}, 200);
 </script>
 
 <template>
@@ -55,10 +61,12 @@ const toggleShowForm = () => {
                     <div>
                         <input
                             id="search"
-                            class="px-2 py-1 rounded-md border-gray-300"
+                            v-model="form.search"
+                            class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
                             placeholder="search"
                             type="text"
+                            @keyup="fireSearch"
                         />
                     </div>
                     <button
@@ -66,20 +74,6 @@ const toggleShowForm = () => {
                         type="button"
                         @click="toggleShowForm"
                     >
-                        <svg
-                            class="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M12 4.5v15m7.5-7.5h-15"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
                         New Rate
                     </button>
                 </form>
@@ -99,7 +93,7 @@ const toggleShowForm = () => {
                             <td>{{ item.description }}</td>
                             <td class="col-actions">
                                 <button
-                                    class="btn-goto"
+                                    class="btn-edit"
                                     type="button"
                                     @click="setSelectedRate(item)"
                                 >

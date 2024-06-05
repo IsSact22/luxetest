@@ -1,8 +1,9 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import DashboardButton from "@/Components/DashboardButton.vue";
+import _ from "lodash";
 
 const props = defineProps({
     resource: {
@@ -10,6 +11,12 @@ const props = defineProps({
         default: () => ({}),
     },
 });
+const form = useForm({
+    search: "",
+});
+const fireSearch = _.throttle(function () {
+    form.get(route("engine-types.index"), { preserveState: true });
+}, 200);
 </script>
 <template>
     <Head title="Engine Types" />
@@ -22,14 +29,17 @@ const props = defineProps({
             <div class="my-4 border rounded-md p-4">
                 <form
                     class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    @submit.prevent
                 >
                     <div>
                         <input
                             id="search"
-                            class="px-2 py-1 rounded-md border-gray-300"
+                            v-model="form.search"
+                            class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
                             placeholder="search"
                             type="text"
+                            @keyup="fireSearch"
                         />
                     </div>
                     <Link :href="route('engine-types.create')" class="btn-goto"
@@ -51,7 +61,7 @@ const props = defineProps({
                             <td class="col-actions">
                                 <Link
                                     :href="route('engine-types.edit', item.id)"
-                                    class="btn-goto"
+                                    class="btn-edit"
                                 >
                                     Edit
                                 </Link>

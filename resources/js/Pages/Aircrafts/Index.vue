@@ -6,6 +6,7 @@ import { route } from "ziggy-js";
 import { onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
 import DashboardButton from "@/Components/DashboardButton.vue";
+import _ from "lodash";
 
 const toast = useToast();
 const props = defineProps({
@@ -25,22 +26,26 @@ const getOwners = async () => {
 };
 onMounted(getOwners);
 const showModal = ref(false);
-const openModal = (id) => {
-    showModal.value = true;
-    form.aircraft_id = id;
-};
-const closeModal = () => {
-    showModal.value = false;
-    form.reset();
-};
 
-const form = useForm({
+const ownerForm = useForm({
     owner_id: null,
     aircraft_id: null,
 });
+const openModal = (id) => {
+    showModal.value = true;
+    ownerForm.aircraft_id = id;
+};
+const closeModal = () => {
+    showModal.value = false;
+    ownerForm.reset();
+};
+
 const submit = async () => {
     try {
-        const response = await axios.post(route("set-owner-aircraft"), form);
+        const response = await axios.post(
+            route("set-owner-aircraft"),
+            ownerForm,
+        );
         if (response.status === 201) {
             toast.success(response.data.message);
             closeModal();
@@ -51,6 +56,12 @@ const submit = async () => {
         console.error(e);
     }
 };
+const form = useForm({
+    search: "",
+});
+const fireSearch = _.throttle(function () {
+    form.get(route("aircrafts.index"), { preserveState: true });
+}, 200);
 </script>
 <template>
     <Head title="Aircrafts" />
@@ -67,27 +78,15 @@ const submit = async () => {
                     <div>
                         <input
                             id="search"
-                            class="px-2 py-1 rounded-md border-gray-300"
+                            v-model="form.search"
+                            class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
                             placeholder="search"
                             type="text"
+                            @keyup="fireSearch"
                         />
                     </div>
                     <Link :href="route('aircrafts.create')" class="btn-goto">
-                        <svg
-                            class="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
                         <span class="ml-1">New Aircraft</span>
                     </Link>
                 </form>
@@ -96,8 +95,9 @@ const submit = async () => {
                         <tr>
                             <th>Id</th>
                             <th>Aircraft Model</th>
-                            <th>Engine Type</th>
                             <th>Register</th>
+                            <th>Owner</th>
+                            <th>Engine Type</th>
                             <th>Serial</th>
                             <th>Actions</th>
                         </tr>
@@ -108,15 +108,20 @@ const submit = async () => {
                             <td class="uppercase">
                                 {{ item.model_aircraft.name }}
                             </td>
+                            <td class="uppercase">{{ item.register }}</td>
+                            <td>
+                                <span v-if="item.owner.length > 0">{{
+                                    item.owner[0].name
+                                }}</span>
+                            </td>
                             <td class="uppercase">
                                 {{ item.engine_type.name }}
                             </td>
-                            <td class="uppercase">{{ item.register }}</td>
                             <td class="uppercase">{{ item.serial }}</td>
                             <td class="col-actions">
                                 <Link
                                     :href="route('aircrafts.edit', item.id)"
-                                    class="btn-goto"
+                                    class="btn-edit"
                                 >
                                     Edit
                                 </Link>
@@ -128,7 +133,7 @@ const submit = async () => {
                                     set Owner
                                 </button>
 
-                                <Link class="btn-delete">Delete</Link>
+                                <Link class="btn-delete"> Delete</Link>
                             </td>
                         </tr>
                     </tbody>
@@ -191,7 +196,7 @@ const submit = async () => {
                             >
                                 Set Aircraft Owner.
                             </h3>
-                            <form>
+                            <form @submit.prevent="submit">
                                 <div
                                     class="flex flex-col justify-items-center items-center space-x-1"
                                 >
@@ -200,7 +205,7 @@ const submit = async () => {
                                     >
                                     <select
                                         id="owner_id"
-                                        v-model="form.owner_id"
+                                        v-model="ownerForm.owner_id"
                                         class="rounded-md border-gray-300"
                                         name="owner_id"
                                     >

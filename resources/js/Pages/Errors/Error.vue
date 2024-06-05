@@ -51,7 +51,7 @@ const description = computed(() => {
             <p class="mt-4 text-gray-500">{{ description }}</p>
             <small>{{ message }}</small>
             <p class="my-7">
-                <a :href="route('dashboard')" class="btn-goto">go back</a>
+                <a :href="route('dashboard')" class="btn-goto">Dashboard</a>
             </p>
         </div>
     </div>
