@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Crear Super-Admin
-        \App\Models\User::query()->firstOrCreate([
+        User::query()->firstOrCreate([
             'email' => 'superadmin@luxeplus.com',
         ], [
             'name' => 'Super Admin',
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        $superAdmin = \App\Models\User::query()->find(1);
+        $superAdmin = User::find(1);
         $superAdmin->syncRoles('super-admin');
 
         // Crear Admin
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
                 'name' => 'Mara Beltran',
                 'email' => 'mara@luxeplus.com',
             ]);
-        $admin = \App\Models\User::query()->find(2);
+        $admin = User::find(2);
         $admin->syncRoles('admin');
 
         // Crear Cams
@@ -48,8 +48,8 @@ class UserSeeder extends Seeder
                 'email' => 'oscar@luxeplus.com',
             ]);
 
-        $cams = \App\Models\User::query()->whereIn('id', [3, 4])->pluck('id');
-        \App\Models\User::query()->whereIn('id', $cams)->each(static function ($admin) {
+        $cams = User::query()->whereIn('id', [3, 4])->pluck('id');
+        User::query()->whereIn('id', $cams)->each(static function ($admin) {
             $admin->syncRoles('cam');
         });
 
