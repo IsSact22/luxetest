@@ -32,7 +32,7 @@ onMounted(queryPendingRate);
 
     <AuthenticatedLayout>
         <template #header>
-            <h2>Dashboard</h2>
+            <h2>{{ $t("Dashboard") }}</h2>
         </template>
 
         <div class="py-12">
