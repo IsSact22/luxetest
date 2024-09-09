@@ -2,7 +2,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import Paginator from "@/Components/Paginator.vue";
-import DashboardButton from "@/Components/DashboardButton.vue";
 import AdminRateForm from "@/Pages/AdminRates/Partials/AdminRateForm.vue";
 import { ref } from "vue";
 import _ from "lodash";
@@ -39,7 +38,6 @@ const fireSearch = _.throttle(function () {
     <AuthenticatedLayout>
         <template #header>
             <h2>Admin Rates</h2>
-            <DashboardButton />
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
             <AdminRateForm
@@ -70,7 +68,7 @@ const fireSearch = _.throttle(function () {
                         />
                     </div>
                     <button
-                        class="btn-goto"
+                        class="btn-primary"
                         type="button"
                         @click="toggleShowForm"
                     >

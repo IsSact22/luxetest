@@ -4,7 +4,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
-import DashboardButton from "@/Components/DashboardButton.vue";
 
 const props = defineProps({
     resource: {
@@ -31,9 +30,8 @@ const destroy = (id) => {
     <AuthenticatedLayout>
         <template #header>
             <h2>Users</h2>
-            <DashboardButton />
         </template>
-        <div class="flex flex-col justify-items-center items-center py-12">
+        <div class="flex flex-col justify-items-center items-center py-2">
             <div class="my-4 border rounded-md px-4 py-4">
                 <form
                     class="my-2 flex flex-row justify-items-center items-center space-x-7"
@@ -49,13 +47,16 @@ const destroy = (id) => {
                             @keyup="fireSearch"
                         />
                     </div>
-                    <Link :href="route('users.create')" class="btn-goto">
+                    <Link :href="route('users.create')" class="btn-primary">
                         New User
                     </Link>
-                    <Link :href="route('roles.index')" class="btn-goto">
+                    <Link :href="route('roles.index')" class="btn-primary">
                         Roles
                     </Link>
-                    <Link :href="route('permissions.index')" class="btn-goto">
+                    <Link
+                        :href="route('permissions.index')"
+                        class="btn-primary"
+                    >
                         Permissions
                     </Link>
                 </form>

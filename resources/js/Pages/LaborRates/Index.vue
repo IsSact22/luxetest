@@ -3,7 +3,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import Paginator from "@/Components/Paginator.vue";
-import DashboardButton from "@/Components/DashboardButton.vue";
 import _ from "lodash";
 
 const props = defineProps({
@@ -24,7 +23,6 @@ const fireSearch = _.throttle(function () {
     <AuthenticatedLayout>
         <template #header>
             <h2>Labor Rates</h2>
-            <DashboardButton />
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 border rounded-md p-4">
@@ -42,7 +40,9 @@ const fireSearch = _.throttle(function () {
                             @keyup="fireSearch"
                         />
                     </div>
-                    <Link :href="route('labor-rates.create')" class="btn-goto"
+                    <Link
+                        :href="route('labor-rates.create')"
+                        class="btn-primary"
                         >New Rate
                     </Link>
                 </form>

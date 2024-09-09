@@ -4,7 +4,6 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import { route } from "ziggy-js";
@@ -32,293 +31,120 @@ const showBackoffice = computed(() => {
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
-                <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
-                                </Link>
-                            </div>
+    <div class="min-h-screen bg-gray-100 flex">
+        <nav class="bg-black-700 border-r border-gray-100 w-64">
+            <!-- Logo -->
+            <div class="shrink-0 flex items-center p-4">
+                <Link :href="route('dashboard')">
+                    <ApplicationLogo
+                        class="block h-9 w-auto fill-current text-white"
+                    />
+                </Link>
+            </div>
 
-                            <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
-                            >
-                                <NavLink
-                                    :active="route().current('dashboard')"
-                                    :href="route('dashboard')"
-                                >
-                                    Dashboard
-                                </NavLink>
-                                <NavLink
-                                    v-show="showBackoffice"
-                                    :active="route().current('aircrafts.index')"
-                                    :href="route('aircrafts.index')"
-                                >
-                                    Aircraft
-                                </NavLink>
-                                <NavLink
-                                    v-show="showBackoffice && showCamos"
-                                    :active="route().current('camos.index')"
-                                    :href="route('camos.index')"
-                                >
-                                    Camos
-                                </NavLink>
-                                <div
-                                    v-show="showBackoffice"
-                                    class="hidden sm:flex sm:items-center sm:ml-6"
-                                >
-                                    <!-- Settings Dropdown -->
-                                    <div class="ml-3 relative">
-                                        <Dropdown align="right" width="48">
-                                            <template #trigger>
-                                                <span
-                                                    class="inline-flex rounded-md"
-                                                >
-                                                    <button
-                                                        class="inline-flex items-center px-3 py-2 border border-transparent leading-4 font-medium rounded-md bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                                        type="button"
-                                                    >
-                                                        System
-                                                        <svg
-                                                            class="ml-2 -mr-0.5 h-4 w-4"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                            <path
-                                                                clip-rule="evenodd"
-                                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                                fill-rule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </button>
-                                                </span>
-                                            </template>
+            <!-- User Info -->
+            <div class="p-4 text-white">
+                <div class="font-medium text-base">
+                    {{ $page.props.auth.user.name }}
+                </div>
+                <div class="text-sm">
+                    <Link
+                        :href="route('profile.edit')"
+                        class="text-gray-300 hover:underline"
+                        >Profile
+                    </Link>
+                </div>
+            </div>
 
-                                            <template #content>
-                                                <DropdownLink
-                                                    v-show="showUsers"
-                                                    :href="route('users.index')"
-                                                >
-                                                    Users
-                                                </DropdownLink>
-                                                <hr />
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'engine-types.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Engine Type
-                                                </DropdownLink>
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'brand-aircrafts.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Brand Aircraft
-                                                </DropdownLink>
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'model-aircrafts.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Model Aircraft
-                                                </DropdownLink>
-                                                <hr />
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'admin-rates.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Admin Rates
-                                                </DropdownLink>
-                                                <hr />
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'labor-rates.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Labor Rates
-                                                </DropdownLink>
-                                            </template>
-                                        </Dropdown>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Navigation Links -->
+            <div class="p-4">
+                <div class="flex flex-col space-y-2">
+                    <NavLink
+                        :active="route().current('dashboard')"
+                        :href="route('dashboard')"
+                        class="text-white"
+                    >
+                        Dashboard
+                    </NavLink>
+                    <NavLink
+                        v-show="showBackoffice"
+                        :active="route().current('aircrafts.index')"
+                        :href="route('aircrafts.index')"
+                        class="text-white"
+                    >
+                        Aircraft
+                    </NavLink>
+                    <NavLink
+                        v-show="showBackoffice && showCamos"
+                        :active="route().current('camos.index')"
+                        :href="route('camos.index')"
+                        class="text-white"
+                    >
+                        Camos
+                    </NavLink>
+                </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                                type="button"
-                                            >
-                                                <img
-                                                    v-if="
-                                                        $page.props.auth
-                                                            .avatarUrl
-                                                    "
-                                                    :src="
-                                                        $page.props.auth
-                                                            .avatarUrl
-                                                    "
-                                                    alt="Avatar"
-                                                    class="h-6 w-6 rounded-full mr-2"
-                                                />
-                                                {{ $page.props.auth.user.name }}
-                                                <svg
-                                                    class="ms-2 -me-0.5 h-4 w-4"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        clip-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        fill-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink
-                                            :href="route('profile.edit')"
-                                        >
-                                            Profile
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            as="button"
-                                            method="post"
-                                        >
-                                            Log Out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
+                <div v-show="showBackoffice" class="mt-4">
+                    <Dropdown align="right" width="48">
+                        <template #trigger>
                             <button
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                                @click="
-                                    showingNavigationDropdown =
-                                        !showingNavigationDropdown
-                                "
+                                class="w-full text-left p-2 text-white hover:bg-gray-600"
                             >
-                                <svg
-                                    class="h-6 w-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex':
-                                                !showingNavigationDropdown,
-                                        }"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex':
-                                                showingNavigationDropdown,
-                                        }"
-                                        d="M6 18L18 6M6 6l12 12"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                    />
-                                </svg>
+                                System
                             </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
-                >
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink
-                            :active="route().current('dashboard')"
-                            :href="route('dashboard')"
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
-                        <div class="px-4">
-                            <div class="font-medium text-base text-gray-800">
-                                {{ $page.props.auth.user.name }}
+                        </template>
+                        <template #content>
+                            <div class="flex flex-col">
+                                <DropdownLink
+                                    v-show="showUsers"
+                                    :href="route('users.index')"
+                                    class="text-black"
+                                >
+                                    Users
+                                </DropdownLink>
+                                <hr />
+                                <DropdownLink
+                                    :href="route('engine-types.index')"
+                                    class="text-black"
+                                    >Engine Type
+                                </DropdownLink>
+                                <DropdownLink
+                                    :href="route('brand-aircrafts.index')"
+                                    class="text-black"
+                                    >Brand Aircraft
+                                </DropdownLink>
+                                <DropdownLink
+                                    :href="route('model-aircrafts.index')"
+                                    class="text-black"
+                                    >Model Aircraft
+                                </DropdownLink>
+                                <hr />
+                                <DropdownLink
+                                    :href="route('admin-rates.index')"
+                                    class="text-black"
+                                    >Admin Rates
+                                </DropdownLink>
+                                <hr />
+                                <DropdownLink
+                                    :href="route('labor-rates.index')"
+                                    class="text-black"
+                                    >Labor Rates
+                                </DropdownLink>
                             </div>
-                            <div class="font-medium text-sm text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                as="button"
-                                method="post"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
+                        </template>
+                    </Dropdown>
                 </div>
-            </nav>
+            </div>
+        </nav>
 
-            <!-- Page Heading -->
+        <div class="flex-1">
             <header v-if="$slots.header" class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
 
-            <!-- Page Content -->
-            <main>
+            <main class="p-4">
                 <slot />
             </main>
         </div>

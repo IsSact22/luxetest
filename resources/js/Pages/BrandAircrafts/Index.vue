@@ -2,7 +2,6 @@
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
-import DashboardButton from "@/Components/DashboardButton.vue";
 import _ from "lodash";
 
 const props = defineProps({
@@ -23,9 +22,8 @@ const fireSearch = _.throttle(function () {
     <AuthenticatedLayout>
         <template #header>
             <h2>Brand Aircraft</h2>
-            <DashboardButton />
         </template>
-        <div class="flex flex-col justify-items-center items-center py-12">
+        <div class="flex flex-col justify-items-center items-center py-2">
             <div class="my-4 border rounded-md p-4">
                 <form
                     class="my-2 flex flex-row justify-items-center items-center space-x-7"
@@ -43,7 +41,7 @@ const fireSearch = _.throttle(function () {
                     </div>
                     <Link
                         :href="route('brand-aircrafts.create')"
-                        class="btn-goto"
+                        class="btn-primary"
                         >New Brand Aircraft
                     </Link>
                 </form>
