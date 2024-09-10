@@ -31,7 +31,7 @@ const showBackoffice = computed(() => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gray-100 flex">
+    <div class="min-h-screen bg-white flex">
         <nav class="bg-black-700 border-r border-gray-100 w-64">
             <!-- Logo -->
             <div class="inline-flex p-7">
@@ -50,7 +50,7 @@ const showBackoffice = computed(() => {
                 <div class="text-sm">
                     <Link
                         :href="route('profile.edit')"
-                        class="text-gray-300 hover:underline"
+                        class="text-yellow-300 hover:underline"
                         >Profile
                     </Link>
                 </div>

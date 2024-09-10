@@ -47,9 +47,9 @@ const goToCamo = () => {
         <div
             class="flex items-center bg-white border rounded-md overflow-hidden shadow"
         >
-            <div class="p-4 bg-emerald-100">
+            <div class="p-4 bg-blue-50">
                 <svg
-                    class="h-20 w-20 fill-emerald-400 stroke-emerald-600"
+                    class="h-20 w-20 fill-blue-200 stroke-blue-600"
                     viewBox="0 0 21 21"
                     xmlns="http://www.w3.org/2000/svg"
                 >
@@ -68,7 +68,7 @@ const goToCamo = () => {
             <div class="px-4 text-gray-700">
                 <h3
                     v-tooltip="'Customer Name'"
-                    class="text-sm font-semibold tracking-wider"
+                    class="text-sm font-semibold tracking-wider uppercase"
                 >
                     {{ title }}
                 </h3>
@@ -128,13 +128,13 @@ const goToCamo = () => {
         </div>
 
         <div>
-            <div class="w-full bg-gray-200 overflow-hidden my-2">
+            <div class="w-full bg-black-200 overflow-hidden my-2">
                 <div class="flex">
                     <div
                         :style="{
                             width: `${getPercentage(statusCounts.in_progress)}%`,
                         }"
-                        class="bg-violet-400 text-white py-2 text-xs text-center h-8 place-content-center"
+                        class="bg-yellow-800 text-white py-2 text-xs text-center h-8 place-content-center"
                     >
                         {{ getPercentage(statusCounts.in_progress) }}%
                     </div>
@@ -142,7 +142,7 @@ const goToCamo = () => {
                         :style="{
                             width: `${getPercentage(statusCounts.completed)}%`,
                         }"
-                        class="bg-green-400 text-white py-2 text-xs text-center h-8 place-content-center"
+                        class="bg-yellow-300 text-yellow-800 py-2 text-xs text-center h-8 place-content-center"
                     >
                         {{ getPercentage(statusCounts.completed) }}%
                     </div>
@@ -150,7 +150,7 @@ const goToCamo = () => {
                         :style="{
                             width: `${getPercentage(statusCounts.pending)}%`,
                         }"
-                        class="bg-orange-400 text-white py-2 text-xs text-center h-8 place-content-center"
+                        class="bg-yellow-600 text-yellow-900 py-2 text-xs text-center h-8 place-content-center"
                     >
                         {{ getPercentage(statusCounts.pending) }}%
                     </div>
@@ -162,10 +162,10 @@ const goToCamo = () => {
                     class="flex flex-col justify-items-center items-center border rounded-md p-4"
                 >
                     <span
-                        class="inline-block h-8 w-8 bg-violet-400 rounded-full p-1"
+                        class="inline-block h-8 w-8 bg-white rounded-full p-1"
                     >
                         <svg
-                            class="h-6 w-6 stroke-white"
+                            class="h-6 w-6 stroke-yellow-800"
                             viewBox="0 0 21 21"
                             xmlns="http://www.w3.org/2000/svg"
                         >
@@ -190,10 +190,10 @@ const goToCamo = () => {
                     class="flex flex-col justify-items-center items-center border rounded-md p-4"
                 >
                     <span
-                        class="inline-block h-8 w-8 bg-green-400 rounded-full p-1"
+                        class="inline-block h-8 w-8 bg-white rounded-full p-1"
                     >
                         <svg
-                            class="h-6 w-6 stroke-white"
+                            class="h-6 w-6 stroke-yellow-800"
                             viewBox="0 0 21 21"
                             xmlns="http://www.w3.org/2000/svg"
                         >
@@ -218,10 +218,10 @@ const goToCamo = () => {
                     class="flex flex-col justify-items-center items-center border rounded-md p-4"
                 >
                     <span
-                        class="inline-block h-8 w-8 bg-orange-400 rounded-full p-1"
+                        class="inline-block h-8 w-8 bg-white rounded-full p-1"
                     >
                         <svg
-                            class="h-6 w-6 stroke-white"
+                            class="h-6 w-6 stroke-yellow-800"
                             viewBox="0 0 21 21"
                             xmlns="http://www.w3.org/2000/svg"
                         >
