@@ -4,6 +4,7 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import { onMounted } from "vue";
 import { route } from "ziggy-js";
 import Checkbox from "@/Components/Checkbox.vue";
+import InputError from "@/Components/InputError.vue";
 
 defineProps({
     canResetPassword: {
@@ -69,6 +70,10 @@ const submit = () => {
                                 name="email"
                                 type="text"
                             />
+                            <InputError
+                                :message="form.errors.email"
+                                class="mt-2"
+                            />
                         </div>
 
                         <div>
@@ -81,6 +86,10 @@ const submit = () => {
                                 class="w-96 py-3 bg-black-700 rounded-md text-white focus:ring-yellow-50"
                                 name="password"
                                 type="password"
+                            />
+                            <InputError
+                                :message="form.errors.password"
+                                class="mt-2"
                             />
                         </div>
 
