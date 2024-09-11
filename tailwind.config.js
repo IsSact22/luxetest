@@ -11,6 +11,9 @@ export default {
 
     theme: {
         extend: {
+            backgroundImage: {
+                "login-bg": "url('/storage/img/background_login.jpg')",
+            },
             fontFamily: {
                 poppins: ["Poppins", "sans-serif"],
             },
