@@ -95,7 +95,7 @@ const handleDelete = (id) => {
         <template #header>
             <h2>Permissions</h2>
         </template>
-        <div class="flex flex-col justify-items-center items-center py-12">
+        <div class="flex flex-col justify-items-center items-center py-2">
             <!-- Modal -->
             <transition name="modal-transition">
                 <div

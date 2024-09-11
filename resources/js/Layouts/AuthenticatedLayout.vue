@@ -4,7 +4,6 @@ import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import { route } from "ziggy-js";
@@ -32,293 +31,235 @@ const showBackoffice = computed(() => {
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
-                <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
-                                </Link>
-                            </div>
+    <div class="min-h-screen bg-white flex">
+        <nav class="bg-black-700 border-r border-gray-100 w-64">
+            <!-- Logo -->
+            <div class="inline-flex p-7">
+                <Link :href="route('dashboard')">
+                    <ApplicationLogo
+                        class="block h-9 w-auto fill-current text-white"
+                    />
+                </Link>
+            </div>
 
-                            <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+            <!-- User Info -->
+            <div class="p-4 text-white">
+                <div class="font-medium text-base">
+                    {{ $page.props.auth.user.name }}
+                </div>
+                <div class="text-sm">
+                    <Link
+                        :href="route('profile.edit')"
+                        class="text-yellow-300 hover:underline"
+                        >Profile
+                    </Link>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <div class="p-4">
+                <div class="flex flex-col space-y-7">
+                    <NavLink
+                        :active="route().current('dashboard')"
+                        :href="route('dashboard')"
+                        class="inline-flex items-center space-x-7"
+                    >
+                        <span>
+                            <svg
+                                class="size-6"
+                                fill="none"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                width="24"
+                                xmlns="http://www.w3.org/2000/svg"
                             >
-                                <NavLink
-                                    :active="route().current('dashboard')"
-                                    :href="route('dashboard')"
-                                >
-                                    Dashboard
-                                </NavLink>
-                                <NavLink
-                                    v-show="showBackoffice"
-                                    :active="route().current('aircrafts.index')"
-                                    :href="route('aircrafts.index')"
-                                >
-                                    Aircraft
-                                </NavLink>
-                                <NavLink
-                                    v-show="showBackoffice && showCamos"
-                                    :active="route().current('camos.index')"
-                                    :href="route('camos.index')"
-                                >
-                                    Camos
-                                </NavLink>
-                                <div
-                                    v-show="showBackoffice"
-                                    class="hidden sm:flex sm:items-center sm:ml-6"
-                                >
-                                    <!-- Settings Dropdown -->
-                                    <div class="ml-3 relative">
-                                        <Dropdown align="right" width="48">
-                                            <template #trigger>
-                                                <span
-                                                    class="inline-flex rounded-md"
-                                                >
-                                                    <button
-                                                        class="inline-flex items-center px-3 py-2 border border-transparent leading-4 font-medium rounded-md bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                                        type="button"
-                                                    >
-                                                        System
-                                                        <svg
-                                                            class="ml-2 -mr-0.5 h-4 w-4"
-                                                            fill="currentColor"
-                                                            viewBox="0 0 20 20"
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                        >
-                                                            <path
-                                                                clip-rule="evenodd"
-                                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                                fill-rule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </button>
-                                                </span>
-                                            </template>
+                                <path
+                                    d="M7 0H4C2.93913 0 1.92172 0.421427 1.17157 1.17157C0.421427 1.92172 0 2.93913 0 4V7C0 8.06087 0.421427 9.07828 1.17157 9.82843C1.92172 10.5786 2.93913 11 4 11H7C8.06087 11 9.07828 10.5786 9.82843 9.82843C10.5786 9.07828 11 8.06087 11 7V4C11 2.93913 10.5786 1.92172 9.82843 1.17157C9.07828 0.421427 8.06087 0 7 0ZM9 7C9 7.53043 8.78929 8.03914 8.41421 8.41421C8.03914 8.78929 7.53043 9 7 9H4C3.46957 9 2.96086 8.78929 2.58579 8.41421C2.21071 8.03914 2 7.53043 2 7V4C2 3.46957 2.21071 2.96086 2.58579 2.58579C2.96086 2.21071 3.46957 2 4 2H7C7.53043 2 8.03914 2.21071 8.41421 2.58579C8.78929 2.96086 9 3.46957 9 4V7Z"
+                                    fill="#FFC300"
+                                />
+                                <path
+                                    d="M20 0H17C15.9391 0 14.9217 0.421427 14.1716 1.17157C13.4214 1.92172 13 2.93913 13 4V7C13 8.06087 13.4214 9.07828 14.1716 9.82843C14.9217 10.5786 15.9391 11 17 11H20C21.0609 11 22.0783 10.5786 22.8284 9.82843C23.5786 9.07828 24 8.06087 24 7V4C24 2.93913 23.5786 1.92172 22.8284 1.17157C22.0783 0.421427 21.0609 0 20 0ZM22 7C22 7.53043 21.7893 8.03914 21.4142 8.41421C21.0391 8.78929 20.5304 9 20 9H17C16.4696 9 15.9609 8.78929 15.5858 8.41421C15.2107 8.03914 15 7.53043 15 7V4C15 3.46957 15.2107 2.96086 15.5858 2.58579C15.9609 2.21071 16.4696 2 17 2H20C20.5304 2 21.0391 2.21071 21.4142 2.58579C21.7893 2.96086 22 3.46957 22 4V7Z"
+                                    fill="#FFC300"
+                                />
+                                <path
+                                    d="M7 13H4C2.93913 13 1.92172 13.4214 1.17157 14.1716C0.421427 14.9217 0 15.9391 0 17V20C0 21.0609 0.421427 22.0783 1.17157 22.8284C1.92172 23.5786 2.93913 24 4 24H7C8.06087 24 9.07828 23.5786 9.82843 22.8284C10.5786 22.0783 11 21.0609 11 20V17C11 15.9391 10.5786 14.9217 9.82843 14.1716C9.07828 13.4214 8.06087 13 7 13ZM9 20C9 20.5304 8.78929 21.0391 8.41421 21.4142C8.03914 21.7893 7.53043 22 7 22H4C3.46957 22 2.96086 21.7893 2.58579 21.4142C2.21071 21.0391 2 20.5304 2 20V17C2 16.4696 2.21071 15.9609 2.58579 15.5858C2.96086 15.2107 3.46957 15 4 15H7C7.53043 15 8.03914 15.2107 8.41421 15.5858C8.78929 15.9609 9 16.4696 9 17V20Z"
+                                    fill="#FFC300"
+                                />
+                                <path
+                                    d="M20 13H17C15.9391 13 14.9217 13.4214 14.1716 14.1716C13.4214 14.9217 13 15.9391 13 17V20C13 21.0609 13.4214 22.0783 14.1716 22.8284C14.9217 23.5786 15.9391 24 17 24H20C21.0609 24 22.0783 23.5786 22.8284 22.8284C23.5786 22.0783 24 21.0609 24 20V17C24 15.9391 23.5786 14.9217 22.8284 14.1716C22.0783 13.4214 21.0609 13 20 13ZM22 20C22 20.5304 21.7893 21.0391 21.4142 21.4142C21.0391 21.7893 20.5304 22 20 22H17C16.4696 22 15.9609 21.7893 15.5858 21.4142C15.2107 21.0391 15 20.5304 15 20V17C15 16.4696 15.2107 15.9609 15.5858 15.5858C15.9609 15.2107 16.4696 15 17 15H20C20.5304 15 21.0391 15.2107 21.4142 15.5858C21.7893 15.9609 22 16.4696 22 17V20Z"
+                                    fill="#FFC300"
+                                />
+                            </svg>
+                        </span>
+                        <span>{{ $t("Dashboard") }}</span>
+                    </NavLink>
+                    <NavLink
+                        v-show="showBackoffice"
+                        :active="route().current('aircrafts.index')"
+                        :href="route('aircrafts.index')"
+                        class="inline-flex items-center space-x-7"
+                    >
+                        <span>
+                            <svg
+                                class="size-6"
+                                fill="none"
+                                height="26"
+                                viewBox="0 0 26 26"
+                                width="26"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    id="Vector"
+                                    d="M24.104 1.89906L24.1025 1.89711L24.1006 1.89516C23.5396 1.32635 22.7595 1 21.9605 1C21.7234 1 21.4863 1.02829 21.2556 1.08391L21.2483 1.08586L21.2414 1.08732L5.33346 4.43038L5.31883 4.43331L5.30468 4.43575C3.97243 4.63283 2.79678 5.33676 1.99382 6.41827C1.19135 7.49978 0.858161 8.82861 1.05524 10.1609C1.21232 11.2243 1.71771 12.2287 2.47823 12.9883L4.18269 14.6942C4.35342 14.8635 4.45099 15.0986 4.4505 15.3396V18.4851C4.45245 20.1696 5.8247 21.5418 7.50916 21.5438H10.6551C10.8986 21.5438 11.1274 21.6384 11.2996 21.8096L13.0055 23.5155C13.4743 23.9878 14.0216 24.3556 14.6343 24.6107C15.247 24.8658 15.8939 24.9956 16.5573 24.9961C17.1091 24.9956 17.6545 24.9058 18.1774 24.7293C19.0628 24.4356 19.8448 23.9034 20.4419 23.1897C21.039 22.476 21.4253 21.6121 21.558 20.691L21.5605 20.6759L21.5634 20.6603L24.9069 4.80259L24.9108 4.78503C25.1684 3.75328 24.8591 2.64738 24.104 1.89906ZM6.59644 17.8802V15.3386C6.59839 14.5323 6.27155 13.7454 5.70031 13.1781L3.99683 11.4731C3.2124 10.7038 2.93825 9.53791 3.29826 8.49982C3.63925 7.45392 4.56368 6.69047 5.65543 6.5534C5.67933 6.55047 5.70324 6.54608 5.72665 6.5412L21.1946 3.28985L6.59644 17.8802ZM19.4531 20.2725L19.4521 20.2769L19.4511 20.2808C19.4472 20.2974 19.4438 20.3222 19.4399 20.3491C19.3443 21.0452 18.9989 21.6833 18.4667 22.1438C17.9398 22.5999 17.2671 22.8511 16.5734 22.8511C16.4417 22.8511 16.3081 22.8419 16.1768 22.8238C15.5544 22.7384 14.967 22.4472 14.5226 22.0028L12.8182 20.2983C12.2513 19.7276 11.4669 19.4007 10.6644 19.4007H8.11358L22.7083 4.80211L19.4531 20.2725Z"
+                                    fill="#FFC300"
+                                    stroke="#FFC300"
+                                    stroke-width="0.3"
+                                />
+                            </svg>
+                        </span>
+                        <span>{{ $t("Aircraft") }}</span>
+                    </NavLink>
+                    <NavLink
+                        v-show="showBackoffice && showCamos"
+                        :active="route().current('camos.index')"
+                        :href="route('camos.index')"
+                        class="inline-flex items-center space-x-7"
+                    >
+                        <span>
+                            <svg
+                                class="size-6"
+                                fill="none"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                width="24"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    id="Vector"
+                                    d="M12 16C11.2089 16 10.4355 15.7654 9.77772 15.3259C9.11992 14.8864 8.60723 14.2616 8.30448 13.5307C8.00173 12.7998 7.92252 11.9956 8.07686 11.2196C8.2312 10.4437 8.61216 9.73099 9.17157 9.17158C9.73098 8.61217 10.4437 8.2312 11.2196 8.07686C11.9956 7.92252 12.7998 8.00173 13.5307 8.30448C14.2616 8.60723 14.8864 9.11993 15.3259 9.77772C15.7654 10.4355 16 11.2089 16 12C16 13.0609 15.5786 14.0783 14.8284 14.8284C14.0783 15.5786 13.0609 16 12 16ZM12 10C11.6044 10 11.2178 10.1173 10.8889 10.3371C10.56 10.5568 10.3036 10.8692 10.1522 11.2346C10.0009 11.6001 9.96126 12.0022 10.0384 12.3902C10.1156 12.7781 10.3061 13.1345 10.5858 13.4142C10.8655 13.6939 11.2219 13.8844 11.6098 13.9616C11.9978 14.0387 12.3999 13.9991 12.7654 13.8478C13.1308 13.6964 13.4432 13.44 13.6629 13.1111C13.8827 12.7822 14 12.3956 14 12C14 11.4696 13.7893 10.9609 13.4142 10.5858C13.0391 10.2107 12.5304 10 12 10ZM18 23C18 21.4087 17.3679 19.8826 16.2426 18.7574C15.1174 17.6321 13.5913 17 12 17C10.4087 17 8.88258 17.6321 7.75736 18.7574C6.63214 19.8826 6 21.4087 6 23C6 23.2652 6.10536 23.5196 6.29289 23.7071C6.48043 23.8946 6.73478 24 7 24C7.26522 24 7.51957 23.8946 7.70711 23.7071C7.89464 23.5196 8 23.2652 8 23C8 21.9391 8.42143 20.9217 9.17157 20.1716C9.92172 19.4214 10.9391 19 12 19C13.0609 19 14.0783 19.4214 14.8284 20.1716C15.5786 20.9217 16 21.9391 16 23C16 23.2652 16.1054 23.5196 16.2929 23.7071C16.4804 23.8946 16.7348 24 17 24C17.2652 24 17.5196 23.8946 17.7071 23.7071C17.8946 23.5196 18 23.2652 18 23ZM18 8C17.2089 8 16.4355 7.76541 15.7777 7.32588C15.1199 6.88636 14.6072 6.26164 14.3045 5.53074C14.0017 4.79983 13.9225 3.99557 14.0769 3.21964C14.2312 2.44372 14.6122 1.73098 15.1716 1.17157C15.731 0.612165 16.4437 0.231202 17.2196 0.0768607C17.9956 -0.0774802 18.7998 0.00173312 19.5307 0.304484C20.2616 0.607234 20.8864 1.11992 21.3259 1.77772C21.7654 2.43552 22 3.20888 22 4C22 5.06087 21.5786 6.07828 20.8284 6.82843C20.0783 7.57858 19.0609 8 18 8ZM18 2C17.6044 2 17.2178 2.1173 16.8889 2.33706C16.56 2.55683 16.3036 2.86918 16.1522 3.23464C16.0009 3.60009 15.9613 4.00222 16.0384 4.39018C16.1156 4.77814 16.3061 5.13451 16.5858 5.41422C16.8655 5.69392 17.2219 5.8844 17.6098 5.96157C17.9978 6.03874 18.3999 5.99914 18.7654 5.84776C19.1308 5.69639 19.4432 5.44004 19.6629 5.11114C19.8827 4.78224 20 4.39557 20 4C20 3.46957 19.7893 2.96086 19.4142 2.58579C19.0391 2.21072 18.5304 2 18 2ZM24 15C23.9984 13.4092 23.3658 11.884 22.2409 10.7591C21.116 9.63424 19.5908 9.00159 18 9C17.7348 9 17.4804 9.10536 17.2929 9.2929C17.1054 9.48043 17 9.73479 17 10C17 10.2652 17.1054 10.5196 17.2929 10.7071C17.4804 10.8946 17.7348 11 18 11C19.0609 11 20.0783 11.4214 20.8284 12.1716C21.5786 12.9217 22 13.9391 22 15C22 15.2652 22.1054 15.5196 22.2929 15.7071C22.4804 15.8946 22.7348 16 23 16C23.2652 16 23.5196 15.8946 23.7071 15.7071C23.8946 15.5196 24 15.2652 24 15ZM6 8C5.20887 8 4.43552 7.76541 3.77772 7.32588C3.11992 6.88636 2.60723 6.26164 2.30448 5.53074C2.00173 4.79983 1.92252 3.99557 2.07686 3.21964C2.2312 2.44372 2.61216 1.73098 3.17157 1.17157C3.73098 0.612165 4.44371 0.231202 5.21964 0.0768607C5.99556 -0.0774802 6.79983 0.00173312 7.53073 0.304484C8.26164 0.607234 8.88635 1.11992 9.32588 1.77772C9.7654 2.43552 10 3.20888 10 4C10 5.06087 9.57857 6.07828 8.82843 6.82843C8.07828 7.57858 7.06087 8 6 8ZM6 2C5.60444 2 5.21776 2.1173 4.88886 2.33706C4.55996 2.55683 4.30362 2.86918 4.15224 3.23464C4.00087 3.60009 3.96126 4.00222 4.03843 4.39018C4.1156 4.77814 4.30608 5.13451 4.58579 5.41422C4.86549 5.69392 5.22186 5.8844 5.60982 5.96157C5.99778 6.03874 6.39991 5.99914 6.76537 5.84776C7.13082 5.69639 7.44318 5.44004 7.66294 5.11114C7.8827 4.78224 8 4.39557 8 4C8 3.46957 7.78929 2.96086 7.41421 2.58579C7.03914 2.21072 6.53043 2 6 2ZM2 15C2 13.9391 2.42143 12.9217 3.17157 12.1716C3.92172 11.4214 4.93913 11 6 11C6.26522 11 6.51957 10.8946 6.70711 10.7071C6.89464 10.5196 7 10.2652 7 10C7 9.73479 6.89464 9.48043 6.70711 9.2929C6.51957 9.10536 6.26522 9 6 9C4.40919 9.00159 2.88399 9.63424 1.75911 10.7591C0.63424 11.884 0.00158843 13.4092 0 15C0 15.2652 0.105357 15.5196 0.292893 15.7071C0.48043 15.8946 0.734784 16 1 16C1.26522 16 1.51957 15.8946 1.70711 15.7071C1.89464 15.5196 2 15.2652 2 15Z"
+                                    fill="#FFC300"
+                                />
+                            </svg>
+                        </span>
+                        <span>{{ $t("Camos") }}</span>
+                    </NavLink>
+                </div>
 
-                                            <template #content>
-                                                <DropdownLink
-                                                    v-show="showUsers"
-                                                    :href="route('users.index')"
-                                                >
-                                                    Users
-                                                </DropdownLink>
-                                                <hr />
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'engine-types.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Engine Type
-                                                </DropdownLink>
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'brand-aircrafts.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Brand Aircraft
-                                                </DropdownLink>
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'model-aircrafts.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Model Aircraft
-                                                </DropdownLink>
-                                                <hr />
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'admin-rates.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Admin Rates
-                                                </DropdownLink>
-                                                <hr />
-                                                <DropdownLink
-                                                    :href="
-                                                        route(
-                                                            'labor-rates.index',
-                                                        )
-                                                    "
-                                                >
-                                                    Labor Rates
-                                                </DropdownLink>
-                                            </template>
-                                        </Dropdown>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="hidden sm:flex sm:items-center sm:ms-6">
-                            <!-- Settings Dropdown -->
-                            <div class="ms-3 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                                type="button"
-                                            >
-                                                <img
-                                                    v-if="
-                                                        $page.props.auth
-                                                            .avatarUrl
-                                                    "
-                                                    :src="
-                                                        $page.props.auth
-                                                            .avatarUrl
-                                                    "
-                                                    alt="Avatar"
-                                                    class="h-6 w-6 rounded-full mr-2"
-                                                />
-                                                {{ $page.props.auth.user.name }}
-                                                <svg
-                                                    class="ms-2 -me-0.5 h-4 w-4"
-                                                    fill="currentColor"
-                                                    viewBox="0 0 20 20"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path
-                                                        clip-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        fill-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink
-                                            :href="route('profile.edit')"
-                                        >
-                                            Profile
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            as="button"
-                                            method="post"
-                                        >
-                                            Log Out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
+                <div v-show="showBackoffice" class="mt-7">
+                    <Dropdown align="right" width="48">
+                        <template #trigger>
                             <button
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                                @click="
-                                    showingNavigationDropdown =
-                                        !showingNavigationDropdown
-                                "
+                                class="w-full text-left px-4 py-2 text-white hover:bg-black-400"
                             >
-                                <svg
-                                    class="h-6 w-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                <span
+                                    class="inline-flex items-center space-x-7"
                                 >
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex':
-                                                !showingNavigationDropdown,
-                                        }"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex':
-                                                showingNavigationDropdown,
-                                        }"
-                                        d="M6 18L18 6M6 6l12 12"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                    />
-                                </svg>
+                                    <span>
+                                        <svg
+                                            class="size-6"
+                                            fill="none"
+                                            height="25"
+                                            viewBox="0 0 24 25"
+                                            width="24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                id="Vector"
+                                                d="M24 22.5459C24 23.6509 23.105 24.5459 22 24.5459C21.262 24.5459 20.624 24.1409 20.277 23.5459H19C17.346 23.5459 16 22.1999 16 20.5459V15.5459C16 14.9929 16.448 14.5459 17 14.5459C17.552 14.5459 18 14.9929 18 15.5459V20.5459C18 21.0979 18.449 21.5459 19 21.5459H20.277C20.623 20.9509 21.261 20.5459 22 20.5459C23.105 20.5459 24 21.4409 24 22.5459ZM13 20.8229V15.5459C13 14.9929 12.552 14.5459 12 14.5459C11.448 14.5459 11 14.9929 11 15.5459V20.8229C10.405 21.1689 10 21.8069 10 22.5459C10 23.6509 10.895 24.5459 12 24.5459C13.105 24.5459 14 23.6509 14 22.5459C14 21.8079 13.595 21.1699 13 20.8229ZM7 14.5459C6.448 14.5459 6 14.9929 6 15.5459V20.5459C6 21.0979 5.551 21.5459 5 21.5459H3.723C3.377 20.9509 2.739 20.5459 2 20.5459C0.895 20.5459 0 21.4409 0 22.5459C0 23.6509 0.895 24.5459 2 24.5459C2.738 24.5459 3.376 24.1409 3.723 23.5459H5C6.654 23.5459 8 22.1999 8 20.5459V15.5459C8 14.9929 7.552 14.5459 7 14.5459ZM21 11.9999C21 12.9789 20.713 13.9239 20.17 14.7319C19.862 15.1909 19.984 15.8119 20.442 16.1199C20.901 16.4299 21.523 16.3049 21.83 15.8479C22.595 14.7079 22.999 13.3779 22.999 11.9999C22.999 8.71592 20.665 5.86692 17.448 5.22592C17.175 5.17092 16.952 5.00092 16.838 4.75792C15.411 1.74692 12.107 0.0659159 8.799 0.672916C5.787 1.22392 3.425 3.62892 2.922 6.65692C2.774 7.55092 2.784 8.44492 2.952 9.31592C3 9.56492 2.891 9.84591 2.667 10.0499C1.607 11.0129 1 12.3859 1 13.8179C1 15.0729 1.46 16.2789 2.297 17.2129C2.495 17.4339 2.768 17.5459 3.043 17.5459C3.28 17.5459 3.519 17.4619 3.71 17.2909C4.122 16.9229 4.156 16.2899 3.788 15.8789C3.28 15.3129 3.001 14.5799 3.001 13.8179C3.001 12.9489 3.37 12.1149 4.014 11.5309C4.751 10.8599 5.097 9.86592 4.918 8.93492C4.794 8.29892 4.788 7.64292 4.897 6.98492C5.257 4.81992 7.01 3.03292 9.161 2.63892C11.611 2.19392 13.975 3.38492 15.033 5.61492C15.422 6.43392 16.16 7.00792 17.059 7.18592C19.343 7.64192 21.001 9.66592 21.001 11.9989L21 11.9999Z"
+                                                fill="#FFC300"
+                                            />
+                                        </svg>
+                                    </span>
+                                    <span>{{ $t("System") }}</span>
+                                </span>
                             </button>
-                        </div>
-                    </div>
+                        </template>
+                        <template #content>
+                            <div class="flex flex-col">
+                                <DropdownLink
+                                    v-show="showUsers"
+                                    :href="route('users.index')"
+                                    class="text-black"
+                                >
+                                    {{ $t("Users") }}
+                                </DropdownLink>
+                                <hr />
+                                <DropdownLink
+                                    :href="route('engine-types.index')"
+                                    class="text-black"
+                                >
+                                    {{ $t("Engine Type") }}
+                                </DropdownLink>
+                                <DropdownLink
+                                    :href="route('brand-aircrafts.index')"
+                                    class="text-black"
+                                    >Brand Aircraft
+                                </DropdownLink>
+                                <DropdownLink
+                                    :href="route('model-aircrafts.index')"
+                                    class="text-black"
+                                >
+                                    {{ $t("Model Aircraft") }}
+                                </DropdownLink>
+                                <hr />
+                                <DropdownLink
+                                    :href="route('admin-rates.index')"
+                                    class="text-black"
+                                >
+                                    {{ $t("Admin Rates") }}
+                                </DropdownLink>
+                                <hr />
+                                <DropdownLink
+                                    :href="route('labor-rates.index')"
+                                    class="text-black"
+                                >
+                                    {{ $t("Labor Rates") }}
+                                </DropdownLink>
+                            </div>
+                        </template>
+                    </Dropdown>
                 </div>
-
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
+                <NavLink
+                    :active="route().current('aircrafts.index')"
+                    :href="route('logout')"
+                    as="button"
+                    class="inline-flex items-center space-x-7 mt-32"
+                    method="post"
                 >
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink
-                            :active="route().current('dashboard')"
-                            :href="route('dashboard')"
+                    <span>
+                        <svg
+                            class="size-6"
+                            fill="none"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            xmlns="http://www.w3.org/2000/svg"
                         >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
+                            <g id="Vector">
+                                <path
+                                    d="M8.00146 21H3.41048C3.18482 20.9994 3.00201 20.8167 3.0015 20.591V3.40898C3.00206 3.18333 3.18482 3.00052 3.41048 3H8.00146C8.82989 3 9.50146 2.32842 9.50146 1.5C9.50146 0.671578 8.82989 0 8.00146 0H3.41048C1.52864 0.00220313 0.00369849 1.52719 0.00149536 3.40898V20.591C0.00369849 22.4728 1.52864 23.9978 3.41048 24H8.00146C8.82989 24 9.50146 23.3284 9.50146 22.5C9.50146 21.6716 8.82989 21 8.00146 21Z"
+                                    fill="#FFC300"
+                                />
+                                <path
+                                    d="M22.6835 8.81798L18.8015 4.93898C18.2155 4.35328 17.2657 4.35351 16.6799 4.9395C16.0942 5.52548 16.0945 6.47531 16.6805 7.06101L20.0924 10.472L6.50146 10.5C5.67304 10.5 5.00146 11.1716 5.00146 12C5.00146 12.8284 5.67304 13.5 6.50146 13.5L20.1475 13.475L16.6805 16.942C16.116 17.5484 16.15 18.4975 16.7563 19.062C17.3326 19.5985 18.2257 19.5981 18.8015 19.061L22.6805 15.182C24.4379 13.4247 24.4379 10.5754 22.6805 8.81808L22.6805 8.81803L22.6835 8.81798Z"
+                                    fill="#FFC300"
+                                />
+                            </g>
+                        </svg>
+                    </span>
+                    <span>{{ $t("Logout") }}</span>
+                </NavLink>
+            </div>
+        </nav>
 
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
-                        <div class="px-4">
-                            <div class="font-medium text-base text-gray-800">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="font-medium text-sm text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                as="button"
-                                method="post"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Page Heading -->
+        <div class="flex-1">
             <header v-if="$slots.header" class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
 
-            <!-- Page Content -->
-            <main>
+            <main class="p-4">
                 <slot />
             </main>
         </div>

@@ -1,0 +1,33 @@
+table {
+    @apply mx-auto;
+}
+
+table thead tr th {
+    @apply text-sm text-black font-medium uppercase px-4 py-1 bg-white
+}
+
+table th:first-child {
+    @apply rounded-tl-lg;
+}
+
+table th:last-child {
+    @apply rounded-tr-lg;
+}
+
+table tbody tr td {
+    @apply text-sm  px-4 py-2 leading-normal;
+}
+
+table tbody tr:hover {
+    @apply bg-black-50;
+}
+
+@layer utilities {
+    tbody tr:nth-child(even) {
+        @apply bg-white;
+    }
+}
+
+.col-actions {
+    @apply space-x-2
+}
