@@ -130,7 +130,7 @@ const submit = () => {
                 </div>
             </div>
             <div
-                class="relative flex items-center w-1/2 h-screen bg-[url('storage/img/background_login.jpg')] bg-cover bg-no-repeat bg-right"
+                class="relative flex items-center w-1/2 h-screen bg-[url('../../storage/app/public/img/background_login.jpg')] bg-cover bg-no-repeat bg-right"
             >
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto"

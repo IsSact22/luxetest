@@ -4,11 +4,6 @@ import vue from "@vitejs/plugin-vue";
 import i18n from "laravel-vue-i18n/vite";
 
 export default defineConfig({
-    server: {
-        hmr: {
-            host: "localhost",
-        },
-    },
     plugins: [
         laravel({
             input: "resources/js/app.js",
@@ -24,4 +19,7 @@ export default defineConfig({
         }),
         i18n(),
     ],
+    resolve: {
+        "@": "/public/storage",
+    },
 });
