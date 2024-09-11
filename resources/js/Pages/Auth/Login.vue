@@ -5,6 +5,7 @@ import { onMounted } from "vue";
 import { route } from "ziggy-js";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
+import backgroundImage from "../../../../storage/app/public/img/background_login.jpg";
 
 defineProps({
     canResetPassword: {
@@ -130,7 +131,8 @@ const submit = () => {
                 </div>
             </div>
             <div
-                class="relative flex items-center w-1/2 h-screen bg-[url('../storage/img/a836e04e2cb0c2958a1df350314addaa.jpg')] bg-cover bg-no-repeat bg-right"
+                :style="{ backgroundImage: `url(${backgroundImage})` }"
+                class="relative flex items-center w-1/2 h-screen bg-cover bg-no-repeat bg-right"
             >
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto"
