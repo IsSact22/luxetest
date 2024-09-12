@@ -6,6 +6,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { route } from "ziggy-js";
+import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
     laborRate: {
@@ -26,7 +27,7 @@ const url = props.laborRate
     ? `/labor-rates/${props.laborRate.id}`
     : "/labor-rates";
 const form = useForm(method, url, {
-    engine_type_id: props.laborRate?.engine_type.id ?? null,
+    engine_type_id: props.laborRate?.rateable.id ?? null,
     code: props.laborRate?.code ?? null,
     name: props.laborRate?.name ?? null,
     mount: props.laborRate?.mount ?? null,
@@ -41,6 +42,7 @@ const submit = async () => {
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("labor-rates.index"));
 };
 </script>
 <template>

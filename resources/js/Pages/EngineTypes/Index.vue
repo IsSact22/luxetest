@@ -3,6 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import _ from "lodash";
+import Paginator from "@/Components/Paginator.vue";
 
 const props = defineProps({
     resource: {
@@ -46,7 +47,7 @@ const fireSearch = _.throttle(function () {
                         >New Engine Type
                     </Link>
                 </form>
-                <table class="table-auto">
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -101,6 +102,13 @@ const fireSearch = _.throttle(function () {
                             </td>
                         </tr>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                <Paginator :data="resource" />
+                            </td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

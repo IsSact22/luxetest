@@ -1,5 +1,5 @@
 table {
-    @apply mx-auto bg-white;
+    @apply w-full mx-auto bg-white;
 }
 
 table thead, tbody tr {
@@ -16,6 +16,14 @@ table th:first-child {
 
 table th:last-child {
     @apply rounded-tr-lg;
+}
+
+table tbody tr td:first-child {
+    @apply text-center;
+}
+
+table tbody tr td:last-child {
+    @apply text-center;
 }
 
 table tbody tr td {

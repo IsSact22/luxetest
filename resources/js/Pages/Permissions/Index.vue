@@ -190,7 +190,7 @@ const handleDelete = (id) => {
                 </Link>
             </form>
 
-            <table class="table-auto">
+            <table class="table-fixed">
                 <thead>
                     <tr>
                         <th>Id</th>

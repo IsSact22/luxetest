@@ -12,21 +12,21 @@ class StoreBrandAircraftRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
             'name' => [
                 ...$this->isPrecognitive() ?
-                    ['min:3', 'max:191', 'unique:brand_aircrafts,name'] :
-                    ['min:3', 'max:191', 'brand_aircrafts,name'],
+                    ['unique:brand_aircrafts,name'] :
+                    ['min:3', 'max:191', 'unique:brand_aircrafts,name'],
             ],
         ];
     }

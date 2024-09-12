@@ -4,7 +4,7 @@ import { Head, Link } from "@inertiajs/vue3";
 import EngineTypeForm from "@/Pages/EngineTypes/Partials/EngineTypeForm.vue";
 </script>
 <template>
-    <Head title="Engine Type" />
+    <Head title="Engine Types" />
     <AuthenticatedLayout>
         <template #header>
             <h2>Engine Type</h2>

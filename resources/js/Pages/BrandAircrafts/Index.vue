@@ -3,6 +3,7 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
+import { route } from "ziggy-js";
 
 const props = defineProps({
     resource: {
@@ -16,6 +17,14 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("brand-aircrafts.index"), { preserveState: true });
 }, 200);
+
+const destroy = (id) => {
+    if (confirm("Are you sure you want to delete?")) {
+        form.delete(route("brand-aircrafts.destroy", id), {
+            preserveState: true,
+        });
+    }
+};
 </script>
 <template>
     <Head title="Brand Aircrafts" />
@@ -45,7 +54,7 @@ const fireSearch = _.throttle(function () {
                         >New Brand Aircraft
                     </Link>
                 </form>
-                <table class="table-auto">
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -81,7 +90,10 @@ const fireSearch = _.throttle(function () {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link class="btn-delete">
+                                <Link
+                                    class="btn-delete"
+                                    @click="destroy(item.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"

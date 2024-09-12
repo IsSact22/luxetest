@@ -46,7 +46,7 @@ const fireSearch = _.throttle(function () {
                         >New Model Aircraft
                     </Link>
                 </form>
-                <table class="table-auto">
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>

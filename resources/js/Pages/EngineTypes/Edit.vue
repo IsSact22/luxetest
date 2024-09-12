@@ -12,7 +12,7 @@ const props = defineProps({
 });
 </script>
 <template>
-    <Head title="Engine Type" />
+    <Head title="Engine Types" />
     <AuthenticatedLayout>
         <template #header>
             <h2>Engine Type</h2>
