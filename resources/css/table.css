@@ -1,9 +1,13 @@
 table {
-    @apply mx-auto;
+    @apply mx-auto bg-white;
+}
+
+table thead, tbody tr {
+    @apply border-b border-b-black-200;
 }
 
 table thead tr th {
-    @apply text-sm text-black font-medium uppercase px-4 py-1 bg-white
+    @apply text-sm text-black font-medium uppercase leading-normal px-4 py-2 bg-white;
 }
 
 table th:first-child {

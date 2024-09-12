@@ -24,9 +24,9 @@ const fireSearch = _.throttle(function () {
             <h2>Engine Types</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
-            <div class="my-4 border rounded-md p-4">
+            <div class="my-4 p-4">
                 <form
-                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                     @submit.prevent
                 >
                     <div>

@@ -52,9 +52,9 @@ const fireSearch = _.throttle(function () {
                 @show-form="toggleShowForm"
             />
 
-            <div v-if="!showForm" class="my-4 border rounded-md p-4">
+            <div v-if="!showForm" class="my-4 p-4">
                 <form
-                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                 >
                     <div>
                         <input
@@ -75,7 +75,7 @@ const fireSearch = _.throttle(function () {
                         New Rate
                     </button>
                 </form>
-                <table class="table-auto">
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>

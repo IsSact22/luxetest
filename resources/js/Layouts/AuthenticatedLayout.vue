@@ -32,7 +32,9 @@ const showBackoffice = computed(() => {
 
 <template>
     <div class="min-h-screen bg-white flex">
-        <nav class="bg-black-700 border-r border-gray-100 w-64">
+        <nav
+            class="flex flex-col h-screen bg-black-700 border-r border-gray-100 w-64"
+        >
             <!-- Logo -->
             <div class="inline-flex p-7">
                 <Link :href="route('dashboard')">
@@ -57,7 +59,7 @@ const showBackoffice = computed(() => {
             </div>
 
             <!-- Navigation Links -->
-            <div class="p-4">
+            <div class="flex-grow p-4">
                 <div class="flex flex-col space-y-7">
                     <NavLink
                         :active="route().current('dashboard')"
@@ -219,37 +221,38 @@ const showBackoffice = computed(() => {
                         </template>
                     </Dropdown>
                 </div>
-                <NavLink
-                    :active="route().current('aircrafts.index')"
-                    :href="route('logout')"
-                    as="button"
-                    class="inline-flex items-center space-x-7 mt-32"
-                    method="post"
-                >
-                    <span>
-                        <svg
-                            class="size-6"
-                            fill="none"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            width="24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <g id="Vector">
-                                <path
-                                    d="M8.00146 21H3.41048C3.18482 20.9994 3.00201 20.8167 3.0015 20.591V3.40898C3.00206 3.18333 3.18482 3.00052 3.41048 3H8.00146C8.82989 3 9.50146 2.32842 9.50146 1.5C9.50146 0.671578 8.82989 0 8.00146 0H3.41048C1.52864 0.00220313 0.00369849 1.52719 0.00149536 3.40898V20.591C0.00369849 22.4728 1.52864 23.9978 3.41048 24H8.00146C8.82989 24 9.50146 23.3284 9.50146 22.5C9.50146 21.6716 8.82989 21 8.00146 21Z"
-                                    fill="#FFC300"
-                                />
-                                <path
-                                    d="M22.6835 8.81798L18.8015 4.93898C18.2155 4.35328 17.2657 4.35351 16.6799 4.9395C16.0942 5.52548 16.0945 6.47531 16.6805 7.06101L20.0924 10.472L6.50146 10.5C5.67304 10.5 5.00146 11.1716 5.00146 12C5.00146 12.8284 5.67304 13.5 6.50146 13.5L20.1475 13.475L16.6805 16.942C16.116 17.5484 16.15 18.4975 16.7563 19.062C17.3326 19.5985 18.2257 19.5981 18.8015 19.061L22.6805 15.182C24.4379 13.4247 24.4379 10.5754 22.6805 8.81808L22.6805 8.81803L22.6835 8.81798Z"
-                                    fill="#FFC300"
-                                />
-                            </g>
-                        </svg>
-                    </span>
-                    <span>{{ $t("Logout") }}</span>
-                </NavLink>
             </div>
+
+            <NavLink
+                :active="route().current('aircrafts.index')"
+                :href="route('logout')"
+                as="button"
+                class="inline-flex items-center space-x-7 mb-7"
+                method="post"
+            >
+                <span>
+                    <svg
+                        class="size-6"
+                        fill="none"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        width="24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <g id="Vector">
+                            <path
+                                d="M8.00146 21H3.41048C3.18482 20.9994 3.00201 20.8167 3.0015 20.591V3.40898C3.00206 3.18333 3.18482 3.00052 3.41048 3H8.00146C8.82989 3 9.50146 2.32842 9.50146 1.5C9.50146 0.671578 8.82989 0 8.00146 0H3.41048C1.52864 0.00220313 0.00369849 1.52719 0.00149536 3.40898V20.591C0.00369849 22.4728 1.52864 23.9978 3.41048 24H8.00146C8.82989 24 9.50146 23.3284 9.50146 22.5C9.50146 21.6716 8.82989 21 8.00146 21Z"
+                                fill="#FFC300"
+                            />
+                            <path
+                                d="M22.6835 8.81798L18.8015 4.93898C18.2155 4.35328 17.2657 4.35351 16.6799 4.9395C16.0942 5.52548 16.0945 6.47531 16.6805 7.06101L20.0924 10.472L6.50146 10.5C5.67304 10.5 5.00146 11.1716 5.00146 12C5.00146 12.8284 5.67304 13.5 6.50146 13.5L20.1475 13.475L16.6805 16.942C16.116 17.5484 16.15 18.4975 16.7563 19.062C17.3326 19.5985 18.2257 19.5981 18.8015 19.061L22.6805 15.182C24.4379 13.4247 24.4379 10.5754 22.6805 8.81808L22.6805 8.81803L22.6835 8.81798Z"
+                                fill="#FFC300"
+                            />
+                        </g>
+                    </svg>
+                </span>
+                <span>{{ $t("Logout") }}</span>
+            </NavLink>
         </nav>
 
         <div class="flex-1">

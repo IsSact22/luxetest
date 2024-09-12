@@ -456,7 +456,7 @@ const badgeClass = (priority) => {
                                 </button>
                             </div>
                             <!-- pending approval -->
-                            <table class="table-auto w-full">
+                            <table class="table-fixed w-full">
                                 <thead>
                                     <tr>
                                         <th>id</th>

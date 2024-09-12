@@ -166,7 +166,7 @@ const handleDelete = (id) => {
             </transition>
 
             <form
-                class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
             >
                 <div>
                     <input
@@ -179,11 +179,13 @@ const handleDelete = (id) => {
                         @keyup="fireSearch"
                     />
                 </div>
-                <button class="btn-goto" type="button">New Permission</button>
-                <Link :href="route('users.index')" class="btn-goto">
+                <button class="btn-primary" type="button">
+                    New Permission
+                </button>
+                <Link :href="route('users.index')" class="btn-primary">
                     Users
                 </Link>
-                <Link :href="route('roles.index')" class="btn-goto">
+                <Link :href="route('roles.index')" class="btn-primary">
                     Roles
                 </Link>
             </form>

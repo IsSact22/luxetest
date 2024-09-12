@@ -32,9 +32,9 @@ const destroy = (id) => {
             <h2>Users</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
-            <div class="my-4 border rounded-md px-4 py-4">
+            <div class="mt-4 px-4 py-4 bg-white">
                 <form
-                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                 >
                     <div>
                         <input
@@ -60,7 +60,7 @@ const destroy = (id) => {
                         Permissions
                     </Link>
                 </form>
-                <table class="table-auto">
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>

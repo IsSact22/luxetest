@@ -12,7 +12,7 @@
 @tailwind utilities;
 
 html, body {
-    font-family: 'Poppins', sans-serif;
+    @apply font-poppins;
 }
 
 h1 {

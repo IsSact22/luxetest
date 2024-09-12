@@ -51,9 +51,9 @@ const toggleEditRole = () => {
             <h2>Roles</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
-            <div class="my-4 border rounded-md px-4 py-4">
+            <div class="my-4 px-4 py-4">
                 <form
-                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                 >
                     <div>
                         <input
@@ -67,16 +67,19 @@ const toggleEditRole = () => {
                         />
                     </div>
                     <button
-                        class="btn-goto"
+                        class="btn-primary"
                         type="button"
                         @click="toggleNewRole"
                     >
                         New Role
                     </button>
-                    <Link :href="route('users.index')" class="btn-goto">
+                    <Link :href="route('users.index')" class="btn-primary">
                         Users
                     </Link>
-                    <Link :href="route('permissions.index')" class="btn-goto">
+                    <Link
+                        :href="route('permissions.index')"
+                        class="btn-primary"
+                    >
                         Permissions
                     </Link>
                 </form>
