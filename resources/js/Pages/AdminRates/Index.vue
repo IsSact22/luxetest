@@ -6,6 +6,7 @@ import AdminRateForm from "@/Pages/AdminRates/Partials/AdminRateForm.vue";
 import { ref } from "vue";
 import _ from "lodash";
 import { route } from "ziggy-js";
+import { useDestroy } from "@/Composables/useDestroy.js";
 
 const props = defineProps({
     resource: {
@@ -24,6 +25,7 @@ const toggleShowForm = () => {
         selectedRate.value = null;
     }
     showForm.value = !showForm.value;
+    console.log(showForm.value);
 };
 const form = useForm({
     search: "",
@@ -31,6 +33,8 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("admin-rates.index"), { preserveState: true });
 }, 200);
+
+const { destroy } = useDestroy("admin-rates.destroy");
 </script>
 
 <template>
@@ -112,7 +116,10 @@ const fireSearch = _.throttle(function () {
                                         </svg>
                                     </span>
                                 </button>
-                                <Link class="btn-delete">
+                                <Link
+                                    class="btn-delete"
+                                    @click="destroy(item.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"

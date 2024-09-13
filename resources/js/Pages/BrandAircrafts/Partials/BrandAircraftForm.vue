@@ -3,7 +3,11 @@ import { useForm } from "laravel-precognition-vue-inertia";
 import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { route } from "ziggy-js";
+import { router } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const props = defineProps({
     brandAircraft: {
         type: Object,
@@ -19,12 +23,16 @@ const form = useForm(method, url, {
 const submit = () => {
     form.submit({
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            toast.success("Brand created");
+        },
     });
 };
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("brand-aircrafts.index"));
 };
 </script>
 <template>

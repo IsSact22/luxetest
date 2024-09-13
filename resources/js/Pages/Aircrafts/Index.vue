@@ -6,6 +6,7 @@ import { route } from "ziggy-js";
 import { onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
 import _ from "lodash";
+import { useDestroy } from "@/Composables/useDestroy.js";
 
 const toast = useToast();
 const props = defineProps({
@@ -61,6 +62,8 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("aircrafts.index"), { preserveState: true });
 }, 200);
+
+const { destroy } = useDestroy("aircrafts.destroy");
 </script>
 <template>
     <Head title="Aircrafts" />
@@ -162,7 +165,10 @@ const fireSearch = _.throttle(function () {
                                     </span>
                                 </button>
 
-                                <Link class="btn-delete">
+                                <Link
+                                    class="btn-delete"
+                                    @click="destroy(item.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"

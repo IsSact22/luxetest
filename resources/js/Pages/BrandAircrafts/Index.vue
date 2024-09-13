@@ -4,6 +4,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
 import { route } from "ziggy-js";
+import { useDestroy } from "@/Composables/useDestroy.js";
 
 const props = defineProps({
     resource: {
@@ -18,13 +19,7 @@ const fireSearch = _.throttle(function () {
     form.get(route("brand-aircrafts.index"), { preserveState: true });
 }, 200);
 
-const destroy = (id) => {
-    if (confirm("Are you sure you want to delete?")) {
-        form.delete(route("brand-aircrafts.destroy", id), {
-            preserveState: true,
-        });
-    }
-};
+const { destroy } = useDestroy("aircrafts.destroy");
 </script>
 <template>
     <Head title="Brand Aircrafts" />

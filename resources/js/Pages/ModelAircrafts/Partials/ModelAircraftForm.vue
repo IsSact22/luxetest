@@ -4,12 +4,16 @@ import { onMounted, ref } from "vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import { route } from "ziggy-js";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const props = defineProps({
     modelAircraft: {
         type: Object,
     },
 });
+
 const method = props.modelAircraft ? "put" : "post";
 const url = props.modelAircraft
     ? `/model-aircrafts/${props.modelAircraft.id}`
@@ -39,10 +43,18 @@ const getEngineTypeOptions = async () => {
 };
 onMounted(getBrandOptions);
 onMounted(getEngineTypeOptions);
-const submit = async () => {
+const submit = () => {
+    console.log(form.data());
     form.submit({
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            if (method === "put") {
+                toast.success("Model updated successfully.");
+            } else {
+                toast.success("Model created successfully.");
+            }
+        },
     });
 };
 const cancel = () => {
@@ -70,6 +82,10 @@ const cancel = () => {
                     v-html="item.label"
                 ></option>
             </select>
+            <InputError
+                v-if="form.errors.brand_aircraft_id"
+                :message="form.errors.brand_aircraft_id"
+            />
         </div>
         <div>
             <label class="block" for="engine_type_id">Engine Type</label>
@@ -89,6 +105,10 @@ const cancel = () => {
                     v-html="item.label"
                 ></option>
             </select>
+            <InputError
+                v-if="form.errors.engine_type_id"
+                :message="form.errors.engine_type_id"
+            />
         </div>
         <div>
             <label class="block" for="name">Name</label>
@@ -107,8 +127,8 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Save</PrimaryButton
-            >
+                >Save
+            </PrimaryButton>
             <SecondaryButton @click="cancel">Cancel</SecondaryButton>
         </div>
     </form>

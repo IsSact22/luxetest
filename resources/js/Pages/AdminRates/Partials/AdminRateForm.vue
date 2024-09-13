@@ -4,7 +4,9 @@ import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const props = defineProps({
     adminRate: {
         type: Object,
@@ -13,7 +15,7 @@ const props = defineProps({
 const method = props.adminRate ? "put" : "post";
 const url = props.adminRate
     ? `/admin-rates/${props.adminRate.id}`
-    : "/admin/rates";
+    : "/admin-rates";
 const form = useForm(method, url, {
     name: props.adminRate?.name ?? "",
     description: props.adminRate?.description ?? "",
@@ -21,7 +23,11 @@ const form = useForm(method, url, {
 const submit = () => {
     form.submit({
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            emit("showForm", false);
+            toast.success("Admin Rate created");
+        },
     });
 };
 const emit = defineEmits(["showForm"]);
@@ -35,10 +41,7 @@ const cancel = () => {
 <template>
     <h2 v-if="props.adminRate" class="my-2">Edit Rate</h2>
     <h2 v-else class="my-2">New Rate</h2>
-    <form
-        class="bg-white rounded-md border border-gray-300 p-4"
-        @submit.prevent="submit"
-    >
+    <form class="bg-white p-4" @submit.prevent="submit">
         <div>
             <InputLabel for="name">Name</InputLabel>
             <input

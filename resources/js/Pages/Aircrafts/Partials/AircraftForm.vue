@@ -4,7 +4,9 @@ import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { onMounted, ref } from "vue";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const props = defineProps({
     aircraft: {
         type: Object,
@@ -30,7 +32,10 @@ const form = useForm(method, url, {
 const submit = () => {
     form.submit({
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            toast.success("Aircraft created");
+        },
     });
 };
 const cancel = () => {

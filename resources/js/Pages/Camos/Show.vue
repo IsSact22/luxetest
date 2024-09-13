@@ -211,133 +211,174 @@ const badgeClass = (priority) => {
                     >
                         View Media
                     </Link>
-                    <!--                    <button
-                                            class="btn-inDev"
-                                            title="Under development"
-                                            type="button"
-                                            @click.passive.prevent
-                                        >
-                                            Archive Camo
-                                        </button>-->
                 </div>
-                <div class="grid grid-cols-3 gap-4 my-3">
-                    <div
-                        class="flex flex-col px-4 border rounded-md bg-gray-100/50"
-                    >
-                        <h1 class="text-gray-700">Customer Data</h1>
-                        <hr class="h-0.5 bg-neutral-400" />
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <p>Customer</p>
-                                <p>Contract</p>
-                                <p>Project Manager</p>
-                                <p>Location</p>
-                            </div>
-                            <div>
-                                <p>{{ resource.data.customer }}</p>
-                                <p>{{ resource.data.contract }}</p>
-                                <p>{{ resource.data.cam }}</p>
-                                <p>{{ resource.data.location }}</p>
-                            </div>
+
+                <div
+                    class="flex flex-row justify-items-center items-start space-x-5 mb-7"
+                >
+                    <div class="flex flex-col">
+                        <!-- customer -->
+                        <div
+                            class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
+                        >
+                            <table class="table-auto">
+                                <thead>
+                                    <tr>
+                                        <th style="color: #b58a00 !important">
+                                            Customer
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            Contract
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            Project Manager
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            Location
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ resource.data.customer }}</td>
+                                        <td>{{ resource.data.contract }}</td>
+                                        <td>{{ resource.data.cam }}</td>
+                                        <td>{{ resource.data.location }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- aircraft -->
+                        <div
+                            class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
+                        >
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="color: #b58a00 !important">
+                                            Aircraft
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            Description
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            Start Date
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            Estimate Finish Date
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            {{
+                                                resource.data.aircraft
+                                                    .model_aircraft.name
+                                            }}
+                                            /
+                                            {{
+                                                resource.data.aircraft.register
+                                            }}
+                                        </td>
+                                        <td>
+                                            {{ resource.data.description }}
+                                            &nbsp;
+                                        </td>
+                                        <td>{{ resource.data.start_date }}</td>
+                                        <td>
+                                            {{
+                                                resource.data
+                                                    .estimate_finish_date
+                                            }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div
-                        class="flex flex-col px-4 border rounded-md bg-gray-100/50"
-                    >
-                        <h1 class="text-gray-700">Project</h1>
-                        <hr class="h-0.5 bg-neutral-400" />
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <p>Aircraft</p>
-                                <p>Description</p>
-                                <p>Start Date</p>
-                                <p>Estimate Finish Date</p>
+
+                    <div class="w-1/2 flex flex-col px-4">
+                        <div
+                            class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
+                        >
+                            <h1 class="text-gray-700">Summary</h1>
+                            <hr class="h-0.5 my-2 bg-neutral-400" />
+
+                            <div
+                                class="flex flex-row justify-between text-xl my-2"
+                            >
+                                <span>Labor Mount</span>
+                                <span
+                                    class="px-2 py-1 bg-yellow-500 rounded-md"
+                                    >{{ formatCurrency(totalLaborMount) }}</span
+                                >
                             </div>
-                            <div>
-                                <p class="text-right">
-                                    {{
-                                        resource.data.aircraft.model_aircraft
-                                            .name
-                                    }}
-                                    / {{ resource.data.aircraft.register }}
-                                </p>
-                                <p class="text-right line-clamp-1">
-                                    {{ resource.data.description }} &nbsp;
-                                </p>
-                                <p class="text-right">
-                                    {{ resource.data.start_date }}
-                                </p>
-                                <p class="text-right">
-                                    {{ resource.data.estimate_finish_date }}
-                                </p>
+
+                            <div
+                                class="flex flex-row justify-between text-xl my-2"
+                            >
+                                <span>Material Mount</span>
+                                <span
+                                    class="px-2 py-1 bg-yellow-500 rounded-md"
+                                    >{{
+                                        formatCurrency(totalMaterialMount)
+                                    }}</span
+                                >
                             </div>
-                        </div>
-                    </div>
-                    <div
-                        class="flex flex-col px-4 border rounded-md bg-gray-100/50"
-                    >
-                        <h1 class="text-gray-700">Summary</h1>
-                        <hr class="h-0.5 bg-neutral-400" />
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <p>Labor Mount</p>
-                                <p>Material Mount</p>
-                                <p>Total</p>
-                                <p>Waiting Approval</p>
-                                <p>Pending</p>
-                                <p>In Progress</p>
-                                <p>Completed</p>
-                                <p>Total Activities</p>
-                            </div>
-                            <div>
-                                <p class="text-right">
-                                    {{ formatCurrency(totalLaborMount) }}
-                                </p>
-                                <p class="text-right">
-                                    {{ formatCurrency(totalMaterialMount) }}
-                                </p>
-                                <hr class="h-0.5 bg-gray-300" />
-                                <p class="text-right text-green-700">
-                                    {{
+
+                            <hr class="my-2" />
+                            <div class="flex flex-row justify-between text-xl">
+                                <span>Total</span>
+                                <span
+                                    class="px-2 py-1 bg-yellow-500 rounded-md"
+                                    >{{
                                         formatCurrency(
                                             Number(totalLaborMount) +
                                                 Number(totalMaterialMount),
                                         )
-                                    }}
-                                </p>
-                                <hr />
-                                <p v-if="waitingApproval" class="text-right">
-                                    <span class="badge-alert">{{
-                                        waitingApproval.length
-                                    }}</span>
-                                </p>
-                                <p v-if="pendingExecution" class="text-right">
-                                    <span class="badge-pending">{{
-                                        pendingExecution.length
-                                    }}</span>
-                                </p>
-                                <p v-if="completed" class="text-right">
-                                    <span class="badge-progress">{{
-                                        inProgress.length
-                                    }}</span>
-                                </p>
-                                <p v-if="completed" class="text-right">
-                                    <span class="badge-completed">{{
-                                        completed.length
-                                    }}</span>
-                                </p>
-                                <p
-                                    v-if="activities && activities.total"
-                                    class="text-right"
+                                    }}</span
                                 >
-                                    <span class="badge-info">{{
-                                        activities.total
-                                    }}</span>
-                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- progress information -->
+                <div
+                    class="flex flex-row justify-between px-2 py-2 my-5 shadow border rounded-md border-gray-200"
+                >
+                    <p v-if="waitingApproval" class="text-right">
+                        Waiting Approval
+                        <span class="badge-alert">{{
+                            waitingApproval.length
+                        }}</span>
+                    </p>
+                    <p v-if="pendingExecution" class="text-right">
+                        Pending
+                        <span class="badge-pending">{{
+                            pendingExecution.length
+                        }}</span>
+                    </p>
+                    <p v-if="completed" class="text-right">
+                        In Progress
+                        <span class="badge-progress">{{
+                            inProgress.length
+                        }}</span>
+                    </p>
+                    <p v-if="completed" class="text-right">
+                        Completed
+                        <span class="badge-completed">{{
+                            completed.length
+                        }}</span>
+                    </p>
+                    <p v-if="activities && activities.total" class="text-right">
+                        Total Activities
+                        <span class="badge-info">{{ activities.total }}</span>
+                    </p>
+                </div>
+
                 <div>
                     <form v-show="!addActivity" class="my-2">
                         <InputLabel for="search">Search</InputLabel>
@@ -359,13 +400,6 @@ const badgeClass = (priority) => {
                             :user="usePage().props.auth.user"
                             @add-activity="handleAddActivity"
                         />
-                        <!--                        <AddActivityComponent
-                                                    v-show="addActivity"
-                                                    ref="addActivityComponent"
-                                                    :camo-id="resource.data.id"
-                                                    @event-close="handleAddActivity"
-                                                    @sent-activity="getActivities"
-                                                />-->
                     </Transition>
                     <!-- add activity -->
 

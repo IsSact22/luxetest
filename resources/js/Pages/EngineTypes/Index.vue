@@ -4,6 +4,7 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import _ from "lodash";
 import Paginator from "@/Components/Paginator.vue";
+import { useDestroy } from "@/Composables/useDestroy.js";
 
 const props = defineProps({
     resource: {
@@ -17,6 +18,8 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("engine-types.index"), { preserveState: true });
 }, 200);
+
+const { destroy } = useDestroy("aircrafts.destroy");
 </script>
 <template>
     <Head title="Engine Types" />
@@ -81,7 +84,10 @@ const fireSearch = _.throttle(function () {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link class="btn-delete">
+                                <Link
+                                    class="btn-delete"
+                                    @click="destroy(item.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"
