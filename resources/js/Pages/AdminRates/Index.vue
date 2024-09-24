@@ -6,7 +6,7 @@ import AdminRateForm from "@/Pages/AdminRates/Partials/AdminRateForm.vue";
 import { ref } from "vue";
 import _ from "lodash";
 import { route } from "ziggy-js";
-import { useDestroy } from "@/Composables/useDestroy.js";
+import Modal from "@/Components/Modal.vue";
 
 const props = defineProps({
     resource: {
@@ -34,29 +34,39 @@ const fireSearch = _.throttle(function () {
     form.get(route("admin-rates.index"), { preserveState: true });
 }, 200);
 
-const { destroy } = useDestroy("admin-rates.destroy");
+const destroy = (id) => {
+    if (confirm("Seguro desea eliminar el registro")) {
+        form.delete(route("admin-rates.destroy", id), {
+            preserveState: true,
+        });
+    }
+};
+
+const showModal = ref(false);
+const openModal = () => {
+    showModal.value = true;
+};
+
+const selected = ref(null);
+const handleSelected = (object) => {
+    selected.value = object;
+    openModal();
+};
+
+const closeModal = () => {
+    selected.value = null;
+    showModal.value = false;
+};
 </script>
 
 <template>
-    <Head title="Admin Rates" />
+    <Head title="Tarifas de administración" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Admin Rates</h2>
+            <h2>Tarifas de administración</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
-            <AdminRateForm
-                v-if="selectedRate"
-                :admin-rate="selectedRate"
-                @show-form="toggleShowForm"
-            />
-
-            <AdminRateForm
-                v-if="showForm && !selectedRate"
-                :admin-rate="selectedRate"
-                @show-form="toggleShowForm"
-            />
-
-            <div v-if="!showForm" class="my-4 p-4">
+            <div class="my-4 p-4">
                 <form
                     class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                 >
@@ -66,7 +76,7 @@ const { destroy } = useDestroy("admin-rates.destroy");
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="search"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -74,18 +84,59 @@ const { destroy } = useDestroy("admin-rates.destroy");
                     <button
                         class="btn-primary"
                         type="button"
-                        @click="toggleShowForm"
+                        @click="openModal"
                     >
-                        New Rate
+                        Nueva Tarifa
                     </button>
                 </form>
+
+                <!-- Modal -->
+                <Modal
+                    :show="showModal"
+                    closeable
+                    maxWidth="md"
+                    @close="closeModal"
+                >
+                    <template #default>
+                        <div class="float-right">
+                            <button
+                                class="mt-2 mr-2 px-1 py-0.5"
+                                @click="closeModal"
+                            >
+                                <svg
+                                    class="size-6 stroke-red-700 hover:fill-red-100"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold">
+                                <span v-if="selected">Editar Tarifa</span>
+                                <span v-else>Registrar nueva Tarifa</span>
+                            </h2>
+                            <AdminRateForm :admin-rate="selected" />
+                        </div>
+                    </template>
+                </Modal>
+                <!-- Modal -->
+
                 <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Actions</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,7 +148,7 @@ const { destroy } = useDestroy("admin-rates.destroy");
                                 <button
                                     class="btn-edit"
                                     type="button"
-                                    @click="setSelectedRate(item)"
+                                    @click="handleSelected(item)"
                                 >
                                     <span>
                                         <svg

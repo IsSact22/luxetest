@@ -7,6 +7,7 @@ import { useForm } from "laravel-precognition-vue-inertia";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import InputError from "@/Components/InputError.vue";
+import { router } from "@inertiajs/vue3";
 
 const toast = useToast();
 const props = defineProps({
@@ -70,6 +71,7 @@ const submit = async () => {
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("camos.index"));
 };
 </script>
 <template>
@@ -79,7 +81,7 @@ const cancel = () => {
                 class="flex flex-row justify-items-center items-center space-x-7 mb-4"
             >
                 <div>
-                    <InputLabel :value="`Project Manager`" for="cam_id" />
+                    <InputLabel :value="`Jefe de Proyecto`" for="cam_id" />
                     <select
                         id="cam_id"
                         v-model="form.cam_id"
@@ -100,7 +102,7 @@ const cancel = () => {
                     <InputError :message="form.errors.cam_id" class="mt-2" />
                 </div>
                 <div>
-                    <InputLabel :value="`Owner`" for="owner_id" />
+                    <InputLabel :value="`Dueño`" for="owner_id" />
                     <select
                         id="owner_id"
                         v-model="form.owner_id"
@@ -121,7 +123,7 @@ const cancel = () => {
                     <InputError :message="form.errors.owner_id" class="mt-2" />
                 </div>
                 <div>
-                    <InputLabel :value="`Location`" for="location" />
+                    <InputLabel :value="`Ubicación`" for="location" />
                     <input
                         id="location"
                         v-model="form.location"
@@ -137,7 +139,7 @@ const cancel = () => {
             </div>
 
             <div class="mb-4">
-                <InputLabel :value="`Aircraft`" for="aircraft_id" />
+                <InputLabel :value="`Avión`" for="aircraft_id" />
                 <select
                     id="aircraft_id"
                     v-model="form.aircraft_id"
@@ -163,7 +165,7 @@ const cancel = () => {
                 class="flex flex-row justify-items-center items-center space-x-7 mb-4"
             >
                 <div>
-                    <InputLabel :value="`Customer`" for="customer" />
+                    <InputLabel :value="`Cliente`" for="customer" />
                     <input
                         id="customer"
                         v-model="form.customer"
@@ -178,7 +180,7 @@ const cancel = () => {
                 </div>
 
                 <div>
-                    <InputLabel :value="`Contract`" for="contract" />
+                    <InputLabel :value="`Contrato`" for="contract" />
                     <input
                         id="contract"
                         v-model="form.contract"
@@ -195,7 +197,7 @@ const cancel = () => {
             </div>
 
             <div class="mb-4">
-                <InputLabel :value="`Description (CAMO)`" for="description" />
+                <InputLabel :value="`Notas (CAMO)`" for="description" />
                 <textarea
                     id="description"
                     v-model="form.description"
@@ -212,7 +214,7 @@ const cancel = () => {
                 class="flex flex-row justify-items-center items-center space-x-7 mb-4"
             >
                 <div>
-                    <InputLabel :value="`Start Date`" for="start_date" />
+                    <InputLabel :value="$t(`Start Date`)" for="start_date" />
                     <input
                         id="start_date"
                         v-model="form.start_date"
@@ -229,7 +231,7 @@ const cancel = () => {
                 </div>
                 <div>
                     <InputLabel
-                        :value="`Estimate Finish Date`"
+                        :value="$t(`Estimate Finish Date`)"
                         for="estimate_finish_date"
                     />
                     <input
@@ -247,7 +249,7 @@ const cancel = () => {
                     />
                 </div>
                 <div v-if="props.camo">
-                    <InputLabel :value="`Finish Date`" for="finish_date" />
+                    <InputLabel :value="$t(`Finish Date`)" for="finish_date" />
                     <input
                         id="finish_date"
                         v-model="form.finish_date"
@@ -269,9 +271,9 @@ const cancel = () => {
                     v-if="form.isDirty"
                     :disable="form.processing"
                     type="submit"
-                    >Save
+                    >Guardar
                 </PrimaryButton>
-                <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+                <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
             </div>
         </form>
     </div>

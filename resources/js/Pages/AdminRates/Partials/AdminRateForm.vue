@@ -5,6 +5,8 @@ import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { useToast } from "vue-toastification";
+import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
 
 const toast = useToast();
 const props = defineProps({
@@ -30,20 +32,17 @@ const submit = () => {
         },
     });
 };
-const emit = defineEmits(["showForm"]);
 const cancel = () => {
     form.clearErrors();
     form.reset();
-    emit("showForm", false);
+    router.get(route("admin-rates.index"));
 };
 </script>
 
 <template>
-    <h2 v-if="props.adminRate" class="my-2">Edit Rate</h2>
-    <h2 v-else class="my-2">New Rate</h2>
     <form class="bg-white p-4" @submit.prevent="submit">
-        <div>
-            <InputLabel for="name">Name</InputLabel>
+        <div class="my-2">
+            <InputLabel for="name">Nombre</InputLabel>
             <input
                 id="name"
                 v-model="form.name"
@@ -56,8 +55,8 @@ const cancel = () => {
             <InputError v-if="form.errors.name" :message="form.errors.name" />
         </div>
 
-        <div>
-            <InputLabel for="description">Description</InputLabel>
+        <div class="my-2">
+            <InputLabel for="description">Descripción</InputLabel>
             <input
                 id="description"
                 v-model="form.description"
@@ -77,9 +76,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" type="submit"
-                >Save
+                >Guardar
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>

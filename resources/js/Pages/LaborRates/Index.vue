@@ -38,7 +38,7 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="search"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -46,18 +46,18 @@ const { destroy } = useDestroy("aircrafts.destroy");
                     <Link
                         :href="route('labor-rates.create')"
                         class="btn-primary"
-                        >New Rate
+                        >Nueva Tarifa
                     </Link>
                 </form>
                 <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Code</th>
-                            <th>RateableS</th>
-                            <th>Name</th>
-                            <th>Mount</th>
-                            <th>Actions</th>
+                            <th>Código</th>
+                            <th>Sujetos a tasa</th>
+                            <th>Nombre</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>

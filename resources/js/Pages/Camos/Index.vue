@@ -131,11 +131,13 @@ const destroy = (id) => {
                 </table>
             </div>
             <div v-else class="my-12">
-                <h1 class="text-center text-2xl my-2">NO CAMO REGISTERED</h1>
+                <h1 class="text-center text-2xl my-2">
+                    Aun no tiene registros para listar
+                </h1>
                 <p class="text-center">
-                    Want to create your first
+                    ¿Quieres crear tu primer
                     <a :href="route('camos.create')">
-                        <span class="text-blue-700">CAMO</span>
+                        <span class="text-blue-700">CAMO?</span>
                     </a>
                 </p>
             </div>
