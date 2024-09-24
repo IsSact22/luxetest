@@ -50,9 +50,9 @@ const submit = () => {
         onSuccess: () => {
             form.reset();
             if (method === "put") {
-                toast.success("Model updated successfully.");
+                toast.success("Modelo actualizado exitosamente.");
             } else {
-                toast.success("Model created successfully.");
+                toast.success("Modelo creado exitosamente.");
             }
         },
     });

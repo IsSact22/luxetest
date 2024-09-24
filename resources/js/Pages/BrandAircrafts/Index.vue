@@ -22,10 +22,10 @@ const fireSearch = _.throttle(function () {
 const { destroy } = useDestroy("aircrafts.destroy");
 </script>
 <template>
-    <Head title="Brand Aircrafts" />
+    <Head title="Marcas de Aviones" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Brand Aircraft</h2>
+            <h2>Marcas de Aviones</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
             <div class="my-4 p-4">
@@ -46,15 +46,15 @@ const { destroy } = useDestroy("aircrafts.destroy");
                     <Link
                         :href="route('brand-aircrafts.create')"
                         class="btn-primary"
-                        >New Brand Aircraft
+                        >Nueva Marca
                     </Link>
                 </form>
                 <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Brand Name</th>
-                            <th>Actions</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>

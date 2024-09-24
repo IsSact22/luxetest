@@ -188,32 +188,32 @@ const showBackoffice = computed(() => {
                                     :href="route('engine-types.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Engine Type") }}
+                                    Tipo de Motor
                                 </DropdownLink>
                                 <DropdownLink
                                     :href="route('brand-aircrafts.index')"
                                     class="text-black"
-                                    >Brand Aircraft
+                                    >Marca de Avión
                                 </DropdownLink>
                                 <DropdownLink
                                     :href="route('model-aircrafts.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Model Aircraft") }}
+                                    Modelo de Avión
                                 </DropdownLink>
                                 <hr />
                                 <DropdownLink
                                     :href="route('admin-rates.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Admin Rates") }}
+                                    Tarifas de administración
                                 </DropdownLink>
                                 <hr />
                                 <DropdownLink
                                     :href="route('labor-rates.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Labor Rates") }}
+                                    Tarifas laborales
                                 </DropdownLink>
                             </div>
                         </template>

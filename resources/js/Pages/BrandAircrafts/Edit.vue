@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 import BrandAircraftForm from "@/Pages/BrandAircrafts/Partials/BrandAircraftForm.vue";
 
 const props = defineProps({
@@ -11,15 +11,10 @@ const props = defineProps({
 });
 </script>
 <template>
-    <Head title="Engine Type" />
+    <Head title="Marcas de Aviones" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Engine Type</h2>
-            <div class="flex flex-row-reverse">
-                <Link :href="route('brand-aircrafts.index')" class="btn-goto"
-                    >Back
-                </Link>
-            </div>
+            <h2>Marcas de Aviones</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">

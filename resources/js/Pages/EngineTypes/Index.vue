@@ -5,6 +5,9 @@ import { route } from "ziggy-js";
 import _ from "lodash";
 import Paginator from "@/Components/Paginator.vue";
 import { useDestroy } from "@/Composables/useDestroy.js";
+import { ref } from "vue";
+import Modal from "@/Components/Modal.vue";
+import EngineTypeForm from "@/Pages/EngineTypes/Partials/EngineTypeForm.vue";
 
 const props = defineProps({
     resource: {
@@ -20,6 +23,20 @@ const fireSearch = _.throttle(function () {
 }, 200);
 
 const { destroy } = useDestroy("aircrafts.destroy");
+
+const showModal = ref(false);
+const openModal = () => {
+    showModal.value = true;
+};
+
+const closeModal = () => {
+    showModal.value = false;
+};
+const modelSelected = ref({});
+const handleSelected = (object) => {
+    modelSelected.value = object;
+    openModal();
+};
 </script>
 <template>
     <Head title="Tipo de Motores" />
@@ -44,12 +61,53 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             @keyup="fireSearch"
                         />
                     </div>
+                    <button class="btn-primary" @click="openModal">
+                        Nuevo Tipo Modal
+                    </button>
                     <Link
                         :href="route('engine-types.create')"
                         class="btn-primary"
                         >Nuevo tipo
                     </Link>
                 </form>
+                <!-- Modal -->
+                <Modal
+                    :show="showModal"
+                    closeable
+                    maxWidth="md"
+                    @close="closeModal"
+                >
+                    <template #default>
+                        <div class="float-right">
+                            <button
+                                class="mt-2 mr-2 px-1 py-0.5"
+                                @click="closeModal"
+                            >
+                                <svg
+                                    class="size-6 stroke-red-700 hover:fill-red-100"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold">
+                                Registrar nuevo Tipo de Motor
+                            </h2>
+                            <EngineTypeForm :engine-type="modelSelected" />
+                        </div>
+                    </template>
+                </Modal>
+                <!-- Modal -->
                 <table class="table-fixed">
                     <thead>
                         <tr>
@@ -63,9 +121,9 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             <td>{{ item.id }}</td>
                             <td class="uppercase">{{ item.name }}</td>
                             <td class="col-actions">
-                                <Link
-                                    :href="route('engine-types.edit', item.id)"
+                                <button
                                     class="btn-edit"
+                                    @click="handleSelected(item)"
                                 >
                                     <span>
                                         <svg
@@ -83,7 +141,7 @@ const { destroy } = useDestroy("aircrafts.destroy");
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                                 <Link
                                     class="btn-delete"
                                     @click="destroy(item.id)"

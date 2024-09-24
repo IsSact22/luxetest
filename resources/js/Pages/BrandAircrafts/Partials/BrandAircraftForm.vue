@@ -38,7 +38,7 @@ const cancel = () => {
 <template>
     <form @submit.prevent="submit">
         <div>
-            <label class="block" for="name">Name</label>
+            <label class="block" for="name">Nombre</label>
             <input
                 id="name"
                 v-model="form.name"
@@ -55,7 +55,7 @@ const cancel = () => {
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
                 >Save
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>
