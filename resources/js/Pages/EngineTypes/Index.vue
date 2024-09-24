@@ -62,13 +62,8 @@ const handleSelected = (object) => {
                         />
                     </div>
                     <button class="btn-primary" @click="openModal">
-                        Nuevo Tipo Modal
+                        Nuevo Tipo
                     </button>
-                    <Link
-                        :href="route('engine-types.create')"
-                        class="btn-primary"
-                        >Nuevo tipo
-                    </Link>
                 </form>
                 <!-- Modal -->
                 <Modal
