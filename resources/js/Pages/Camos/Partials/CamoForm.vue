@@ -38,14 +38,24 @@ const getOwners = async () => {
         console.error(e);
     }
 };
-const getAircrafts = async () => {
+const getAircrafts = async (search = "") => {
     try {
-        const response = await axios.get(route("aircrafts.select"));
-        aircrafts.value = response.data;
+        const response = await axios.get(
+            route("aircrafts.select", { search: search }),
+        );
+        aircrafts.value = response.data.map((aircraft) => ({
+            value: aircraft.id, // Asumiendo que hay una propiedad 'id'
+            label: `${aircraft.model_aircraft.name} ${aircraft.register}`, // Concatenando las propiedades 'name' y 'model'
+        }));
     } catch (e) {
         console.error(e);
     }
 };
+
+const searchAirplane = async (value) => {
+    await getAircrafts(value);
+};
+
 onMounted(getCams);
 onMounted(getOwners);
 onMounted(getAircrafts);
@@ -138,26 +148,18 @@ const cancel = () => {
                 </div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4 w-64">
                 <InputLabel :value="`Avión`" for="aircraft_id" />
-                <select
-                    id="aircraft_id"
+                <v-select
+                    v-if="aircrafts"
                     v-model="form.aircraft_id"
-                    aria-required="true"
-                    class="mt-1 block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    name="aircraft_id"
+                    :options="aircrafts"
+                    :placeholder="`Selección`"
+                    :reduce="(item) => item.value"
+                    appendToBody
                     required
-                >
-                    <option :value="null" disabled>Select</option>
-                    <option
-                        v-for="(item, idx) in aircrafts"
-                        :key="idx"
-                        :value="item.id"
-                    >
-                        {{ item.model_aircraft.name }}
-                        {{ item.register }}
-                    </option>
-                </select>
+                    @search="searchAirplane"
+                ></v-select>
                 <InputError :message="form.errors.aircraft_id" class="mt-2" />
             </div>
 

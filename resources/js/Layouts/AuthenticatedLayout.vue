@@ -203,6 +203,7 @@ const showBackoffice = computed(() => {
                                 </DropdownLink>
                                 <hr />
                                 <DropdownLink
+                                    v-if="showUsers"
                                     :href="route('admin-rates.index')"
                                     class="text-black"
                                 >
@@ -210,6 +211,7 @@ const showBackoffice = computed(() => {
                                 </DropdownLink>
                                 <hr />
                                 <DropdownLink
+                                    v-if="showUsers"
                                     :href="route('labor-rates.index')"
                                     class="text-black"
                                 >

@@ -5,6 +5,8 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
+import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
 
 const toast = useToast();
 const props = defineProps({
@@ -41,6 +43,7 @@ const submit = () => {
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("aircrafts.index"));
 };
 </script>
 <template>
@@ -90,9 +93,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Save
+                >Guardar
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>
