@@ -11,9 +11,7 @@ use Override;
 
 class EngineTypeRepository implements EngineTypeRepositoryInterface
 {
-    public function __construct(protected EngineType $model)
-    {
-    }
+    public function __construct(protected EngineType $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -31,13 +29,13 @@ class EngineTypeRepository implements EngineTypeRepositoryInterface
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        return $this->model::query()->findOrFail($id);
     }
 
     #[Override]
     public function newEngineType(array $data): ?Model
     {
-        return $this->model->create($data);
+        return $this->model::query()->create($data);
     }
 
     #[Override]

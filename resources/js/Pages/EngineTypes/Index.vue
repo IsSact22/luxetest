@@ -4,7 +4,6 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import _ from "lodash";
 import Paginator from "@/Components/Paginator.vue";
-import { useDestroy } from "@/Composables/useDestroy.js";
 import { ref } from "vue";
 import Modal from "@/Components/Modal.vue";
 import EngineTypeForm from "@/Pages/EngineTypes/Partials/EngineTypeForm.vue";
@@ -22,19 +21,24 @@ const fireSearch = _.throttle(function () {
     form.get(route("engine-types.index"), { preserveState: true });
 }, 200);
 
-const { destroy } = useDestroy("aircrafts.destroy");
-
 const showModal = ref(false);
 const openModal = () => {
     showModal.value = true;
 };
 
 const closeModal = () => {
+    selected.value = null;
     showModal.value = false;
 };
-const modelSelected = ref({});
+const destroy = (id) => {
+    if (confirm("Seguro desea eliminar el registro")) {
+        form.delete(route("engine-types.destroy", id), { preserveState: true });
+    }
+};
+
+const selected = ref(null);
 const handleSelected = (object) => {
-    modelSelected.value = object;
+    selected.value = object;
     openModal();
 };
 </script>
@@ -96,9 +100,14 @@ const handleSelected = (object) => {
                         </div>
                         <div class="p-4">
                             <h2 class="text-lg font-bold">
-                                Registrar nuevo Tipo de Motor
+                                <span v-if="selected"
+                                    >Editar tipo de Motor</span
+                                >
+                                <span v-else
+                                    >Registrar nuevo Tipo de Motor</span
+                                >
                             </h2>
-                            <EngineTypeForm :engine-type="modelSelected" />
+                            <EngineTypeForm :engine-type="selected" />
                         </div>
                     </template>
                 </Modal>

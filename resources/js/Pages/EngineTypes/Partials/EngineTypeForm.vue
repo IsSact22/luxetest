@@ -5,7 +5,10 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import { useToast } from "vue-toastification";
+import { onMounted } from "vue";
 
+const toast = useToast();
 const props = defineProps({
     engineType: {
         type: Object,
@@ -16,7 +19,7 @@ const url = props.engineType
     ? `/engine-types/${props.engineType.id}`
     : `/engine-types`;
 const form = useForm(method, url, {
-    name: props.engineType?.name ?? "",
+    name: props.engineType.name ?? "",
 });
 
 const submit = () => {
@@ -33,6 +36,10 @@ const cancel = () => {
     form.reset();
     router.get(route("engine-types.index"));
 };
+
+onMounted(() => {
+    console.log(props.engineType);
+});
 </script>
 <template>
     <form @submit.prevent="submit">
@@ -41,6 +48,7 @@ const cancel = () => {
             <input
                 id="name"
                 v-model="form.name"
+                :autocomplete="false"
                 class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm uppercase"
                 name="name"
                 type="text"
