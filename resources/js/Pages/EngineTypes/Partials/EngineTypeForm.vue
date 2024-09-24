@@ -30,7 +30,7 @@ const cancel = () => {
 <template>
     <form @submit.prevent="submit">
         <div>
-            <label class="block" for="name">Name</label>
+            <label class="block" for="name">Nombre</label>
             <input
                 id="name"
                 v-model="form.name"

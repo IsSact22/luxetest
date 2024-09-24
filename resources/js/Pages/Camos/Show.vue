@@ -194,14 +194,14 @@ const badgeClass = (priority) => {
             <div class="my-4 border rounded-md px-4 py-4">
                 <div class="inline-flex space-x-5">
                     <Link :href="route('camos.index')" class="btn-primary"
-                        >back to Camos
+                        >Regresar
                     </Link>
                     <button
                         v-if="$page.props.auth.user.is_cam"
                         class="btn-primary"
                         @click="addActivity = true"
                     >
-                        new activity for this CAMO
+                        Agregar Actividad
                     </button>
                     <Link
                         :href="route('camos.images', props.resource.data.id)"
@@ -209,7 +209,7 @@ const badgeClass = (priority) => {
                         title="Gallery of Camo"
                         @click.passive.prevent
                     >
-                        View Media
+                        Ver Galeria
                     </Link>
                 </div>
 
@@ -225,16 +225,16 @@ const badgeClass = (priority) => {
                                 <thead>
                                     <tr>
                                         <th style="color: #b58a00 !important">
-                                            Customer
+                                            {{ $t("Customer") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
-                                            Contract
+                                            {{ $t("Contract") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
-                                            Project Manager
+                                            {{ $t("Project Manager") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
-                                            Location
+                                            {{ $t("Location") }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -257,16 +257,16 @@ const badgeClass = (priority) => {
                                 <thead>
                                     <tr>
                                         <th style="color: #b58a00 !important">
-                                            Aircraft
+                                            {{ $t("Airplane") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
-                                            Description
+                                            {{ $t("Description") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
-                                            Start Date
+                                            {{ $t("Start Date") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
-                                            Estimate Finish Date
+                                            {{ $t("Estimate Finish Date") }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -303,13 +303,13 @@ const badgeClass = (priority) => {
                         <div
                             class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
                         >
-                            <h1 class="text-gray-700">Summary</h1>
+                            <h1 class="text-gray-700">Sumario</h1>
                             <hr class="h-0.5 my-2 bg-neutral-400" />
 
                             <div
                                 class="flex flex-row justify-between text-xl my-2"
                             >
-                                <span>Labor Mount</span>
+                                <span>Mano de Obra</span>
                                 <span
                                     class="px-2 py-1 bg-yellow-500 rounded-md"
                                     >{{ formatCurrency(totalLaborMount) }}</span
@@ -319,7 +319,7 @@ const badgeClass = (priority) => {
                             <div
                                 class="flex flex-row justify-between text-xl my-2"
                             >
-                                <span>Material Mount</span>
+                                <span>Materiales</span>
                                 <span
                                     class="px-2 py-1 bg-yellow-500 rounded-md"
                                     >{{
@@ -350,44 +350,44 @@ const badgeClass = (priority) => {
                     class="flex flex-row justify-between px-2 py-2 my-5 shadow border rounded-md border-gray-200"
                 >
                     <p v-if="waitingApproval" class="text-right">
-                        Waiting Approval
+                        Esperando Aprobación
                         <span class="badge-alert">{{
                             waitingApproval.length
                         }}</span>
                     </p>
                     <p v-if="pendingExecution" class="text-right">
-                        Pending
+                        Pendiente
                         <span class="badge-pending">{{
                             pendingExecution.length
                         }}</span>
                     </p>
                     <p v-if="completed" class="text-right">
-                        In Progress
+                        en Progreso
                         <span class="badge-progress">{{
                             inProgress.length
                         }}</span>
                     </p>
                     <p v-if="completed" class="text-right">
-                        Completed
+                        Completado
                         <span class="badge-completed">{{
                             completed.length
                         }}</span>
                     </p>
                     <p v-if="activities && activities.total" class="text-right">
-                        Total Activities
+                        Total de Actividades
                         <span class="badge-info">{{ activities.total }}</span>
                     </p>
                 </div>
 
                 <div>
                     <form v-show="!addActivity" class="my-2">
-                        <InputLabel for="search">Search</InputLabel>
+                        <InputLabel for="search">Buscar</InputLabel>
                         <input
                             id="search"
                             v-model="search"
-                            class="px-4 py-2 rounded-md border-gray-300 w-3/12"
+                            class="px-4 py-2 rounded-md border-gray-300 w-1/3"
                             name="search"
-                            placeholder="type for search and clear to reset"
+                            placeholder="Escriba para buscar y borre para restablecer"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -419,7 +419,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = null"
                                 >
-                                    All
+                                    Todas
                                 </button>
                                 <button
                                     :class="{
@@ -433,7 +433,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'approval_status.approved'"
                                 >
-                                    Approved
+                                    Aprobadas
                                 </button>
                                 <button
                                     :class="{
@@ -447,7 +447,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'approval_status.pending'"
                                 >
-                                    Pending Approval
+                                    Aprobación pendiente
                                 </button>
                                 <button
                                     :class="{
@@ -460,7 +460,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.pending'"
                                 >
-                                    Pending
+                                    Pendiente
                                 </button>
                                 <button
                                     :class="{
@@ -473,7 +473,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.in_progress'"
                                 >
-                                    In Progress
+                                    en Progreso
                                 </button>
                                 <button
                                     :class="{
@@ -486,7 +486,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.completed'"
                                 >
-                                    Completed
+                                    Completado
                                 </button>
                             </div>
                             <!-- pending approval -->
@@ -494,17 +494,17 @@ const badgeClass = (priority) => {
                                 <thead>
                                     <tr>
                                         <th>id</th>
-                                        <th>Priority</th>
-                                        <th>Date</th>
-                                        <th>Start at</th>
-                                        <th>Estimate Time</th>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                        <th>Labor/Mount</th>
-                                        <th>Material/Mount</th>
+                                        <th>Prioridad</th>
+                                        <th>Fecha</th>
+                                        <th>Inicia</th>
+                                        <th>Estimado</th>
+                                        <th>Nombre</th>
+                                        <th>Estatus</th>
+                                        <th>H/H</th>
+                                        <th>Material</th>
                                         <th>AWR</th>
-                                        <th>Approval/Status</th>
-                                        <th>Actions</th>
+                                        <th>Aprobado</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -567,7 +567,7 @@ const badgeClass = (priority) => {
                                             <span
                                                 v-if="act.status === 'pending'"
                                                 class="badge-pending"
-                                                >{{ act.status }}</span
+                                                >{{ $t(act.status) }}</span
                                             >
                                             <span
                                                 v-else-if="
@@ -575,12 +575,12 @@ const badgeClass = (priority) => {
                                                 "
                                                 class="badge-progress"
                                             >
-                                                {{ act.status }}
+                                                {{ $t(act.status) }}
                                             </span>
                                             <span
                                                 v-else
                                                 class="badge-completed"
-                                                >{{ act.status }}</span
+                                                >{{ $t(act.status) }}</span
                                             >
                                         </td>
                                         <td class="text-right">
@@ -607,12 +607,16 @@ const badgeClass = (priority) => {
                                                     'pending'
                                                 "
                                                 class="badge-pending"
-                                                >{{ act.approval_status }}</span
+                                                >{{
+                                                    $t(act.approval_status)
+                                                }}</span
                                             >
                                             <span
                                                 v-else
                                                 class="badge-approval"
-                                                >{{ act.approval_status }}</span
+                                                >{{
+                                                    $t(act.approval_status)
+                                                }}</span
                                             >
                                         </td>
                                         <td class="col-actions">

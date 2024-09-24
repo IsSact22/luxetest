@@ -184,7 +184,7 @@ const goToCamo = () => {
                     <span class="my-1 text-xl">{{
                         statusCounts.in_progress
                     }}</span>
-                    <span>In Progress</span>
+                    <span>en Progreso</span>
                 </div>
                 <div
                     class="flex flex-col justify-items-center items-center border rounded-md p-4"
@@ -212,7 +212,7 @@ const goToCamo = () => {
                     <span class="my-1 text-xl">{{
                         statusCounts.completed
                     }}</span>
-                    <span>Completed</span>
+                    <span>Completado</span>
                 </div>
                 <div
                     class="flex flex-col justify-items-center items-center border rounded-md p-4"
@@ -245,7 +245,7 @@ const goToCamo = () => {
                         </svg>
                     </span>
                     <span class="my-1 text-xl">{{ statusCounts.pending }}</span>
-                    <span>Pending</span>
+                    <span>Pendiente</span>
                 </div>
             </div>
         </div>

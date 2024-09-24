@@ -40,7 +40,9 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <div class="flex flex-row justify-between items-center mx-auto">
+        <div
+            class="flex flex-row justify-between items-center mx-auto bg-[url('../../storage/app/public/img/background.png')] bg-center bg-cover bg-no-repeat"
+        >
             <div class="w-1/2 h-screen">
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto"
@@ -55,8 +57,9 @@ const submit = () => {
                     >
                         Ingresa tu usuario y contraseña para entrar en tu cuenta
                     </p>
+
                     <form
-                        class="flex flex-col justify-items-center items-center mx-auto space-y-9"
+                        class="flex flex-col justify-items-center items-center mx-auto space-y-9 bg-black bg-opacity-60 p-10 rounded-lg my-2"
                         @submit.prevent="submit"
                     >
                         <div>
@@ -129,26 +132,25 @@ const submit = () => {
                     </form>
                 </div>
             </div>
-            <div
-                class="relative flex items-center w-1/2 h-screen bg-[url('../../storage/app/public/img/background_login.jpg')] bg-cover bg-no-repeat bg-right"
-            >
+            <div class="relative flex items-center w-1/2 h-screen">
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto"
                 >
-                    <h1
-                        class="text-[75px] font-poppins font-medium leading-normal text-black-50 tracking-[1px]"
-                    >
+                    <img
+                        alt="Logo Luxe Plus"
+                        class="mb-6 w-30 h-30"
+                        src="storage/img/Logo.png"
+                    />
+                    <h2 class="text-5xl font-bold mb-5 text-center text-white">
                         Bienvenido a
-                    </h1>
-                    <h1
-                        class="text-[75px] font-poppins font-medium mt-3 space-x-5"
-                    >
-                        <span class="text-black-600">LUXE</span>
-                        <span class="text-yellow-500">PLUS</span>
-                    </h1>
-                    <p class="text-white tracking-normal mt-7">
-                        Indícanos tus datos para verificarte y <br />
-                        comenzar a organizar tu proyecto.
+                        <span class="text-yellow-500">LUXE PLUS</span>
+                    </h2>
+                    <p class="text-white text-center py-3 text-2xl">
+                        Airworthiness tracker
+                    </p>
+                    <p class="text-white text-center pt-2 px-10 text-2xl">
+                        Nuestra aplicación CAMO facilita la gestión eficiente de
+                        la aeronavegabilidad continua para flotas de aeronaves
                     </p>
                 </div>
             </div>

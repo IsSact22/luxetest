@@ -50,25 +50,25 @@ const destroy = (id) => {
                     <Link
                         v-if="$page.props.auth.user.is_cam"
                         :href="route('camos.create')"
-                        class="btn-goto"
-                        >New CAMO
+                        class="btn-primary"
+                        >Nuevo CAMO
                     </Link>
                 </form>
                 <table class="table-auto">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Customer</th>
-                            <th>Owner</th>
-                            <th>Contract</th>
-                            <th>Cam</th>
-                            <th>Aircraft</th>
-                            <th>Activities</th>
-                            <th>Start Date</th>
-                            <th>Estimate Finish Date</th>
-                            <th>Finish Date</th>
-                            <th>Location</th>
-                            <th>Actions</th>
+                            <th>{{ $t("Customer") }}</th>
+                            <th>{{ $t("Owner") }}</th>
+                            <th>{{ $t("Contract") }}</th>
+                            <th>{{ $t("Cam") }}</th>
+                            <th>{{ $t("Airplane") }}</th>
+                            <th>{{ $t("Activities") }}</th>
+                            <th>{{ $t("Start Date") }}</th>
+                            <th>{{ $t("Estimate Finish Date") }}</th>
+                            <th>{{ $t("Finish Date") }}</th>
+                            <th>{{ $t("Location") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>

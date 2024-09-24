@@ -12,10 +12,10 @@ const props = defineProps({
 });
 </script>
 <template>
-    <Head title="Engine Types" />
+    <Head title="Tipo de Motores" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Engine Type</h2>
+            <h2>Tipo de Motor</h2>
             <div class="flex flex-row-reverse">
                 <Link :href="route('engine-types.index')" class="btn-goto"
                     >Back

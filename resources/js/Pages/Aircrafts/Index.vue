@@ -66,10 +66,10 @@ const fireSearch = _.throttle(function () {
 const { destroy } = useDestroy("aircrafts.destroy");
 </script>
 <template>
-    <Head title="Aircrafts" />
+    <Head title="Avión" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Aircraft</h2>
+            <h2>Avión</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
             <div class="my-4 p-4">
@@ -82,25 +82,25 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="search"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
                     </div>
                     <Link :href="route('aircrafts.create')" class="btn-primary">
-                        <span class="ml-1">New Aircraft</span>
+                        <span class="ml-1">{{ $t("New Plane") }}</span>
                     </Link>
                 </form>
                 <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Aircraft Model</th>
-                            <th>Register</th>
-                            <th>Owner</th>
-                            <th>Engine Type</th>
-                            <th>Serial</th>
-                            <th>Actions</th>
+                            <th>{{ $t("Aircraft Model") }}</th>
+                            <th>{{ $t("Registration") }}</th>
+                            <th>{{ $t("Owner") }}</th>
+                            <th>{{ $t("Engine Type") }}</th>
+                            <th>{{ $t("Serial") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -51,7 +51,7 @@ const showBackoffice = computed(() => {
                     <Link
                         :href="route('profile.edit')"
                         class="text-yellow-300 hover:underline"
-                        >Profile
+                        >Perfil
                     </Link>
                 </div>
             </div>
@@ -117,7 +117,7 @@ const showBackoffice = computed(() => {
                                 />
                             </svg>
                         </span>
-                        <span>{{ $t("Aircraft") }}</span>
+                        <span>{{ $t("Airplane") }}</span>
                     </NavLink>
                     <NavLink
                         v-show="showBackoffice && showCamos"

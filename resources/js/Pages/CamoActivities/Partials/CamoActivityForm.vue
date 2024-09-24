@@ -200,7 +200,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
 <template>
     <div class="py-12 bg-white rounded-md p-4">
         <h3 class="text-right">
-            CAMO Estimate Duration {{ estimateDuration }} days
+            Duración estimada: {{ estimateDuration }} dia(s)
         </h3>
         <form @submit.prevent="submit">
             <input
@@ -218,7 +218,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         class="flex flex-row justify-items-center items-center space-x-3"
                         for="required"
                     >
-                        <span class="font-bold">Activity has required</span>
+                        <span class="font-bold">Actividad Obligatoria</span>
                         <Checkbox
                             v-model="form.required"
                             :checked="form.required"
@@ -229,7 +229,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
 
                 <div>
                     <InputLabel
-                        :value="`Approval Status`"
+                        :value="`Estatus de Aprobación`"
                         for="approval_status"
                     />
                     <select
@@ -259,7 +259,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`Priority`" for="priority" />
+                    <InputLabel :value="`Prioridad`" for="priority" />
                     <select
                         id="priority"
                         v-model="form.priority"
@@ -286,7 +286,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 class="flex flex-row justify-items-center items-center space-x-5 mb-4"
             >
                 <div>
-                    <InputLabel :value="`Date`" for="date" />
+                    <InputLabel :value="`Fecha`" for="date" />
                     <input
                         id="date"
                         v-model="form.date"
@@ -303,7 +303,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`Type`" for="labor_rate_id" />
+                    <InputLabel :value="`Tipo`" for="labor_rate_id" />
                     <select
                         id="labor_rate_id"
                         v-model="form.labor_rate_id"
@@ -333,7 +333,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`name`" for="name" />
+                    <InputLabel :value="`Nombre`" for="name" />
                     <input
                         id="name"
                         v-model="form.name"
@@ -351,7 +351,10 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`Estimate Time`" for="estimate_time" />
+                    <InputLabel
+                        :value="`Tiempo Estimado Hrs/Hom`"
+                        for="estimate_time"
+                    />
                     <input
                         id="estimate_time"
                         v-model="form.estimate_time"
@@ -375,7 +378,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 class="flex flex-row justify-items-center items-center space-x-5 mb-4"
             >
                 <div>
-                    <InputLabel :value="`Description`" for="description" />
+                    <InputLabel :value="`Nota`" for="description" />
                     <textarea
                         id="description"
                         v-model="form.description"
@@ -397,7 +400,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`Comments`" for="comments" />
+                    <InputLabel :value="`Comentarios`" for="comments" />
                     <textarea
                         id="comments"
                         v-model="form.comments"
@@ -417,7 +420,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
 
                 <div>
                     <InputLabel
-                        :value="`Material Information`"
+                        :value="`Información de Materiales`"
                         for="material_information"
                     />
                     <textarea
@@ -445,7 +448,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 class="flex flex-row justify-items-center items-center space-x-5 mb-4"
             >
                 <div>
-                    <InputLabel :value="`Start Date`" for="start_date" />
+                    <InputLabel :value="`Fecha de Inicio`" for="start_date" />
                     <input
                         id="start_date"
                         v-model="form.started_at"
@@ -465,7 +468,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`Status`" for="status" />
+                    <InputLabel :value="`Estatus/Actividad`" for="status" />
                     <select
                         id="status"
                         v-model="form.status"
@@ -490,7 +493,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`Labor Mount`" for="labor_mount" />
+                    <InputLabel :value="`Hrs/Hom Monto`" for="labor_mount" />
                     <input
                         id="labor_mount"
                         v-model="form.labor_mount"
@@ -510,7 +513,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
 
                 <div>
                     <InputLabel
-                        :value="`Material Mount`"
+                        :value="`Materiales Monto`"
                         for="material_mount"
                     />
                     <input
@@ -551,7 +554,10 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
             </div>
 
             <div>
-                <InputLabel :value="`Completed Date`" for="completed_date" />
+                <InputLabel
+                    :value="`Fecha de finalización`"
+                    for="completed_date"
+                />
                 <input
                     id="completed_date"
                     v-model="form.completed_at"
@@ -582,11 +588,13 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                     type="submit"
                     >Save
                 </PrimaryButton>
-                <SecondaryButton @click="handleCancel">Cancel</SecondaryButton>
+                <SecondaryButton @click="handleCancel"
+                    >Cancelar
+                </SecondaryButton>
             </div>
         </form>
         <h3 v-if="form.started_at" class="text-right">
-            Estimate Finish Date <br />
+            Fecha estimada de finalización <br />
             {{ estimatedFinishDate }}
         </h3>
     </div>

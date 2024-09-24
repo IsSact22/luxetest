@@ -46,7 +46,7 @@ const cancel = () => {
 <template>
     <form @submit.prevent="submit">
         <div>
-            <label class="block" for="model_aircraft_id">Model Aircraft</label>
+            <label class="block" for="model_aircraft_id">Modelo</label>
             <select
                 id="model_aircraft_id"
                 v-model="form.model_aircraft_id"
@@ -63,7 +63,7 @@ const cancel = () => {
             </select>
         </div>
         <div>
-            <label class="block" for="register">Register</label>
+            <label class="block" for="register">Registro/Matricula</label>
             <input
                 id="register"
                 v-model="form.register"

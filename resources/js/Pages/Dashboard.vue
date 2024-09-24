@@ -41,7 +41,7 @@ onMounted(queryPendingRate);
                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg px-2"
                 >
                     <h2 class="text-xl p-6 text-black-900">
-                        <span>Hello</span> {{ $page.props.auth.user.name }}
+                        <span>Bienvenido</span> {{ $page.props.auth.user.name }}
                         <small class="text-yellow-700 capitalize">{{
                             $page.props.auth.user.roles[0].name
                         }}</small>

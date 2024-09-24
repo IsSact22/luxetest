@@ -22,10 +22,10 @@ const fireSearch = _.throttle(function () {
 const { destroy } = useDestroy("aircrafts.destroy");
 </script>
 <template>
-    <Head title="Engine Types" />
+    <Head title="Tipo de Motores" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Engine Types</h2>
+            <h2>Tipo de Motores</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 p-4">
@@ -47,15 +47,15 @@ const { destroy } = useDestroy("aircrafts.destroy");
                     <Link
                         :href="route('engine-types.create')"
                         class="btn-primary"
-                        >New Engine Type
+                        >Nuevo tipo
                     </Link>
                 </form>
                 <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>Actions</th>
+                            <th>{{ $t("Name") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
