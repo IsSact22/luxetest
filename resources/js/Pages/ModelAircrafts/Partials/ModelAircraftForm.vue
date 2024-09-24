@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { route } from "ziggy-js";
 import { useToast } from "vue-toastification";
+import { router } from "@inertiajs/vue3";
 
 const toast = useToast();
 const props = defineProps({
@@ -60,12 +61,13 @@ const submit = () => {
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("model-aircrafts.index"));
 };
 </script>
 <template>
-    <form @submit.prevent="submit">
+    <form class="px-4 py-2" @submit.prevent="submit">
         <div>
-            <label class="block" for="brand_aircraft_id">Brand</label>
+            <label class="block" for="brand_aircraft_id">Marca</label>
             <select
                 id="brand_aircraft_id"
                 v-model="form.brand_aircraft_id"
@@ -88,7 +90,7 @@ const cancel = () => {
             />
         </div>
         <div>
-            <label class="block" for="engine_type_id">Engine Type</label>
+            <label class="block" for="engine_type_id">Tipo de Motor(es)</label>
             <select
                 id="engine_type_id"
                 v-model="form.engine_type_id"
@@ -111,7 +113,7 @@ const cancel = () => {
             />
         </div>
         <div>
-            <label class="block" for="name">Name</label>
+            <label class="block" for="name">Nombre del Modelo</label>
             <input
                 id="name"
                 v-model="form.name"
@@ -127,9 +129,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Save
+                >Guardar
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>

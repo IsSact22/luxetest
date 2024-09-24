@@ -25,7 +25,8 @@ const submit = () => {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
-            toast.success("Brand created");
+            toast.success("Marca creada exitosamente");
+            router.get(route("brand-aircrafts.index"));
         },
     });
 };

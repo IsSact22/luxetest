@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\BrandAircraft;
+use App\Models\EngineType;
+use App\Models\ModelAircraft;
 use Illuminate\Database\Seeder;
 
 class ModelAircraftSeeder extends Seeder
@@ -18,19 +21,19 @@ class ModelAircraftSeeder extends Seeder
                 'models' => [
                     [
                         'name' => 'Citation II',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Citation CJ3+',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Citation Latitude',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Citation XLS+',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                 ],
             ],
@@ -40,15 +43,15 @@ class ModelAircraftSeeder extends Seeder
                 'models' => [
                     [
                         'name' => 'Challenger 350',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Global 5000',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Global 6000',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                 ],
             ],
@@ -58,15 +61,15 @@ class ModelAircraftSeeder extends Seeder
                 'models' => [
                     [
                         'name' => 'G280',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'G550',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'G650',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                 ],
             ],
@@ -76,15 +79,15 @@ class ModelAircraftSeeder extends Seeder
                 'models' => [
                     [
                         'name' => 'Phenom 300',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Legacy 450',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Legacy 650',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                 ],
             ],
@@ -94,27 +97,27 @@ class ModelAircraftSeeder extends Seeder
                 'models' => [
                     [
                         'name' => 'Falcon 2000LXS',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Falcon 900LX',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                     [
                         'name' => 'Falcon 7X',
-                        'engine_type' => 'turbo-fan',
+                        'engine_type' => 'turbo-fan/turbo-jet',
                     ],
                 ],
             ],
         ];
 
         foreach ($models as $model) {
-            $brand = \App\Models\BrandAircraft::query()->where('name', $model['brand'])->first();
+            $brand = BrandAircraft::query()->where('name', $model['brand'])->first();
 
             foreach ($model['models'] as $modelData) {
-                $engineType = \App\Models\EngineType::query()->where('name', $modelData['engine_type'])->first();
+                $engineType = EngineType::query()->where('name', $modelData['engine_type'])->first();
 
-                \App\Models\ModelAircraft::query()->create([
+                ModelAircraft::query()->create([
                     'name' => $modelData['name'],
                     'brand_aircraft_id' => $brand->id,
                     'engine_type_id' => $engineType->id,

@@ -5,10 +5,10 @@ import { Head, Link } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 </script>
 <template>
-    <Head title="Model Aircraft" />
+    <Head title="Modelo de Aviones" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Model Aircraft</h2>
+            <h2>Modelo de Aviones</h2>
             <div class="flex flex-row-reverse">
                 <Link :href="route('model-aircrafts.index')" class="btn-goto"
                     >Back

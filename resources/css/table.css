@@ -27,7 +27,7 @@ table tbody tr td:last-child {
 }
 
 table tbody tr td {
-    @apply text-sm  px-4 py-2 leading-normal;
+    @apply text-sm  px-4 py-1 leading-normal;
 }
 
 table tbody tr:hover {

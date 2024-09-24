@@ -4,7 +4,9 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
 import { route } from "ziggy-js";
-import { useDestroy } from "@/Composables/useDestroy.js";
+import { ref } from "vue";
+import Modal from "@/Components/Modal.vue";
+import BrandAircraftForm from "@/Pages/BrandAircrafts/Partials/BrandAircraftForm.vue";
 
 const props = defineProps({
     resource: {
@@ -19,7 +21,29 @@ const fireSearch = _.throttle(function () {
     form.get(route("brand-aircrafts.index"), { preserveState: true });
 }, 200);
 
-const { destroy } = useDestroy("aircrafts.destroy");
+const destroy = (id) => {
+    if (confirm("Seguro desea eliminar el registro")) {
+        form.delete(route("brand-aircrafts.destroy", id), {
+            preserveState: true,
+        });
+    }
+};
+
+const showModal = ref(false);
+const openModal = () => {
+    showModal.value = true;
+};
+
+const selected = ref(null);
+const handleSelected = (object) => {
+    selected.value = object;
+    openModal();
+};
+
+const closeModal = () => {
+    selected.value = null;
+    showModal.value = false;
+};
 </script>
 <template>
     <Head title="Marcas de Aviones" />
@@ -43,12 +67,55 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             @keyup="fireSearch"
                         />
                     </div>
-                    <Link
-                        :href="route('brand-aircrafts.create')"
+                    <button
                         class="btn-primary"
-                        >Nueva Marca
-                    </Link>
+                        type="button"
+                        @click="openModal"
+                    >
+                        Nueva Marca
+                    </button>
                 </form>
+
+                <!-- Modal -->
+                <Modal
+                    :show="showModal"
+                    closeable
+                    maxWidth="md"
+                    @close="closeModal"
+                >
+                    <template #default>
+                        <div class="float-right">
+                            <button
+                                class="mt-2 mr-2 px-1 py-0.5"
+                                @click="closeModal"
+                            >
+                                <svg
+                                    class="size-6 stroke-red-700 hover:fill-red-100"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold">
+                                <span v-if="selected">Editar Marca</span>
+                                <span v-else>Registrar nueva Marca</span>
+                            </h2>
+                            <BrandAircraftForm :brand-aircraft="selected" />
+                        </div>
+                    </template>
+                </Modal>
+                <!-- Modal -->
+
                 <table class="table-fixed">
                     <thead>
                         <tr>
@@ -62,11 +129,9 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             <td>{{ item.id }}</td>
                             <td>{{ item.name }}</td>
                             <td class="col-actions">
-                                <Link
-                                    :href="
-                                        route('brand-aircrafts.edit', item.id)
-                                    "
+                                <button
                                     class="btn-edit"
+                                    @click="handleSelected(item)"
                                 >
                                     <span>
                                         <svg
@@ -84,7 +149,7 @@ const { destroy } = useDestroy("aircrafts.destroy");
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                                 <Link
                                     class="btn-delete"
                                     @click="destroy(item.id)"

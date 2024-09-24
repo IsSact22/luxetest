@@ -19,7 +19,7 @@ const url = props.engineType
     ? `/engine-types/${props.engineType.id}`
     : `/engine-types`;
 const form = useForm(method, url, {
-    name: props.engineType.name ?? "",
+    name: props.engineType?.name ?? "",
 });
 
 const submit = () => {

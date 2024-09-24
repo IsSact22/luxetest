@@ -4,7 +4,9 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
 import { route } from "ziggy-js";
-import { useDestroy } from "@/Composables/useDestroy.js";
+import { ref } from "vue";
+import Modal from "@/Components/Modal.vue";
+import ModelAircraftForm from "@/Pages/ModelAircrafts/Partials/ModelAircraftForm.vue";
 
 const props = defineProps({
     resource: {
@@ -19,7 +21,28 @@ const fireSearch = _.throttle(function () {
     form.get(route("model-aircrafts.index"), { preserveState: true });
 }, 200);
 
-const { destroy } = useDestroy("model-aircrafts.destroy");
+const destroy = (id) => {
+    if (confirm("Seguro desea eliminar el registro")) {
+        form.delete(route("model-aircrafts.destroy", id), {
+            preserveState: true,
+        });
+    }
+};
+const showModal = ref(false);
+const openModal = () => {
+    showModal.value = true;
+};
+
+const selected = ref(null);
+const handleSelected = (object) => {
+    selected.value = object;
+    openModal();
+};
+
+const closeModal = () => {
+    selected.value = null;
+    showModal.value = false;
+};
 </script>
 <template>
     <Head title="Modelo de Aviones" />
@@ -43,12 +66,55 @@ const { destroy } = useDestroy("model-aircrafts.destroy");
                             @keyup="fireSearch"
                         />
                     </div>
-                    <Link
-                        :href="route('model-aircrafts.create')"
+                    <button
                         class="btn-primary"
-                        >Nuevo Modelo
-                    </Link>
+                        type="button"
+                        @click="openModal"
+                    >
+                        Nuevo Modelo
+                    </button>
                 </form>
+
+                <!-- Modal -->
+                <Modal
+                    :show="showModal"
+                    closeable
+                    maxWidth="md"
+                    @close="closeModal"
+                >
+                    <template #default>
+                        <div class="float-right">
+                            <button
+                                class="mt-2 mr-2 px-1 py-0.5"
+                                @click="closeModal"
+                            >
+                                <svg
+                                    class="size-6 stroke-red-700 hover:fill-red-100"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold">
+                                <span v-if="selected">Editar Modelo</span>
+                                <span v-else>Registrar nuev Modelo</span>
+                            </h2>
+                            <ModelAircraftForm :model-aircraft="selected" />
+                        </div>
+                    </template>
+                </Modal>
+                <!-- Modal -->
+
                 <table class="table-fixed">
                     <thead>
                         <tr>
@@ -66,11 +132,10 @@ const { destroy } = useDestroy("model-aircrafts.destroy");
                             <td>{{ item.engine_type.name }}</td>
                             <td>{{ item.name }}</td>
                             <td class="col-actions">
-                                <Link
-                                    :href="
-                                        route('model-aircrafts.edit', item.id)
-                                    "
+                                <button
                                     class="btn-edit"
+                                    type="button"
+                                    @click="handleSelected(item)"
                                 >
                                     <span>
                                         <svg
@@ -88,7 +153,7 @@ const { destroy } = useDestroy("model-aircrafts.destroy");
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                                 <Link
                                     class="btn-delete"
                                     @click="destroy(item.id)"
