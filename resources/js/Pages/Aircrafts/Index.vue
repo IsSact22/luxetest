@@ -6,7 +6,8 @@ import { route } from "ziggy-js";
 import { onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
 import _ from "lodash";
-import { useDestroy } from "@/Composables/useDestroy.js";
+import Modal from "@/Components/Modal.vue";
+import AircraftForm from "@/Pages/Aircrafts/Partials/AircraftForm.vue";
 
 const toast = useToast();
 const props = defineProps({
@@ -25,18 +26,18 @@ const getOwners = async () => {
     }
 };
 onMounted(getOwners);
-const showModal = ref(false);
+const showModalOwner = ref(false);
 
 const ownerForm = useForm({
     owner_id: null,
     aircraft_id: null,
 });
-const openModal = (id) => {
-    showModal.value = true;
+const openModalOwner = (id) => {
+    showModalOwner.value = true;
     ownerForm.aircraft_id = id;
 };
-const closeModal = () => {
-    showModal.value = false;
+const closeModalOwner = () => {
+    showModalOwner.value = false;
     ownerForm.reset();
 };
 
@@ -48,7 +49,7 @@ const submit = async () => {
         );
         if (response.status === 201) {
             toast.success(response.data.message);
-            closeModal();
+            closeModalOwner();
             router.get(route("aircrafts.index"));
         }
     } catch (e) {
@@ -63,7 +64,29 @@ const fireSearch = _.throttle(function () {
     form.get(route("aircrafts.index"), { preserveState: true });
 }, 200);
 
-const { destroy } = useDestroy("aircrafts.destroy");
+const destroy = (id) => {
+    if (confirm("Seguro desea eliminar el registro")) {
+        form.delete(route("aircrafts.destroy", id), {
+            preserveState: true,
+        });
+    }
+};
+
+const showModal = ref(false);
+const openModal = () => {
+    showModal.value = true;
+};
+
+const selected = ref(null);
+const handleSelected = (object) => {
+    selected.value = object;
+    openModal();
+};
+
+const closeModal = () => {
+    selected.value = null;
+    showModal.value = false;
+};
 </script>
 <template>
     <Head title="Avión" />
@@ -87,10 +110,55 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             @keyup="fireSearch"
                         />
                     </div>
-                    <Link :href="route('aircrafts.create')" class="btn-primary">
+                    <button
+                        class="btn-primary"
+                        type="button"
+                        @click="openModal"
+                    >
                         <span class="ml-1">{{ $t("New Plane") }}</span>
-                    </Link>
+                    </button>
                 </form>
+
+                <!-- Modal -->
+                <Modal
+                    :show="showModal"
+                    closeable
+                    maxWidth="md"
+                    @close="closeModal"
+                >
+                    <template #default>
+                        <div class="float-right">
+                            <button
+                                class="mt-2 mr-2 px-1 py-0.5"
+                                @click="closeModal"
+                            >
+                                <svg
+                                    class="size-6 stroke-red-700 hover:fill-red-100"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold">
+                                <span v-if="selected">Editar Avión</span>
+                                <span v-else>Registrar nuevo Avión</span>
+                            </h2>
+                            <AircraftForm :aircraft="selected" />
+                        </div>
+                    </template>
+                </Modal>
+                <!-- Modal -->
+
                 <table class="table-fixed">
                     <thead>
                         <tr>
@@ -120,9 +188,10 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             </td>
                             <td class="uppercase">{{ item.serial }}</td>
                             <td class="col-actions">
-                                <Link
-                                    :href="route('aircrafts.edit', item.id)"
+                                <button
                                     class="btn-edit"
+                                    type="button"
+                                    @click="handleSelected(item)"
                                 >
                                     <span>
                                         <svg
@@ -140,12 +209,12 @@ const { destroy } = useDestroy("aircrafts.destroy");
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                                 <button
                                     v-if="item.owner.length === 0"
                                     class="btn-edit"
                                     title="Set Owner"
-                                    @click="openModal(item.id)"
+                                    @click="openModalOwner(item.id)"
                                 >
                                     <span>
                                         <svg
@@ -200,7 +269,7 @@ const { destroy } = useDestroy("aircrafts.destroy");
             </div>
             <!-- Modal -->
             <div
-                v-if="showModal"
+                v-if="showModalOwner"
                 class="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4"
             >
                 <div
@@ -210,7 +279,7 @@ const { destroy } = useDestroy("aircrafts.destroy");
                         <button
                             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                             type="button"
-                            @click="closeModal"
+                            @click="closeModalOwner"
                         >
                             <svg
                                 class="w-5 h-5"
@@ -246,14 +315,14 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             <h3
                                 class="text-xl font-normal text-gray-500 mt-5 mb-6"
                             >
-                                Set Aircraft Owner.
+                                Asignar propietario.
                             </h3>
                             <form @submit.prevent="submit">
                                 <div
                                     class="flex flex-col justify-items-center items-center space-x-1"
                                 >
-                                    <label class="block" for="owner_id"
-                                        >Owner</label
+                                    <label class="inline-block" for="owner_id"
+                                        >Cliente</label
                                     >
                                     <select
                                         id="owner_id"
@@ -261,7 +330,7 @@ const { destroy } = useDestroy("aircrafts.destroy");
                                         class="rounded-md border-gray-300"
                                         name="owner_id"
                                     >
-                                        <option :value="null">Select</option>
+                                        <option :value="null">Selección</option>
                                         <option
                                             v-for="(item, idx) in owners"
                                             :key="idx"
@@ -274,10 +343,13 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             </form>
                         </div>
                         <button class="btn-submit mx-4" @click="submit">
-                            Save
+                            Guardar
                         </button>
-                        <button class="btn-cancel mx-4" @click="closeModal">
-                            No, cancel
+                        <button
+                            class="btn-cancel mx-4"
+                            @click="closeModalOwner"
+                        >
+                            No, cancelar
                         </button>
                     </div>
                 </div>

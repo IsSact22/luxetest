@@ -96,10 +96,11 @@ const submit = () => {
                             />
                         </div>
 
-                        <div>
+                        <div class="flex justify-start items-center">
                             <label class="flex items-center" for="remember">
                                 <Checkbox
                                     v-model:checked="form.remember"
+                                    class="transparent-checkbox"
                                     name="remember"
                                 />
                                 <span
@@ -157,4 +158,35 @@ const submit = () => {
         </div>
     </GuestLayout>
 </template>
-<style scoped></style>
+<style scoped>
+.transparent-checkbox {
+    appearance: none; /* Elimina el estilo predeterminado del navegador */
+    background-color: transparent; /* Fondo transparente por defecto */
+    border: 2px solid #ccc; /* Borde gris claro */
+    padding: 0.25rem; /* Ajusta el padding si es necesario */
+    display: inline-block;
+    width: 1.5rem; /* Tamaño del checkbox */
+    height: 1.5rem; /* Tamaño del checkbox */
+    position: relative;
+    cursor: pointer;
+}
+
+/* Estilo para el checkbox cuando está marcado */
+.transparent-checkbox:checked {
+    background-color: transparent; /* Color amarillo para el checkbox marcado */
+    border-color: #ccc; /* Color del borde igual al fondo */
+}
+
+/* Estilo para el símbolo de verificación dentro del checkbox */
+.transparent-checkbox:checked::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0.5rem; /* Ajusta el tamaño del símbolo de verificación */
+    height: 0.75rem; /* Ajusta el tamaño del símbolo de verificación */
+    border: solid #fbbf24; /* Color del símbolo de verificación */
+    border-width: 0 0.2rem 0.2rem 0; /* Ajusta el grosor del símbolo */
+    transform: translate(-50%, -50%) rotate(45deg); /* Posiciona y rota el símbolo */
+}
+</style>
