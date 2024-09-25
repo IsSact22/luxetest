@@ -45,23 +45,24 @@ const submit = () => {
         >
             <div class="w-1/2 h-screen">
                 <div
-                    class="flex flex-col justify-items-center items-center mx-auto"
+                    class="flex flex-col justify-items-center items-center mx-auto mt-16"
                 >
-                    <h2
-                        class="text-yellow-400 text-3xl font-poppins font-medium leading-normal mt-32"
-                    >
-                        Iniciar Sesión
-                    </h2>
-                    <p
-                        class="text-black-50 font-poppins not-italic leading-[80px]"
-                    >
-                        Ingresa tu usuario y contraseña para entrar en tu cuenta
-                    </p>
-
                     <form
                         class="flex flex-col justify-items-center items-center mx-auto space-y-9 bg-black bg-opacity-60 p-10 rounded-lg my-2"
                         @submit.prevent="submit"
                     >
+                        <!--                        <ApplicationLogo />-->
+                        <h2
+                            class="text-yellow-400 text-3xl font-poppins font-medium leading-normal"
+                        >
+                            Iniciar Sesión
+                        </h2>
+                        <p
+                            class="text-black-50 font-poppins not-italic leading-normal"
+                        >
+                            Ingresa tu usuario y contraseña para entrar en tu
+                            cuenta
+                        </p>
                         <div>
                             <label class="block text-black-50" for="email">
                                 Usuario
@@ -71,6 +72,7 @@ const submit = () => {
                                 v-model="form.email"
                                 class="w-96 py-3 bg-black-700 rounded-md text-white focus:ring-yellow-50"
                                 name="email"
+                                placeholder="Correo Electrónico"
                                 type="text"
                             />
                             <InputError
@@ -88,6 +90,7 @@ const submit = () => {
                                 v-model="form.password"
                                 class="w-96 py-3 bg-black-700 rounded-md text-white focus:ring-yellow-50"
                                 name="password"
+                                placeholder="Contraseña"
                                 type="password"
                             />
                             <InputError
@@ -96,8 +99,8 @@ const submit = () => {
                             />
                         </div>
 
-                        <div class="flex justify-start items-center">
-                            <label class="flex items-center" for="remember">
+                        <div class="w-10/12">
+                            <label class="inline-block" for="remember">
                                 <Checkbox
                                     v-model:checked="form.remember"
                                     class="transparent-checkbox"
