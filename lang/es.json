@@ -275,5 +275,8 @@
     "Project Manager": "Jefe de Proyecto",
     "pending": "Pendiente",
     "approved": "aprobado",
-    "System": "Sistema"
+    "System": "Sistema",
+    "High Priority": "Alta prioridad",
+    "Medium Priority": "Prioridad media",
+    "Low Priority": "Baja prioridad"
 }

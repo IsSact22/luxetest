@@ -136,14 +136,14 @@ const getLaborRates = async () => {
 };
 onMounted(getLaborRates);
 const statusList = ref([
-    { value: "pending", label: "Pending", selected: false },
-    { value: "in_progress", label: "in Progress", selected: false },
-    { value: "completed", label: "completed", selected: false },
+    { value: "pending", label: "Pendiente", selected: false },
+    { value: "in_progress", label: "en Progreso", selected: false },
+    { value: "completed", label: "completado", selected: false },
 ]);
 const statusApproval = ref([
-    { value: "pending", label: "Pending", selected: false },
-    { value: "approved", label: "Approved", selected: false },
-    { value: "canceled", label: "Canceled", selected: false },
+    { value: "pending", label: "Pendiente", selected: false },
+    { value: "approved", label: "Aprobado", selected: false },
+    { value: "canceled", label: "Cancelado", selected: false },
 ]);
 
 watch(
@@ -243,7 +243,9 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         class="block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="approval_status"
                     >
-                        <option :value="null" disabled>Select</option>
+                        <option :value="null" disabled>
+                            {{ $t("Select") }}
+                        </option>
                         <option
                             v-for="(item, idx) in statusApproval"
                             :key="idx"
@@ -268,13 +270,13 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                     >
                         <option :value="null" disabled>Select</option>
                         <option :value="1" class="bg-red-500">
-                            High Priority
+                            {{ $t("High Priority") }}
                         </option>
                         <option :value="2" class="bg-amber-300">
-                            Medium Priority
+                            {{ $t("Medium Priority") }}
                         </option>
                         <option :value="3" class="bg-blue-200">
-                            Low Priority
+                            {{ $t("Low Priority") }}
                         </option>
                     </select>
                     <InputError :message="form.errors.priority" class="mt-2" />
@@ -317,7 +319,9 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         name="labor_rate_id"
                         required
                     >
-                        <option :value="null" disabled>Select</option>
+                        <option :value="null" disabled>
+                            {{ $t("Select") }}
+                        </option>
                         <option
                             v-for="(item, idx) in laborRates"
                             :key="idx"
@@ -344,7 +348,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         :readonly="props.user.is_owner"
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm capitalize"
                         name="name"
-                        placeholder="Activity Name"
+                        placeholder="Nombre de la actividad"
                         type="text"
                     />
                     <InputError :message="form.errors.name" class="mt-2" />
@@ -378,7 +382,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 class="flex flex-row justify-items-center items-center space-x-5 mb-4"
             >
                 <div>
-                    <InputLabel :value="`Nota`" for="description" />
+                    <InputLabel :value="`Descripción`" for="description" />
                     <textarea
                         id="description"
                         v-model="form.description"
@@ -390,7 +394,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         cols="30"
                         name="description"
-                        placeholder="Description activity"
+                        placeholder="Descripción de la actividad"
                         rows="3"
                     ></textarea>
                     <InputError
@@ -412,7 +416,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         cols="30"
                         name="comments"
-                        placeholder="Comments activity"
+                        placeholder="Comentarios"
                         rows="3"
                     ></textarea>
                     <InputError :message="form.errors.comments" class="mt-2" />
@@ -434,7 +438,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         cols="30"
                         name="material_information"
-                        placeholder="Material information"
+                        placeholder="Información sobre materiales"
                         rows="3"
                     ></textarea>
                     <InputError

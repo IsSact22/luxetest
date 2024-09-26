@@ -121,7 +121,9 @@ const cancel = () => {
                         name="owner_id"
                         required
                     >
-                        <option :value="null" disabled>Select</option>
+                        <option :value="null" disabled>
+                            {{ $t("Select") }}
+                        </option>
                         <option
                             v-for="(own, idx) in owners"
                             :key="idx"
@@ -174,7 +176,7 @@ const cancel = () => {
                         aria-required="true"
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm capitalize placeholder-custom"
                         name="customer"
-                        placeholder="It must be a unique name"
+                        placeholder="Debe ser un nombre único"
                         required
                         type="text"
                     />
@@ -189,7 +191,7 @@ const cancel = () => {
                         aria-required="true"
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm capitalize placeholder-custom"
                         name="contract"
-                        placeholder="Quote or Contract number"
+                        placeholder="Número de cotización o contrato"
                         required
                         type="text"
                         @change="form.validate('contract')"
@@ -206,7 +208,7 @@ const cancel = () => {
                     class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm placeholder-custom"
                     cols="50"
                     name="description"
-                    placeholder="General description"
+                    placeholder="Descripción general"
                     rows="3"
                 ></textarea>
                 <InputError :message="form.errors.description" class="mt-2" />

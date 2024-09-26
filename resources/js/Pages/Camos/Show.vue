@@ -197,7 +197,10 @@ const badgeClass = (priority) => {
                         >Regresar
                     </Link>
                     <button
-                        v-if="$page.props.auth.user.is_cam"
+                        v-if="
+                            $page.props.auth.user.is_cam ||
+                            $page.props.auth.user.is_super
+                        "
                         class="btn-primary"
                         @click="addActivity = true"
                     >
