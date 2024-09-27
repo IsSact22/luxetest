@@ -36,7 +36,7 @@ const submit = () => {
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
-            toast.success("Aircraft created");
+            toast.success("Avión creado");
         },
     });
 };
@@ -47,8 +47,11 @@ const cancel = () => {
 };
 </script>
 <template>
-    <form @submit.prevent="submit">
-        <div>
+    <form
+        class="justify-items-center items-center px-7 py-3 space-y-5"
+        @submit.prevent="submit"
+    >
+        <div class="my-2">
             <label class="block" for="model_aircraft_id">Modelo</label>
             <select
                 id="model_aircraft_id"
@@ -56,7 +59,7 @@ const cancel = () => {
                 class="w-full mt-1 block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                 name="model_aircraft_id"
             >
-                <option :value="null">Select</option>
+                <option :value="null">{{ $t("Select") }}</option>
                 <option
                     v-for="(item, idx) in modelAircraftOptions"
                     :key="idx"
@@ -65,7 +68,7 @@ const cancel = () => {
                 ></option>
             </select>
         </div>
-        <div>
+        <div class="my-2">
             <label class="block" for="register">Registro/Matricula</label>
             <input
                 id="register"
@@ -77,7 +80,7 @@ const cancel = () => {
             />
             <InputError :message="form.errors.register" class="mt-2" />
         </div>
-        <div>
+        <div class="my-2">
             <label class="block" for="serial">Serial</label>
             <input
                 id="serial"
@@ -89,13 +92,9 @@ const cancel = () => {
             />
             <InputError :message="form.errors.serial" class="mt-2" />
         </div>
-        <div
-            class="flex flex-row justify-items-center items-center space-x-7 my-2"
-        >
-            <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Guardar
-            </PrimaryButton>
+        <div class="flex flex-row justify-around items-center space-x-7 my-2">
             <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
+            <PrimaryButton :disable="form.processing">Guardar</PrimaryButton>
         </div>
     </form>
 </template>

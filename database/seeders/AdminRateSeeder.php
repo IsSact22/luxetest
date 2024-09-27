@@ -15,23 +15,23 @@ class AdminRateSeeder extends Seeder
         $adminRates = [
             [
                 'id' => 1,
-                'name' => 'Technical Service',
-                'description' => 'Technical Service',
+                'name' => 'lorem ipsum',
+                'description' => 'lorem ipsum',
             ],
             [
                 'id' => 2,
-                'name' => 'Sales',
-                'description' => 'Sales',
+                'name' => 'lorem ipsum 1',
+                'description' => 'lorem ipsum 1',
             ],
             [
                 'id' => 3,
-                'name' => 'Rent',
-                'description' => 'Equipment Rental + Technical Service',
+                'name' => 'lorem ipsum 2',
+                'description' => 'lorem ipsum 2',
             ],
             [
                 'id' => 4,
-                'name' => 'Management',
-                'description' => 'Administrative Management',
+                'name' => 'lorem ipsum 3',
+                'description' => 'lorem ipsum 3',
             ],
         ];
         foreach ($adminRates as $adminRate) {
