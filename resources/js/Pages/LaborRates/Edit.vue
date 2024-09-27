@@ -11,10 +11,10 @@ const props = defineProps({
 });
 </script>
 <template>
-    <Head title="Camo Rates" />
+    <Head title="Tarifas laborales" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Camo Rates</h2>
+            <h2>Tarifas laborales</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
             <div class="w-3/12 my-4 border rounded-md p-4">

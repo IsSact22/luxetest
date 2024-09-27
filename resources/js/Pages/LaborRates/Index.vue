@@ -22,10 +22,10 @@ const fireSearch = _.throttle(function () {
 const { destroy } = useDestroy("aircrafts.destroy");
 </script>
 <template>
-    <Head title="Labor Rates" />
+    <Head title="Tarifas laborales" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Labor Rates</h2>
+            <h2>Tarifas laborales</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 p-4">

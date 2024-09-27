@@ -46,9 +46,14 @@ const cancel = () => {
 };
 </script>
 <template>
-    <form @submit.prevent="submit">
+    <form
+        class="flex flex-col justify-items-center items-stretch space-y-3"
+        @submit.prevent="submit"
+    >
         <div>
-            <InputLabel for="engine_type_id">Engine Type</InputLabel>
+            <InputLabel for="engine_type_id"
+                >{{ $t("Engine Type") }}
+            </InputLabel>
             <select
                 id="engine_type_id"
                 v-model="form.engine_type_id"
@@ -56,7 +61,7 @@ const cancel = () => {
                 name="engine_type_id"
                 required
             >
-                <option :value="null">Select</option>
+                <option :value="null">{{ $t("Select") }}</option>
                 <option
                     v-for="(item, idx) in engineTypes"
                     :value="item.value"
@@ -71,7 +76,7 @@ const cancel = () => {
             />
         </div>
         <div>
-            <InputLabel for="code">Code</InputLabel>
+            <InputLabel for="code">{{ $t("Code") }}</InputLabel>
             <input
                 id="code"
                 v-model="form.code"
@@ -84,7 +89,7 @@ const cancel = () => {
             <InputError v-if="form.errors.code" :message="form.errors.code" />
         </div>
         <div>
-            <InputLabel for="name">Name</InputLabel>
+            <InputLabel for="name">{{ $t("Name") }}</InputLabel>
             <input
                 id="name"
                 v-model="form.name"
@@ -97,7 +102,7 @@ const cancel = () => {
             <InputError v-if="form.errors.name" :message="form.errors.name" />
         </div>
         <div>
-            <InputLabel for="mount">Mount</InputLabel>
+            <InputLabel for="mount">Monto</InputLabel>
             <input
                 id="mount"
                 v-model="form.mount"
@@ -111,8 +116,8 @@ const cancel = () => {
         <div
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
-            <PrimaryButton v-if="form.isDirty">Save</PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
+            <PrimaryButton type="submit">Guardar</PrimaryButton>
         </div>
     </form>
 </template>
