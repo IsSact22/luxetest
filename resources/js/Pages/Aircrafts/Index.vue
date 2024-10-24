@@ -179,7 +179,10 @@ const closeModal = () => {
                                 <span v-if="selected">Editar Avión</span>
                                 <span v-else>Nuevo Avión</span>
                             </h2>
-                            <AircraftForm :aircraft="selected" />
+                            <AircraftForm
+                                :aircraft="selected"
+                                @close="closeModal"
+                            />
                         </div>
                     </template>
                 </Modal>

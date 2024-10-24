@@ -31,11 +31,14 @@ const form = useForm(method, url, {
     register: props.aircraft?.register ?? "",
     serial: props.aircraft?.serial ?? "",
 });
+
+const emit = defineEmits(["close"]);
 const submit = () => {
     form.submit({
         preserveScroll: true,
         onSuccess: () => {
             form.reset();
+            emit("close", true);
             toast.success("Avión creado");
         },
     });
