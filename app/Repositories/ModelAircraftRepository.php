@@ -12,16 +12,14 @@ use Override;
 
 class ModelAircraftRepository implements ModelAircraftRepositoryInterface
 {
-    public function __construct(protected ModelAircraft $model)
-    {
-    }
+    public function __construct(protected ModelAircraft $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
     {
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
-        return $this->model
+        return $this->model->orderBy('name', 'asc')
             ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('name', 'like', $search.'%')
                     ->orWhereHas('brandAircraft', static function (Builder $query) use ($search) {
