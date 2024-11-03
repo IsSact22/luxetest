@@ -26,10 +26,10 @@ const destroy = (id) => {
 };
 </script>
 <template>
-    <Head title="Users" />
+    <Head title="Usuarios" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Users</h2>
+            <h2>Usuarios</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
             <div class="mt-4 px-4 py-4 bg-white">
@@ -48,16 +48,16 @@ const destroy = (id) => {
                         />
                     </div>
                     <Link :href="route('users.create')" class="btn-primary">
-                        New User
+                        {{ $t("New User") }}
                     </Link>
                     <Link :href="route('roles.index')" class="btn-primary">
-                        Roles
+                        {{ $t("Roles") }}
                     </Link>
                     <Link
                         :href="route('permissions.index')"
                         class="btn-primary"
                     >
-                        Permissions
+                        {{ $t("Permissions") }}
                     </Link>
                 </form>
                 <table class="table-fixed">
@@ -65,11 +65,11 @@ const destroy = (id) => {
                         <tr>
                             <th>Id</th>
                             <th>Avatar</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Register</th>
-                            <th>Actions</th>
+                            <th>{{ $t("Name") }}</th>
+                            <th>{{ $t("Email") }}</th>
+                            <th>{{ $t("Role") }}</th>
+                            <th>{{ $t("Member since") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,8 +88,8 @@ const destroy = (id) => {
                                 </div>
                             </td>
                             <td>{{ user.name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
+                            <td class="px-2">{{ user.email }}</td>
+                            <td>{{ $t(`${user.role}`) }}</td>
                             <td class="text-center">{{ user.created_at }}</td>
                             <td class="col-actions">
                                 <Link
@@ -138,7 +138,7 @@ const destroy = (id) => {
                                 <span
                                     v-if="user.id === 1"
                                     class="font-bold text-red-800"
-                                    >Actions not allowed</span
+                                    >{{ $t("Actions not allowed") }}</span
                                 >
                             </td>
                         </tr>
