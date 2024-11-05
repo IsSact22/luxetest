@@ -24,7 +24,7 @@ class UpdateAircraftRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'model_aircraft_id' => ['required', 'integer', 'exists:aircrafts,id'],
+            'model_aircraft_id' => ['required', 'integer', 'exists:model_aircrafts,id'],
             'register' => [
                 ...$this->isPrecognitive() ?
                     [Rule::unique('aircrafts', 'register')->ignore($this->aircraft)] :
