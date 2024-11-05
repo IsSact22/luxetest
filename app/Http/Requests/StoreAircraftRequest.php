@@ -30,7 +30,7 @@ class StoreAircraftRequest extends FormRequest
                     [Rule::unique('aircrafts', 'register')] :
                     ['required', 'unique:aircrafts,register'],
             ],
-            'serial' => ['required'],
+            'serial' => ['required', Rule::unique('aircrafts', 'serial')],
         ];
     }
 }

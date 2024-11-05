@@ -30,7 +30,7 @@ class UpdateAircraftRequest extends FormRequest
                     [Rule::unique('aircrafts', 'register')->ignore($this->aircraft)] :
                     ['required', Rule::unique('aircrafts', 'register')->ignore($this->aircraft)],
             ],
-            'serial' => ['required'],
+            'serial' => ['required', Rule::unique('aircrafts', 'serial')->ignore($this->aircraft)],
         ];
     }
 }
