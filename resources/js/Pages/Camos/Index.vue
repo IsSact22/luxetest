@@ -76,7 +76,7 @@ const submitUpdate = () => {
                             id="search"
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300"
-                            name="search"
+                            name="buscar"
                             placeholder="search"
                             type="text"
                             @keyup="fireSearch"
