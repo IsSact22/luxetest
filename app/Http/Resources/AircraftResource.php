@@ -18,7 +18,7 @@ class AircraftResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'model_aircraft' => $this->modelAircraft,
+            'model_aircraft' => new ModelAircraftResource($this->modelAircraft),
             'engine_type' => $this->engineType,
             'register' => $this->register,
             'serial' => $this->serial,

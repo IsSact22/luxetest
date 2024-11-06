@@ -41,17 +41,17 @@ class CamoRepository implements CamoRepositoryInterface
                 });
             })
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('customer', 'like', $search.'%')
-                    ->orWhere('contract', 'like', $search.'%')
-                    ->orWhere('location', 'like', $search.'%')
+                $query->where('customer', 'like', $search . '%')
+                    ->orWhere('contract', 'like', $search . '%')
+                    ->orWhere('location', 'like', $search . '%')
                     ->orWhereHas('aircraft', static function (Builder $query) use ($search) {
-                        $query->where('register', 'like', $search.'%');
+                        $query->where('register', 'like', $search . '%');
                     })
                     ->orWhereHas('owner', static function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search.'%');
+                        $query->where('name', 'like', $search . '%');
                     })
                     ->orWhereHas('cam', static function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search.'%');
+                        $query->where('name', 'like', $search . '%');
                     });
             })
             ->paginate($perPage)
@@ -61,13 +61,13 @@ class CamoRepository implements CamoRepositoryInterface
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        return $this->model::query()->findOrFail($id);
     }
 
     #[Override]
     public function newModel(array $data): ?Model
     {
-        return $this->model->create($data);
+        return $this->model::query()->create($data);
     }
 
     #[Override]
