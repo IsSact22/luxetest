@@ -32,7 +32,7 @@ const showBackoffice = computed(() => {
 
 <template>
     <div class="min-h-screen bg-white flex">
-        <nav class="flex flex-col bg-black-700 border-r border-gray-100 w-64">
+        <nav class="flex flex-col bg-black-700 border-r border-gray-100 w-56">
             <!-- Logo -->
             <div class="inline-flex p-7">
                 <Link :href="route('dashboard')">
