@@ -3,9 +3,12 @@
 namespace App\Repositories;
 
 use App\Contracts\AircraftRepositoryInterface;
+use App\Exceptions\RepositoryException;
 use App\Models\Aircraft;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Override;
@@ -23,39 +26,74 @@ class AircraftRepository implements AircraftRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('register', 'like', $search.'%')
-                    ->orWhere('serial', 'like', $search.'%')
+                $query->where('register', 'like', $search . '%')
+                    ->orWhere('serial', 'like', $search . '%')
                     ->orWhereHas('modelAircraft', function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search.'%');
+                        $query->where('name', 'like', $search . '%');
                     });
             })
             ->paginate($perPage)
             ->withQueryString();
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        try {
+            return $this->model::query()->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function newModel(array $data): ?Model
     {
-        return $this->model->create($data);
+        try {
+            return $this->model::query()->create($data);
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function updateModel(array $data, int $id): ?Model
     {
-        $this->model->findOrFail($id)->update($data);
+        try {
+            $aircraft = $this->model::query()->findOrFail($id);
+            if ($aircraft) {
+                $aircraft->update($data);
+            }
 
-        return $this->model->fresh();
+            return $aircraft->fresh();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function deleteModel(int $id): bool
     {
-        return $this->model->findOrFail($id)->delete();
+        try {
+            return $this->model::query()->findOrFail($id)->delete();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 }

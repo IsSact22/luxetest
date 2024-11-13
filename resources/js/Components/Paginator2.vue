@@ -2,13 +2,13 @@
     <div>
         <div class="flex flex-row items-center mt-4">
             <button
-                :class="[
-          'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-500 border rounded cursor-pointer',
-          { 'disabled': currentPage === 1 },
-        ]"
                 v-if="currentPage !== 1"
-                @click="goToPage(currentPage - 1)"
+                :class="[
+                    'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-blue-700 border rounded cursor-pointer hover:text-blue-400 hover:bg-cyan-200',
+                    { disabled: currentPage === 1 },
+                ]"
                 aria-label="Previous"
+                @click="goToPage(currentPage - 1)"
             >
                 <span aria-hidden="true">&laquo;</span>
             </button>
@@ -16,20 +16,23 @@
                 v-for="page in lastPage"
                 :key="page"
                 :class="[
-          'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-500 border rounded cursor-pointer',
-          { 'hover:text-blue-700 hover:bg-blue-300': currentPage !== page },
-          { 'text-blue-700 bg-blue-300': currentPage === page },
-        ]"
+                    'mr-1 mb-1 px-4 py-3 text-sm leading-4 text-blue-700 border rounded cursor-pointer',
+                    {
+                        'hover:text-blue-400 hover:bg-cyan-200':
+                            currentPage !== page,
+                    },
+                    { 'text-blue-700 bg-cyan-200': currentPage === page },
+                ]"
                 @click="goToPage(page)"
             >
                 {{ page }}
             </button>
             <button
                 v-if="currentPage !== lastPage"
-                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-500 border rounded cursor-pointer hover:text-blue-700 hover:bg-blue-300"
-                :class="{ 'disabled': currentPage === lastPage }"
-                @click="goToPage(currentPage + 1)"
+                :class="{ disabled: currentPage === lastPage }"
                 aria-label="Next"
+                class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-blue-700 border rounded cursor-pointer hover:text-blue-400 hover:bg-cyan-200"
+                @click="goToPage(currentPage + 1)"
             >
                 <span aria-hidden="true">&raquo;</span>
             </button>
@@ -38,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { defineEmits, defineProps } from "vue";
 
 // Props
 const props = defineProps({
@@ -53,12 +56,12 @@ const props = defineProps({
 });
 
 // Emits
-const emit = defineEmits(['page-change']);
+const emit = defineEmits(["page-change"]);
 
 // Función para ir a una página específica
 const goToPage = (page) => {
     if (page >= 1 && page <= props.lastPage) {
-        emit('page-change', page);
+        emit("page-change", page);
     }
 };
 </script>

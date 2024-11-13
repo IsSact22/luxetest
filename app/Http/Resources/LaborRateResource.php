@@ -22,7 +22,7 @@ class LaborRateResource extends JsonResource
             'rateable' => $this->rateable,
             'code' => $this->code,
             'name' => $this->name,
-            'mount' => $this->mount,
+            'amount' => $this->amount,
         ];
     }
 }

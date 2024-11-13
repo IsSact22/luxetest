@@ -3,8 +3,11 @@
 namespace App\Repositories;
 
 use App\Contracts\CamoActivityRepositoryInterface;
+use App\Exceptions\RepositoryException;
 use App\Models\CamoActivity;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Override;
@@ -25,35 +28,68 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 $query->where('camo_id', $camoId);
             })
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search.'%');
+                $query->where('name', 'like', $search . '%');
             })
             ->paginate($perPage)
             ->withQueryString();
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        try {
+            return $this->model::query()->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        }
+
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function newModel(array $data): ?Model
     {
-        return $this->model->create($data);
+        try {
+            return $this->model::query()->create($data);
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function updateModel(array $data, int $id): ?Model
     {
-        $this->model->findOrFail($id)->update($data);
+        try {
+            $this->model->findOrFail($id)->update($data);
 
-        return $this->model->fresh();
+            return $this->model->fresh();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function deleteModel(int $id): bool
     {
-        return $this->model->findOrFail($id)->delete();
+        try {
+            return $this->model->findOrFail($id)->delete();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 }

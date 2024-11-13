@@ -66,7 +66,7 @@ const { destroy } = useDestroy("aircrafts.destroy");
                             <td>{{ item.code }}</td>
                             <td class="uppercase">{{ item.rateable.name }}</td>
                             <td>{{ item.name }}</td>
-                            <td>{{ item.mount }}</td>
+                            <td class="text-right">{{ item.amount }}</td>
                             <td class="col-actions">
                                 <Link
                                     :href="route('labor-rates.edit', item.id)"

@@ -3,15 +3,20 @@
 namespace App\Repositories;
 
 use App\Contracts\BrandAircraftRepositoryInterface;
+use App\Exceptions\RepositoryException;
 use App\Models\BrandAircraft;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Override;
 
 class BrandAircraftRepository implements BrandAircraftRepositoryInterface
 {
-    public function __construct(protected BrandAircraft $model) {}
+    public function __construct(protected BrandAircraft $model)
+    {
+    }
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -20,35 +25,69 @@ class BrandAircraftRepository implements BrandAircraftRepositoryInterface
 
         return $this->model->orderBy('name', 'asc')
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search.'%');
+                $query->where('name', 'like', $search . '%');
             })
             ->paginate($perPage)
             ->withQueryString();
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        try {
+            return $this->model::query()->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function newBrandAircraft(array $data): ?Model
     {
-        return $this->model->create($data);
+        try {
+            return $this->model::query()->create($data);
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
+
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function updateBrandAircraft(array $data, int $id): ?Model
     {
-        $this->model->findOrFail($id)->update($data);
+        try {
+            $this->model->findOrFail($id)->update($data);
 
-        return $this->model->fresh();
+            return $this->model->fresh();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
+
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function deleteBrandAircraft(int $id): bool
     {
-        return $this->model->findOrFail($id)->delete();
+        try {
+            return $this->model->findOrFail($id)->delete();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 }

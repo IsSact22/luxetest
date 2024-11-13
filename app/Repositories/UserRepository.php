@@ -3,8 +3,11 @@
 namespace App\Repositories;
 
 use App\Contracts\UserRepositoryInterface;
+use App\Exceptions\RepositoryException;
 use App\Models\User;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -23,9 +26,9 @@ class UserRepository implements UserRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search.'%')
+                $query->where('name', 'like', $search . '%')
                     ->orWhereHas('roles', static function ($query) use ($search) {
-                        $query->where('name', 'like', $search.'%');
+                        $query->where('name', 'like', $search . '%');
                     });
             })
             ->paginate($perPage)
@@ -68,43 +71,75 @@ class UserRepository implements UserRepositoryInterface
             ->withQueryString();
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        try {
+            return $this->model::query()->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function newModel(array $data): ?Model
     {
-        $user = $this->model->create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'owner_id' => $data['owner_id'] ?: null,
-        ]);
+        try {
+            $user = $this->model::query()->create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+                'owner_id' => $data['owner_id'] ?: null,
+            ]);
 
-        $user->assignRole($data['role']);
+            $user->assignRole($data['role']);
 
-        return $user;
+            return $user;
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function updateModel(array $data, int $id): ?Model
     {
-        $user = $this->model->findOrFail($id);
-        $user->update($data);
+        try {
+            $user = $this->model->findOrFail($id);
+            $user->update($data);
 
-        if (isset($data['role'])) {
-            $user->assignRole($data['role']);
+            if (isset($data['role'])) {
+                $user->assignRole($data['role']);
+            }
+
+            return $user->fresh();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
         }
-
-        return $user->fresh();
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function deleteModel(int $id): bool
     {
-        return $this->model->findOrFail($id)->delete();
+        try {
+            return $this->model->findOrFail($id)->delete();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 }
