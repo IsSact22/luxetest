@@ -1,11 +1,11 @@
 <script setup>
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, Link, router, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
 import Modal from "@/Components/Modal.vue";
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
@@ -16,6 +16,23 @@ const props = defineProps({
     },
 });
 
+// Definimos un estado reactivo para la disponibilidad de aviones y la carga
+const aircraftAvailable = ref(false);
+const loading = ref(true);
+// Función asíncrona para obtener la lista de aviones
+const fetchAircraft = async () => {
+    try {
+        const response = await axios.get(route("aircrafts.select"));
+        aircraftAvailable.value = response.data.length > 0;
+    } catch (error) {
+        console.error(error);
+        aircraftAvailable.value = false; // Puedes ajustar esto según cómo quieras manejar errores
+    } finally {
+        loading.value = false; // Finaliza la carga
+    }
+};
+onMounted(fetchAircraft);
+const hasAircraft = computed(() => !loading.value && aircraftAvailable.value);
 const camoSelected = ref(null);
 const url = ref("");
 const formCamo = useForm({
@@ -58,6 +75,14 @@ const submitUpdate = () => {
             toast.error("Imposible actualizar");
         },
     });
+};
+
+const handleNewCamo = () => {
+    if (!hasAircraft.value) {
+        toast.info("No hay aviones registrados");
+    } else {
+        router.get(route("camos.create"));
+    }
 };
 </script>
 <template>
@@ -367,9 +392,9 @@ const submitUpdate = () => {
                 </h1>
                 <p class="text-center">
                     ¿Quieres crear tu primer
-                    <a :href="route('camos.create')">
+                    <button @click="handleNewCamo">
                         <span class="text-blue-700">CAMO?</span>
-                    </a>
+                    </button>
                 </p>
             </div>
         </div>

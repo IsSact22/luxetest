@@ -106,14 +106,14 @@ const estimatedFinishDate = computed(() => {
     }
 });
 
-watch(
+/*watch(
     () => form.started_at,
     (newValue) => {
         if (form.status === "pending" && newValue !== null) {
             form.status = "in_progress";
         }
     },
-);
+);*/
 
 watch(
     () => form.required,
@@ -153,7 +153,7 @@ watch(
             const selected = newLaborRates.value.filter(
                 (item) => item.id === newLaborRateId,
             );
-            const mount = selected[0].mount;
+            const mount = selected[0].amount;
             const result = newEstimateTime * mount;
             form.labor_mount = parseFloat(result).toFixed(2);
         }
@@ -327,7 +327,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                             :key="idx"
                             :value="item.id"
                         >
-                            {{ item.name }}
+                            {{ item.label }}
                         </option>
                     </select>
                     <InputError

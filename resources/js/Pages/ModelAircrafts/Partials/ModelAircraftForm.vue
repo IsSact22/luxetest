@@ -14,7 +14,7 @@ const props = defineProps({
         type: Object,
     },
 });
-
+const emit = defineEmits(["close"]);
 const method = props.modelAircraft ? "put" : "post";
 const url = props.modelAircraft
     ? `/model-aircrafts/${props.modelAircraft.id}`
@@ -55,6 +55,7 @@ const submit = () => {
             } else {
                 toast.success("Modelo creado exitosamente.");
             }
+            emit("close", true);
         },
     });
 };

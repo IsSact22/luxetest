@@ -43,6 +43,7 @@ class LaborRate extends Model
             'engine_type_id' => 'integer',
             'code' => 'string',
             'name' => 'string',
+            'amount' => 'decimal:2',
             'created_at' => 'datetime:Y-m-d H:i',
             'updated_at' => 'datetime:Y-m-d H:i',
             'deleted_at' => 'datetime:Y-m-d H:i',
@@ -52,7 +53,7 @@ class LaborRate extends Model
     protected function amount(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->values()->latest()->value('amount') ?? 0
+            get: fn() => round($this->values()->latest()->value('amount') ?? 0, 2)
         );
     }
 
