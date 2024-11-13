@@ -4,7 +4,6 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
-import { useDestroy } from "@/Composables/useDestroy.js";
 
 const props = defineProps({
     resource: {
@@ -19,7 +18,13 @@ const fireSearch = _.throttle(function () {
     form.get(route("labor-rates.index"), { preserveState: true });
 }, 200);
 
-const { destroy } = useDestroy("aircrafts.destroy");
+const destroy = (id) => {
+    if (confirm("Seguro desea eliminar el registro")) {
+        form.delete(route("labor-rates.destroy", id), {
+            preserveState: true,
+        });
+    }
+};
 </script>
 <template>
     <Head title="Tarifas laborales" />

@@ -13,7 +13,6 @@ return new class extends Migration
             $table->morphs('rateable');
             $table->string('code')->unique();
             $table->string('name')->unique();
-            $table->decimal('mount', 8, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

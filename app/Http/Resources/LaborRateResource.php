@@ -19,6 +19,8 @@ class LaborRateResource extends JsonResource
         //return parent::toArray($request);
         return [
             'id' => $this->id,
+            'rateable_id' => $this->rateable_id,
+            'rateable_type' => $this->rateable_type,
             'rateable' => $this->rateable,
             'code' => $this->code,
             'name' => $this->name,

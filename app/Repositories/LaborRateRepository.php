@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Override;
+use Throwable;
 
 class LaborRateRepository implements LaborRateRepositoryInterface
 {
@@ -44,47 +46,53 @@ class LaborRateRepository implements LaborRateRepositoryInterface
     }
 
     /**
-     * @throws RepositoryException
+     * @throws RepositoryException|Throwable
      */
     #[Override]
     public function newModel(array $data): ?Model
     {
+        $laborRate = new LaborRate;
         try {
-            $laborRate = $this->model::query()->create($data);
-            $amount = $data['amount'] ?? null;
-            if ($amount !== null) {
-                $laborRate->values()->create([
-                    'amount' => $amount,
-                ]);
-            }
+            DB::transaction(static function () use ($data, &$laborRate) {
+                $laborRate->fill($data);
+                $laborRate->save();
+                $amount = $data['amount'] ?? null;
+                if ($amount !== null) {
+                    $laborRate->values()->create([
+                        'date' => now()->toDateString(),
+                        'amount' => $amount,
+                    ]);
+                }
+            });
 
             return $laborRate;
+
         } catch (Exception $e) {
-            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+            throw new RepositoryException($e->getMessage(), 500, 1001);
         }
     }
 
     /**
-     * @throws RepositoryException
+     * @throws RepositoryException|Throwable
      */
     #[Override]
     public function updateModel(array $data, int $id): ?Model
     {
         try {
             $laborRate = $this->model::query()->findOrFail($id);
-
-            if ($laborRate) {
+            DB::transaction(static function () use ($data, &$laborRate) {
                 $laborRate->update($data);
                 $amount = $data['amount'] ?? null;
 
                 if ($amount !== null) {
                     $laborRate->values()->create([
+                        'date' => now()->toDateString(),
                         'amount' => $amount,
                     ]);
                 }
-            }
+            });
 
-            return $laborRate->fresh();
+            return $laborRate ? $laborRate->refresh() : null;
         } catch (ModelNotFoundException $e) {
             throw new RepositoryException($e->getMessage(), 404, $e->getCode());
         } catch (Exception $e) {

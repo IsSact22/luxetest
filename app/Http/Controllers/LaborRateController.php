@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Contracts\LaborRateRepositoryInterface;
 use App\Helpers\InertiaResponse;
-use App\Http\Requests\StoreCamoRateRequest;
-use App\Http\Requests\UpdateCamoRateRequest;
+use App\Http\Requests\StoreLaborRateRequest;
+use App\Http\Requests\UpdateLaborRateRequest;
 use App\Http\Resources\LaborRateResource;
 use App\Models\LaborRate;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -86,11 +86,12 @@ class LaborRateController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCamoRateRequest $request): Response|RedirectResponse
+    public function store(StoreLaborRateRequest $request): Response|RedirectResponse
     {
         try {
             $this->authorize('create', LaborRate::class);
             $payload = precognitive(static fn ($bail) => $request->validated());
+            //dd($payload);
             $this->laborRateRepository->newModel($payload);
 
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been created.');
@@ -185,7 +186,7 @@ class LaborRateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCamoRateRequest $request, int $id): Response|RedirectResponse
+    public function update(UpdateLaborRateRequest $request, int $id): Response|RedirectResponse
     {
         try {
             $laborRate = $this->laborRateRepository->getById($id);

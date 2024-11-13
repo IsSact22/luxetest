@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateLaborRateRequest extends FormRequest
+class StoreLaborRateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,20 +29,12 @@ class UpdateLaborRateRequest extends FormRequest
             'code' => [
                 ...$this->isPrecognitive() ?
                     [Rule::unique('labor_rates', 'code')] :
-                    [
-                        'required',
-                        'string',
-                        Rule::unique('labor_rates', 'code')->ignore($this->labor_rate),
-                    ],
+                    ['required', 'string', Rule::unique('labor_rates', 'code')],
             ],
             'name' => [
                 ...$this->isPrecognitive() ?
                     [Rule::unique('labor_rates', 'name')] :
-                    [
-                        'required',
-                        'string',
-                        Rule::unique('labor_rates', 'name')->ignore($this->labor_rate),
-                    ],
+                    ['required', 'string', Rule::unique('labor_rates', 'name')],
             ],
             'amount' => ['required', 'numeric'],
         ];
