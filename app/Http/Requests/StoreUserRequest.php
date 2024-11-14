@@ -25,7 +25,7 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'role' => ['required'],
-            'owner_id' => ['sometimes', 'exists:users,id'],
+            'owner_id' => ['nullable', 'exists:users,id'],
             'name' => ['required'],
             'email' => [
                 ...$this->isPrecognitive() ?

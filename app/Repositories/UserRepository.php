@@ -15,9 +15,7 @@ use Override;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function __construct(protected ?User $model)
-    {
-    }
+    public function __construct(protected ?User $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -26,9 +24,9 @@ class UserRepository implements UserRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search . '%')
+                $query->where('name', 'like', $search.'%')
                     ->orWhereHas('roles', static function ($query) use ($search) {
-                        $query->where('name', 'like', $search . '%');
+                        $query->where('name', 'like', $search.'%');
                     });
             })
             ->paginate($perPage)
@@ -95,7 +93,7 @@ class UserRepository implements UserRepositoryInterface
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
-                'owner_id' => $data['owner_id'] ?: null,
+                'owner_id' => $data['owner_id'] ?? null,
             ]);
 
             $user->assignRole($data['role']);
@@ -113,7 +111,7 @@ class UserRepository implements UserRepositoryInterface
     public function updateModel(array $data, int $id): ?Model
     {
         try {
-            $user = $this->model->findOrFail($id);
+            $user = $this->model::query()->findOrFail($id);
             $user->update($data);
 
             if (isset($data['role'])) {

@@ -23,7 +23,7 @@ class CamoActivityResource extends JsonResource
             'camo' => $this->camo,
             'labor_rate_id' => $this->labor_rate_id,
             'required' => $this->required,
-            'date' => $this->date->format('Y-m-d'),
+            'date' => $this->date ? $this->date->format('Y-m-d') : null,
             'name' => $this->name,
             'description' => $this->description,
             'estimate_time' => $this->estimate_time,

@@ -60,7 +60,8 @@ const cancelForm = () => {
                         class="flex flex-col my-2 space-y-2 px-2 py-2 border rounded-md bg-white"
                     >
                         <label for="isOwner">
-                            If it is a crew, please check the owner.
+                            Si se trata de una tripulante, por favor verificar
+                            el propietario.
                         </label>
                         <div
                             class="flex flex-row justify-items-center items-center space-x-2"
@@ -85,7 +86,9 @@ const cancelForm = () => {
                                     type="radio"
                                     value="owner"
                                 />
-                                <label for="owner">Owner</label>
+                                <label class="text-xs" for="owner"
+                                    >Owner (Propietario)</label
+                                >
                             </div>
                             <div
                                 class="flex-1 justify-items-center items-center space-x-2"
@@ -96,7 +99,9 @@ const cancelForm = () => {
                                     type="radio"
                                     value="crew"
                                 />
-                                <label for="owner">Crew</label>
+                                <label class="text-xs" for="owner"
+                                    >Crew (Tripulante)</label
+                                >
                             </div>
                         </div>
                     </div>
@@ -104,7 +109,10 @@ const cancelForm = () => {
                         v-if="form.role === 'crew'"
                         class="flex flex-col my-2 space-y-2"
                     >
-                        <InputLabel for="owner_id" value="Owner"></InputLabel>
+                        <InputLabel
+                            for="owner_id"
+                            value="Propietario"
+                        ></InputLabel>
                         <select
                             id="owner_id"
                             v-model="form.owner_id"
@@ -126,7 +134,7 @@ const cancelForm = () => {
                         />
                     </div>
                     <div class="flex flex-col my-2 space-y-2">
-                        <InputLabel for="name" value="Name"></InputLabel>
+                        <InputLabel :value="$t('Name')" for="name"></InputLabel>
                         <TextInput
                             id="name"
                             v-model="form.name"
@@ -139,7 +147,10 @@ const cancelForm = () => {
                         <InputError :message="form.errors.name" class="mt-2" />
                     </div>
                     <div class="flex flex-col my-2 space-y-2">
-                        <InputLabel for="email" value="Email"></InputLabel>
+                        <InputLabel
+                            :value="$t('Email')"
+                            for="email"
+                        ></InputLabel>
                         <TextInput
                             id="email"
                             v-model="form.email"
@@ -153,8 +164,8 @@ const cancelForm = () => {
                     </div>
                     <div class="flex flex-col my-2 space-y-2">
                         <InputLabel
+                            :value="$t('Password')"
                             for="password"
-                            value="Password"
                         ></InputLabel>
                         <TextInput
                             id="password"
@@ -170,8 +181,8 @@ const cancelForm = () => {
                     </div>
                     <div class="flex flex-col my-2 space-y-2">
                         <InputLabel
+                            :value="$t('Confirm Password')"
                             for="password_confirmation"
-                            value="Confirm Password"
                         />
                         <TextInput
                             id="password_confirmation"
@@ -198,15 +209,19 @@ const cancelForm = () => {
                         />
                     </div>
                     <div class="flex flex-row justify-around my-4">
-                        <button class="btn-submit" type="submit">
-                            Create User
+                        <button
+                            class="btn-submit"
+                            type="submit"
+                            @click="submit"
+                        >
+                            Registrar
                         </button>
                         <button
                             class="btn-cancel"
                             type="button"
                             @click="cancelForm"
                         >
-                            Cancel
+                            Cancelar
                         </button>
                     </div>
                     <progress
