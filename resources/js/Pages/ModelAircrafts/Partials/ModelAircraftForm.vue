@@ -76,7 +76,7 @@ const cancel = () => {
                 name="brand_aircraft_id"
                 required
             >
-                <option :value="null">Select</option>
+                <option :value="null">{{ $t("Select") }}</option>
                 <option
                     v-for="(item, idx) in brandOptions"
                     :key="idx"
@@ -99,7 +99,7 @@ const cancel = () => {
                 name="engine_type_id"
                 required
             >
-                <option :value="null">Select</option>
+                <option :value="null">{{ $t("Select") }}</option>
                 <option
                     v-for="(item, idx) in engineTypeOptions"
                     :key="idx"

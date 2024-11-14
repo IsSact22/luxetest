@@ -108,7 +108,12 @@ const toggleEditRole = () => {
                     <tbody>
                         <tr v-for="(role, idx) in resource.data" :key="idx">
                             <td>{{ role.id }}</td>
-                            <td>{{ $t(`${role.name}`) }}</td>
+                            <td>
+                                {{ role.name }} (<small>{{
+                                    $t(`${role.name}`)
+                                }}</small
+                                >)
+                            </td>
                             <td class="text-center">{{ role.guard_name }}</td>
                             <td class="col-actions">
                                 <Link

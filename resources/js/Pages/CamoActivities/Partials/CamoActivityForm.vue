@@ -101,18 +101,17 @@ const workDaysPerWeek = Number(import.meta.env.VITE_WORK_DAYS_PER_WEEK);
 
 const estimatedFinishDate = computed(() => {
     if (form.estimate_time && form.started_at) {
-        const startDate = moment(form.started_at, "YYYY-MM-DD HH:mm");
+        // Asegúrate de que se esté usando el formato correcto al parsear
+        const startDate = moment(form.started_at); // Cambié el formato a solo form.started_at
         const estimateHours = form.estimate_time;
 
         // Calculamos los días estimados correctamente
         let estimatedDays = Math.ceil(estimateHours / dailyWorkHours);
 
-        // Calculamos las semanas estimadas correctamente
-        const estimatedWeeks = Math.ceil(estimatedDays / workDaysPerWeek);
-
+        // Inicializa la fecha estimada de finalización
         let estimatedFinishDate = startDate.clone();
 
-        // Avanzamos los días estimados, saltando los fines de semana
+        // Avanza los días estimados, saltando los fines de semana
         while (estimatedDays > 0) {
             // Avanza un día
             estimatedFinishDate = estimatedFinishDate.add(1, "day");
@@ -123,19 +122,14 @@ const estimatedFinishDate = computed(() => {
                 estimatedFinishDate.day() === 6
             ) {
                 estimatedFinishDate = estimatedFinishDate.add(1, "day");
-                while (
-                    estimatedFinishDate.day() === 0 ||
-                    estimatedFinishDate.day() === 6
-                ) {
-                    estimatedFinishDate = estimatedFinishDate.add(1, "day");
-                }
             }
 
             estimatedDays -= 1;
         }
 
-        return estimatedFinishDate.toDate();
+        return estimatedFinishDate.toDate(); // Devuelve la fecha como objeto Date
     }
+    return null; // Devuelve un valor nulo si no se cumplen las condiciones
 });
 
 /*watch(
@@ -629,9 +623,9 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </SecondaryButton>
             </div>
         </form>
-        <h3 v-if="form.started_at" class="text-right">
-            Fecha estimada de finalización <br />
-            {{ estimatedFinishDate }}
+        <h3 v-if="form.started_at && estimatedFinishDate" class="text-right">
+            <small>Fecha estimada de finalización</small> <br />
+            <small>{{ estimatedFinishDate }}</small>
         </h3>
     </div>
 </template>

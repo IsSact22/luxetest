@@ -3,8 +3,10 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import { useToast } from "vue-toastification";
+import useFormatCurrency from "@/Composables/formatCurrency.js";
 
 const toast = useToast();
+const { formatCurrency } = useFormatCurrency();
 
 const props = defineProps({
     resource: {
@@ -142,14 +144,14 @@ const goBack = () => {
                             >Hrs/Hom Monto</strong
                         >
                         <br />
-                        {{ resource.data.labor_mount }}
+                        {{ formatCurrency(resource.data.labor_mount) }}
                     </p>
                     <p class="w-1/4">
                         <strong style="color: #b58a00 !important"
                             >Materiales Monto</strong
                         >
                         <br />
-                        {{ resource.data.material_mount }}
+                        {{ formatCurrency(resource.data.material_mount) }}
                     </p>
                 </div>
                 <div
