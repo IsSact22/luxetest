@@ -54,7 +54,7 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Save
+                >Guardar
             </PrimaryButton>
             <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
