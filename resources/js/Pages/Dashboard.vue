@@ -48,7 +48,7 @@ onMounted(queryPendingRate);
                     </h2>
 
                     <div
-                        v-if="hasPendingRate.length > 0"
+                        v-if="hasPendingRate && hasPendingRate.length > 0"
                         class="bg-yellow-100 rounded-md px-4 py-2 my-5"
                     >
                         <h3
@@ -68,7 +68,7 @@ onMounted(queryPendingRate);
                                     stroke-linejoin="round"
                                 />
                             </svg>
-                            <span> Pending activities by rate </span>
+                            <span> Actividades pendientes por tasa </span>
                         </h3>
                     </div>
 
