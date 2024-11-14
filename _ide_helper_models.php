@@ -261,11 +261,13 @@ namespace App\Models{
  * @property int $rateable_id
  * @property string $code
  * @property string $name
- * @property numeric $mount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read mixed $amount
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $rateable
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\LaborRateValue> $values
+ * @property-read int|null $values_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate onlyTrashed()
@@ -274,7 +276,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate whereMount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate whereRateableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRate whereRateableType($value)
@@ -285,6 +286,37 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperLaborRate {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $labor_rate_id
+ * @property \Illuminate\Support\Carbon $date
+ * @property numeric $amount
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\LaborRate $laborRate
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereLaborRateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperLaborRateValue {}
 }
 
 namespace App\Models{
