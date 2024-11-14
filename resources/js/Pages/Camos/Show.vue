@@ -517,6 +517,7 @@ const badgeClass = (priority) => {
                                         <td>{{ act.id }}</td>
                                         <td>
                                             <span
+                                                v-tooltip="act.name"
                                                 :class="
                                                     badgeClass(act.priority)
                                                 "
