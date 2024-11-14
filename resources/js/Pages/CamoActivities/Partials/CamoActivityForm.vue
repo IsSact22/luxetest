@@ -26,6 +26,20 @@ const props = defineProps({
         required: true,
     },
 });
+const startDate = ref(props.camo.start_date);
+// Computed property to format startDate as datetime-local (YYYY-MM-DDTHH:mm)
+const formattedStartDate = computed(() => {
+    // Asegúrate de que startDate no sea nulo antes de intentar formatearlo
+    if (startDate.value) {
+        // Convertir startDate a un objeto moment
+        const momentDate = moment(startDate.value);
+        // Establecer la hora a 08:00
+        momentDate.set({ hour: 8, minute: 0 });
+        // Retornar el valor formateado para datetime-local
+        return momentDate.format("YYYY-MM-DDTHH:mm");
+    }
+    return null; // O un valor por defecto si fuera necesario
+});
 
 const method = props.camoActivity ? "put" : "post";
 const url = props.camoActivity
@@ -40,7 +54,7 @@ const form = useForm(method, url, {
     name: props.camoActivity?.name ?? null,
     description: props.camoActivity?.description ?? null,
     estimate_time: props.camoActivity?.estimate_time ?? null,
-    started_at: props.camoActivity?.started_at ?? null,
+    started_at: props.camoActivity?.started_at ?? formattedStartDate.value,
     completed_at: props.camoActivity?.completed_at ?? null,
     status: props.camoActivity?.status ?? "pending",
     comments: props.camoActivity?.comments ?? null,
@@ -51,6 +65,24 @@ const form = useForm(method, url, {
     approval_status: props.camoActivity?.approval_status ?? "pending",
     priority: props.camoActivity?.priority ?? 3,
 });
+
+// Validación para que started_at no sea menor que startDate a las 8:00
+watch(
+    () => form.started_at,
+    (newValue) => {
+        if (
+            moment(newValue).isBefore(
+                moment(startDate.value).set({ hour: 8, minute: 0 }),
+            )
+        ) {
+            form.errors.started_at =
+                "La fecha de inicio no puede ser anterior a la fecha de inicio del proyecto a las 8:00.";
+        } else {
+            delete form.errors.started_at; // Elimina el error si la validación es exitosa
+        }
+    },
+);
+
 const estimateDuration = computed(() => {
     if (props.camo) {
         return Math.ceil(
@@ -466,7 +498,7 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                         type="datetime-local"
                     />
                     <InputError
-                        :message="form.errors.start_date"
+                        :message="form.errors.started_at"
                         class="mt-2"
                     />
                 </div>
