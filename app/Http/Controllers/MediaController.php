@@ -34,9 +34,9 @@ class MediaController extends Controller
                 }
 
                 return InertiaResponse::content('Media/AddImage', ['modelName' => $modelName, 'id' => $id, 'record' => $record]);
-            } else {
-                return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_BAD_REQUEST]);
             }
+
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_BAD_REQUEST]);
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
         } catch (Throwable $e) {
@@ -67,11 +67,11 @@ class MediaController extends Controller
                 return response()->json([
                     'message' => 'Image added successfully',
                 ], 201);
-            } else {
-                return response()->json([
-                    'message' => 'Invalid model',
-                ], 400);
             }
+
+            return response()->json([
+                'message' => 'Invalid model',
+            ], 400);
 
         } catch (FileDoesNotExist $exception) {
             return response()->json([
@@ -96,6 +96,19 @@ class MediaController extends Controller
             'CamoActivity' => new CamoActivity,
             default => null,
         };
+    }
+
+    public function hasImagesInActivities(Camo $camo): JsonResponse
+    {
+        // Obtener todas las actividades relacionadas con el modelo Camo
+        $activities = $camo->camoActivity()->with('media')->get();
+
+        // Verificar si alguna actividad tiene imágenes
+        $hasImages = $activities->contains(function ($activity) {
+            return $activity->getMedia('image-support')->isNotEmpty();
+        });
+
+        return response()->json(['hasImages' => $hasImages]);
     }
 
     /**
@@ -127,6 +140,7 @@ class MediaController extends Controller
                 throw new FileDoesNotExist;
             }
         }
+
         return InertiaResponse::content('Camos/Gallery', ['resource' => $results]);
     }
 }

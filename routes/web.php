@@ -17,6 +17,7 @@ use App\Http\Controllers\Invokes\PendingRateController;
 use App\Http\Controllers\Invokes\PermissionController;
 use App\Http\Controllers\Invokes\SetOwnerAircraftController;
 use App\Http\Controllers\LaborRateController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ModelAircraftController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -27,14 +28,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', static fn() => Inertia::render('Welcome', [
+Route::get('/', static fn () => Inertia::render('Welcome', [
     'canLogin' => Route::has('login'),
     'canRegister' => Route::has('register'),
     'laravelVersion' => Application::VERSION,
     'phpVersion' => PHP_VERSION,
 ]));
 
-Route::get('dashboard', static fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('dashboard', static fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(static function ($route) {
     // Invokes Controllers
@@ -62,9 +63,9 @@ Route::middleware('auth')->group(static function ($route) {
     // Users
     $route->resource('users', UserController::class);
     // Profile
-    $route->get('profile', static fn(\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)->edit($request))->name('profile.edit');
-    $route->patch('profile', static fn(ProfileUpdateRequest $request): RedirectResponse => (new ProfileController)->update($request))->name('profile.update');
-    $route->delete('profile', static fn(\Illuminate\Http\Request $request): RedirectResponse => (new ProfileController)->destroy($request))->name('profile.destroy');
+    $route->get('profile', static fn (\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)->edit($request))->name('profile.edit');
+    $route->patch('profile', static fn (ProfileUpdateRequest $request): RedirectResponse => (new ProfileController)->update($request))->name('profile.update');
+    $route->delete('profile', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new ProfileController)->destroy($request))->name('profile.destroy');
     // Admin Rate
     $route->resource('admin-rates', AdminRateController::class);
     // Labor Rates
@@ -83,10 +84,11 @@ Route::middleware('auth')->group(static function ($route) {
     $route->get('camos/{camo}/get-images', [App\Http\Controllers\MediaController::class, 'getMedia'])->name('camos.images');
     $route->resource('camos', CamoController::class);
     // Media Camo Activities
+    $route->get('camo/{camo}/has-images-in-activities', [MediaController::class, 'hasImagesInActivities'])->name('camo.has-images-in-activities');
     $route->post('camo_activities/add-images', MediaActivityController::class)
         ->name('camo_activities.add_images');
     // Camo Activities
     $route->resource('camo_activities', CamoActivityController::class);
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

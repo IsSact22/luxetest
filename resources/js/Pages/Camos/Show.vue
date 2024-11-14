@@ -183,6 +183,25 @@ const badgeClass = (priority) => {
             return "badge-alert";
     }
 };
+// Ref para manejar la visibilidad del botón
+const showGallery = ref(false);
+
+// Función para verificar si alguna actividad tiene imágenes
+const checkIfActivitiesHaveImages = async () => {
+    try {
+        const response = await axios.get(
+            `/camo/${props.resource.data.id}/has-images-in-activities`,
+        );
+        showGallery.value = response.data.hasImages; // Se establece el valor del botón
+    } catch (error) {
+        console.error("Error fetching images", error);
+    }
+};
+
+// Llamar a la función cuando el componente se monta
+onMounted(() => {
+    checkIfActivitiesHaveImages();
+});
 </script>
 <template>
     <Head title="Camos" />
@@ -207,6 +226,7 @@ const badgeClass = (priority) => {
                         Agregar Actividad
                     </button>
                     <Link
+                        v-if="showGallery"
                         :href="route('camos.images', props.resource.data.id)"
                         class="btn-primary"
                         title="Gallery of Camo"
