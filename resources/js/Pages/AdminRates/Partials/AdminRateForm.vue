@@ -22,6 +22,7 @@ const form = useForm(method, url, {
     name: props.adminRate?.name ?? "",
     description: props.adminRate?.description ?? "",
 });
+const emit = defineEmits(["showForm"]);
 const submit = () => {
     form.submit({
         preserveScroll: true,

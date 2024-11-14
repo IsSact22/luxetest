@@ -124,7 +124,10 @@ const closeModal = () => {
                                 <span v-if="selected">Editar Tarifa</span>
                                 <span v-else>Registrar nueva Tarifa</span>
                             </h2>
-                            <AdminRateForm :admin-rate="selected" />
+                            <AdminRateForm
+                                :admin-rate="selected"
+                                @show-form="closeModal"
+                            />
                         </div>
                     </template>
                 </Modal>
