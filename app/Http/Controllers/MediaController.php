@@ -106,6 +106,7 @@ class MediaController extends Controller
         $results = collect();
         $camoId = $camo->id;
         $activities = CamoActivity::query()
+            ->with('camo')
             ->where('camo_id', $camoId)
             ->get();
         foreach ($activities as $activity) {
@@ -114,6 +115,7 @@ class MediaController extends Controller
                     $results->push([
                         'id' => $media->id,
                         'camo_id' => $camoId,
+                        'camo' => $activity->camo,
                         'title' => $media->name,
                         'file_name' => $media->file_name,
                         'mime_type' => $media->mime_type,
