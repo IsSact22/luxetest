@@ -501,11 +501,9 @@ const badgeClass = (priority) => {
                                         <th>Fecha</th>
                                         <th>Inicia</th>
                                         <th>Estimado</th>
-                                        <th>Nombre</th>
                                         <th>Estatus</th>
                                         <th>H/H</th>
                                         <th>Material</th>
-                                        <th>AWR</th>
                                         <th>Aprobado</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -534,37 +532,6 @@ const badgeClass = (priority) => {
                                         <td class="text-center">
                                             {{ act.estimate_time }}
                                             <small>H/m</small>
-                                        </td>
-                                        <td>
-                                            <div
-                                                class="flex flex-row justify-items-center items-center space-x-2"
-                                            >
-                                                <span>
-                                                    <svg
-                                                        class="w-4 h-4"
-                                                        viewBox="0 0 21 21"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <g
-                                                            fill="none"
-                                                            fill-rule="evenodd"
-                                                            stroke="currentColor"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                        >
-                                                            <circle
-                                                                cx="8.5"
-                                                                cy="8.5"
-                                                                r="5"
-                                                            />
-                                                            <path
-                                                                d="m17.571 17.5-5.571-5.5"
-                                                            />
-                                                        </g>
-                                                    </svg>
-                                                </span>
-                                                <span>{{ act.name }}</span>
-                                            </div>
                                         </td>
                                         <td class="flex place-content-center">
                                             <span
@@ -598,11 +565,6 @@ const badgeClass = (priority) => {
                                                 )
                                             }}
                                         </td>
-                                        <td>
-                                            <span class="line-clamp-1">{{
-                                                act.awr
-                                            }}</span>
-                                        </td>
                                         <td class="flex place-content-center">
                                             <span
                                                 v-if="
@@ -626,11 +588,43 @@ const badgeClass = (priority) => {
                                             <Link
                                                 :href="
                                                     route(
-                                                        'camo_activities.edit',
+                                                        'camo_activities.show',
                                                         act.id,
                                                     )
                                                 "
                                                 class="btn-show"
+                                            >
+                                                <span>
+                                                    <svg
+                                                        class="size-5 stroke-yellow-700"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        stroke-width="1.5"
+                                                        viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        />
+                                                        <path
+                                                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        />
+                                                    </svg>
+                                                </span>
+                                            </Link>
+
+                                            <Link
+                                                :href="
+                                                    route(
+                                                        'camo_activities.edit',
+                                                        act.id,
+                                                    )
+                                                "
+                                                class="btn-edit"
                                             >
                                                 <span>
                                                     <svg
