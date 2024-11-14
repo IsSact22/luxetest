@@ -18,6 +18,16 @@ const props = defineProps({
         default: () => ({}),
     },
 });
+const brandAircrafts = ref(false);
+const fetchBrandAircraft = async () => {
+    try {
+        const response = await axios.get(route("brand-aircrafts.select"));
+        brandAircrafts.value = response.data.length > 0;
+    } catch (e) {
+        console.error(e);
+    }
+};
+onMounted(fetchBrandAircraft);
 const owners = ref(null);
 const getOwners = async () => {
     try {
@@ -76,7 +86,14 @@ const destroy = (id) => {
 
 const showModal = ref(false);
 const openModal = () => {
-    showModal.value = true;
+    if (!brandAircrafts.value) {
+        toast.info("No hay marcas registradas");
+        setTimeout(() => {
+            router.get(route("brand-aircrafts.create"));
+        }, 1000);
+    } else {
+        showModal.value = true;
+    }
 };
 
 const selected = ref(null);

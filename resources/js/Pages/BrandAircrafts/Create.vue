@@ -10,6 +10,7 @@ import BrandAircraftForm from "@/Pages/BrandAircrafts/Partials/BrandAircraftForm
             <h2>Marcas de Aviones</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
+            <h2>Nueva Marca</h2>
             <div class="p-4 sm:p-8 bg-white">
                 <BrandAircraftForm />
             </div>
