@@ -289,25 +289,22 @@ const handleNewCamo = () => {
                 <table class="table-auto">
                     <thead>
                         <tr>
-                            <th>Id</th>
                             <th>{{ $t("Customer") }}</th>
-                            <th>{{ $t("Owner") }}</th>
-                            <th>{{ $t("Contract") }}</th>
+                            <th>Orden</th>
                             <th>{{ $t("Cam") }}</th>
                             <th>{{ $t("Airplane") }}</th>
                             <th>{{ $t("Activities") }}</th>
-                            <th>{{ $t("Start Date") }}</th>
-                            <th>{{ $t("Estimate Finish Date") }}</th>
-                            <th>{{ $t("Finish Date") }}</th>
-                            <th>{{ $t("Location") }}</th>
+                            <th title="Fecha de Inicio">F. Ini</th>
+                            <th title="Fecha estimanda de finalización">
+                                F. E. Fin
+                            </th>
+                            <th title="Fecha de Finalización">F. Fin</th>
                             <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(camo, idx) in resource.data" :key="idx">
-                            <td>{{ camo.id }}</td>
                             <td class="uppercase">{{ camo.customer }}</td>
-                            <td>{{ camo.owner }}</td>
                             <td>{{ camo.contract }}</td>
                             <td>{{ camo.cam }}</td>
                             <td>
@@ -322,7 +319,6 @@ const handleNewCamo = () => {
                                 {{ camo.estimate_finish_date }}
                             </td>
                             <td class="text-center">{{ camo.finish_date }}</td>
-                            <td class="text-center">{{ camo.location }}</td>
                             <td
                                 class="flex flex-row justify-items-center items-center space-x-3"
                             >

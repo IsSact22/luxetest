@@ -516,11 +516,9 @@ onMounted(() => {
                             <table class="table-fixed w-full">
                                 <thead>
                                     <tr>
-                                        <th>id</th>
-                                        <th>Prioridad</th>
-                                        <th>Fecha</th>
+                                        <th>Nombre</th>
                                         <th>Inicia</th>
-                                        <th>Estimado</th>
+                                        <th>Hrs</th>
                                         <th>Estatus</th>
                                         <th>H/H</th>
                                         <th>Material</th>
@@ -534,27 +532,27 @@ onMounted(() => {
                                         activities.resource"
                                         :key="idx"
                                     >
-                                        <td>{{ act.id }}</td>
                                         <td>
-                                            <span
-                                                v-tooltip="act.name"
-                                                :class="
-                                                    badgeClass(act.priority)
-                                                "
-                                            >
-                                                {{ act.priority }}
-                                            </span>
+                                            {{ act.name }}
+                                            <!--                                            <span
+                            v-tooltip="act.name"
+                            :class="
+                                badgeClass(act.priority)
+                            "
+                        >
+                            {{ act.priority }}
+                        </span>-->
                                         </td>
-                                        <td class="text-xs">{{ act.date }}</td>
                                         <td class="text-xs">
                                             <span v-if="act.started_at"></span>
                                             {{ act.started_at ?? "undefined" }}
                                         </td>
                                         <td class="text-center">
                                             {{ act.estimate_time }}
-                                            <small>H/m</small>
                                         </td>
-                                        <td class="flex place-content-center">
+                                        <td
+                                            class="flex items-center justify-center h-12"
+                                        >
                                             <span
                                                 v-if="act.status === 'pending'"
                                                 class="badge-pending"
@@ -586,7 +584,9 @@ onMounted(() => {
                                                 )
                                             }}
                                         </td>
-                                        <td class="flex place-content-center">
+                                        <td
+                                            class="flex items-center justify-center h-12"
+                                        >
                                             <span
                                                 v-if="
                                                     act.approval_status ===

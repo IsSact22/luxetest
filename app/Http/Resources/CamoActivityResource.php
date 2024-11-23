@@ -16,7 +16,6 @@ class CamoActivityResource extends JsonResource
     #[Override]
     public function toArray(Request $request): array
     {
-        //return parent::toArray($request);
         return [
             'id' => $this->id,
             'camo_id' => $this->camo_id,
@@ -27,7 +26,7 @@ class CamoActivityResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'estimate_time' => $this->estimate_time,
-            'started_at' => $this->started_at->format('Y-m-d H:i:s'),
+            'started_at' => $this->started_at ? $this->started_at->format('Y-m-d H:i:s') : null,
             'completed_at' => $this->completed_at ? $this->completed_at->format('Y-m-d H:i:s') : null,
             'status' => $this->status,
             'comments' => $this->comments,
