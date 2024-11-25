@@ -120,7 +120,7 @@ class LaborRateSeeder extends Seeder
             // Añadir el valor del LaborRate en labor_rate_values
             LaborRateValue::query()->create([
                 'labor_rate_id' => $laborRate->id,
-                'date' => now()->toDateString(),
+                //'date' => now()->toDateString(),
                 'amount' => $camoRate['amount'],
             ]);
         }

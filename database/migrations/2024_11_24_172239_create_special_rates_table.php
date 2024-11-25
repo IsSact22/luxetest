@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('labor_rate_values', static function (Blueprint $table) {
+        Schema::create('special_rates', static function (Blueprint $table) {
             $table->id();
-            $table->foreignId('labor_rate_id')->constrained('labor_rates')->cascadeOnDelete();
-            $table->date('valid_from');
-            $table->date('valid_to')->nullable();
-            $table->decimal('amount', 8, 2)->default(0);
+            $table->foreignId('camo_activity_id')->constrained('camo_activities')->cascadeOnDelete();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->decimal('amount', 8, 2);
+            $table->boolean('is_used')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('labor_rate_values');
+        Schema::dropIfExists('special_rates');
     }
 };
