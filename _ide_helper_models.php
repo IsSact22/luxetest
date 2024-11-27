@@ -184,9 +184,11 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Camo $camo
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection $images
+ * @property-read mixed $get_special_rate
  * @property-read \App\Models\LaborRate|null $laborRate
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
+ * @property-read \App\Models\SpecialRate|null $specialRate
  * @method static \Database\Factories\CamoActivityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity newQuery()
@@ -294,7 +296,8 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $labor_rate_id
- * @property \Illuminate\Support\Carbon $date
+ * @property \Illuminate\Support\Carbon $valid_from
+ * @property \Illuminate\Support\Carbon|null $valid_to
  * @property numeric $amount
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -306,11 +309,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereLaborRateId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereValidFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue whereValidTo($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|LaborRateValue withoutTrashed()
  * @mixin \Eloquent
@@ -373,6 +377,41 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperOwnerAircraft {}
+}
+
+namespace App\Models{
+/**
+ * 
+ *
+ * @property int $id
+ * @property int $camo_activity_id
+ * @property string $name
+ * @property string|null $description
+ * @property numeric $amount
+ * @property bool $is_used
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\CamoActivity $activity
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereCamoActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereIsUsed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SpecialRate withoutTrashed()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSpecialRate {}
 }
 
 namespace App\Models{
