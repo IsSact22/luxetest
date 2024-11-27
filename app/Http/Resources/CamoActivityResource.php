@@ -30,6 +30,7 @@ class CamoActivityResource extends JsonResource
             'completed_at' => $this->completed_at ? $this->completed_at->format('Y-m-d H:i:s') : null,
             'status' => $this->status,
             'comments' => $this->comments,
+            'special_rate' => $this->get_special_rate,
             'labor_mount' => $this->labor_mount,
             'material_mount' => $this->material_mount,
             'material_information' => $this->material_information,

@@ -9,8 +9,10 @@ use App\Http\Resources\CamoActivityResource;
 use App\Models\Camo;
 use App\Models\CamoActivity;
 use App\Repositories\CamoActivityRepository;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -142,7 +144,7 @@ class CamoActivityController extends Controller
     public function update(UpdateCamoActivityRequest $request, string $id): RedirectResponse|Response
     {
         try {
-
+            //dd($request->validated());
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
             $payload = precognitive(static fn ($bail) => $request->validated());
@@ -151,7 +153,7 @@ class CamoActivityController extends Controller
             return to_route('camos.show', $id)->with('success', 'Activity update successfully');
         } catch (ModelNotFoundException) {
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable $e) {
+        } catch (Exception|Throwable|QueryException $e) {
             Log::error($e->getMessage());
 
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);

@@ -5,18 +5,20 @@ namespace App\Repositories;
 use App\Contracts\CamoActivityRepositoryInterface;
 use App\Exceptions\RepositoryException;
 use App\Models\CamoActivity;
+use App\Models\LaborRate;
+use App\Models\SpecialRate;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Override;
+use Throwable;
 
 class CamoActivityRepository implements CamoActivityRepositoryInterface
 {
-    public function __construct(protected ?CamoActivity $model)
-    {
-    }
+    public function __construct(protected ?CamoActivity $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -28,7 +30,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 $query->where('camo_id', $camoId);
             })
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search . '%');
+                $query->where('name', 'like', $search.'%');
             })
             ->paginate($perPage)
             ->withQueryString();
@@ -52,7 +54,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
      * @throws RepositoryException
      */
     #[Override]
-    public function newModel(array $data): ?Model
+    public function newModel(array $data): CamoActivity
     {
         try {
             return $this->model::query()->create($data);
@@ -65,17 +67,35 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
      * @throws RepositoryException
      */
     #[Override]
-    public function updateModel(array $data, int $id): ?Model
+    public function updateModel(array $data, int $id): ?CamoActivity
     {
         try {
             $this->model->findOrFail($id)->update($data);
+            // tarifa especial
+            if (! is_null($data['special_rate']) && $data['special_rate'] > 0) {
+                SpecialRate::create([
+                    'camo_activity_id' => $id,
+                    'name' => $this->getLaborRateName($data['labor_rate_id']),
+                    'description' => 'Se aplica tarifa especial',
+                    'amount' => $data['special_rate'],
+                    'is_used' => true,
+                ]);
+            }
 
             return $this->model->fresh();
         } catch (ModelNotFoundException $e) {
             throw new RepositoryException($e->getMessage(), 404, $e->getCode());
-        } catch (Exception $e) {
+        } catch (Exception|Throwable $e) {
+            Log::error('Error inesperado en updateModel: '.$e->getMessage());
             throw new RepositoryException($e->getMessage(), 500, $e->getCode());
         }
+    }
+
+    private function getLaborRateName($id)
+    {
+        $laborRate = LaborRate::find($id);
+
+        return $laborRate->name ?? null;
     }
 
     /**

@@ -58,6 +58,7 @@ const form = useForm(method, url, {
     completed_at: props.camoActivity?.completed_at ?? null,
     status: props.camoActivity?.status ?? "pending",
     comments: props.camoActivity?.comments ?? null,
+    special_rate: props.camoActivity?.special_rate.amount ?? null,
     labor_mount: props.camoActivity?.labor_mount ?? null,
     material_mount: props.camoActivity?.material_mount ?? null,
     material_information: props.camoActivity?.material_information ?? null,
@@ -173,15 +174,40 @@ const statusApproval = ref([
 ]);
 
 watch(
-    () => [laborRates, form.labor_rate_id, form.estimate_time],
-    ([newLaborRates, newLaborRateId, newEstimateTime]) => {
-        if (newLaborRates && newLaborRateId) {
+    () => form.special_rate,
+    (newValue) => {
+        if (newValue === "") {
+            form.special_rate = null;
+        }
+    },
+);
+
+watch(
+    () => [
+        laborRates,
+        form.labor_rate_id,
+        form.estimate_time,
+        form.special_rate,
+    ],
+    ([newLaborRates, newLaborRateId, newEstimateTime, newSpecialRate]) => {
+        let mount;
+
+        // Verifica si hay una tasa especial válida
+        if (newSpecialRate !== null && newSpecialRate > 0) {
+            mount = newSpecialRate;
+        } else if (newLaborRates && newLaborRateId) {
             const selected = newLaborRates.value.filter(
                 (item) => item.id === newLaborRateId,
             );
-            const mount = selected[0].amount;
+            mount = selected[0]?.amount; // Usar el monto de la tasa laboral seleccionada
+        }
+
+        // Si se obtuvo un monto (ya sea de la tasa especial o de la tasa laboral), calcula el monto laboral
+        if (mount && newEstimateTime) {
             const result = newEstimateTime * mount;
             form.labor_mount = parseFloat(result).toFixed(2);
+        } else {
+            form.labor_mount = null; // Si no hay monto, se puede establecer como nulo
         }
     },
 );
@@ -222,6 +248,7 @@ const goBack = () => {
     router.get(route("camos.show", camoId), {}, { replace: false });
 };
 const enableRates = computed(() => props.user.is_admin || props.user.is_super);
+const enableSpecialRate = computed(() => props.user.is_admin);
 </script>
 <template>
     <div class="py-12 bg-white rounded-md p-4">
@@ -286,49 +313,49 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                     />
                 </div>
 
-                <div>
-                    <InputLabel :value="`Prioridad`" for="priority" />
-                    <select
-                        id="priority"
-                        v-model="form.priority"
-                        class="block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        name="priority"
-                    >
-                        <option :value="null" disabled>Select</option>
-                        <option :value="1" class="bg-red-500">
-                            {{ $t("High Priority") }}
-                        </option>
-                        <option :value="2" class="bg-amber-300">
-                            {{ $t("Medium Priority") }}
-                        </option>
-                        <option :value="3" class="bg-blue-200">
-                            {{ $t("Low Priority") }}
-                        </option>
-                    </select>
-                    <InputError :message="form.errors.priority" class="mt-2" />
-                </div>
+                <!--                <div>
+                                    <InputLabel :value="`Prioridad`" for="priority" />
+                                    <select
+                                        id="priority"
+                                        v-model="form.priority"
+                                        class="block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        name="priority"
+                                    >
+                                        <option :value="null" disabled>Select</option>
+                                        <option :value="1" class="bg-red-500">
+                                            {{ $t("High Priority") }}
+                                        </option>
+                                        <option :value="2" class="bg-amber-300">
+                                            {{ $t("Medium Priority") }}
+                                        </option>
+                                        <option :value="3" class="bg-blue-200">
+                                            {{ $t("Low Priority") }}
+                                        </option>
+                                    </select>
+                                    <InputError :message="form.errors.priority" class="mt-2" />
+                                </div>-->
             </div>
 
             <hr class="mb-4" />
             <div
                 class="flex flex-row justify-items-center items-center space-x-5 mb-4"
             >
-                <div>
-                    <InputLabel :value="`Fecha`" for="date" />
-                    <input
-                        id="date"
-                        v-model="form.date"
-                        :aria-readonly="props.user.is_owner"
-                        :class="{
-                            'input-not-allowed': props.user.is_owner,
-                        }"
-                        :readonly="props.user.is_owner"
-                        class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        name="date"
-                        type="date"
-                    />
-                    <InputError :message="form.errors.date" class="mt-2" />
-                </div>
+                <!--                <div>
+                                    <InputLabel :value="`Fecha`" for="date" />
+                                    <input
+                                        id="date"
+                                        v-model="form.date"
+                                        :aria-readonly="props.user.is_owner"
+                                        :class="{
+                                            'input-not-allowed': props.user.is_owner,
+                                        }"
+                                        :readonly="props.user.is_owner"
+                                        class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        name="date"
+                                        type="date"
+                                    />
+                                    <InputError :message="form.errors.date" class="mt-2" />
+                                </div>-->
 
                 <div>
                     <InputLabel :value="`Tipo`" for="labor_rate_id" />
@@ -362,6 +389,26 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                     />
                 </div>
 
+                <!-- tarifa especial -->
+                <div v-if="props.user.is_admin">
+                    <InputLabel :value="`Tarifa Especial`" for="special_rate" />
+                    <input
+                        id="special_rate"
+                        v-model="form.special_rate"
+                        :aria-readonly="!enableSpecialRate"
+                        :class="{ 'input-not-allowed': !enableSpecialRate }"
+                        :readonly="!enableSpecialRate"
+                        class="w-32 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right"
+                        name="special_rate"
+                        step="0.1"
+                        type="number"
+                    />
+                </div>
+            </div>
+
+            <div
+                class="flex flex-row justify-items-center items-center space-x-5 mb-4"
+            >
                 <div>
                     <InputLabel :value="`Nombre`" for="name" />
                     <input
@@ -497,6 +544,46 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                     />
                 </div>
 
+                <div v-if="props.user.is_admin">
+                    <InputLabel :value="`Hrs/Hom Monto`" for="labor_mount" />
+                    <input
+                        id="labor_mount"
+                        v-model="form.labor_mount"
+                        :aria-readonly="true"
+                        :readonly="true"
+                        class="w-32 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right input-not-allowed"
+                        name="labor_mount"
+                        step="0.1"
+                        type="number"
+                    />
+                    <InputError
+                        :message="form.errors.labor_mount"
+                        class="mt-2"
+                    />
+                </div>
+
+                <div v-if="props.user.is_admin">
+                    <InputLabel
+                        :value="`Materiales Monto`"
+                        for="material_mount"
+                    />
+                    <input
+                        id="material_mount"
+                        v-model="form.material_mount"
+                        :aria-readonly="true"
+                        :readonly="true"
+                        class="w-32 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right input-not-allowed"
+                        name="material_mount"
+                        placeholder="0.00"
+                        step="0.1"
+                        type="number"
+                    />
+                    <InputError
+                        :message="form.errors.material_mount"
+                        class="mt-2"
+                    />
+                </div>
+
                 <div>
                     <InputLabel :value="`Estatus/Actividad`" for="status" />
                     <select
@@ -523,84 +610,27 @@ const enableRates = computed(() => props.user.is_admin || props.user.is_super);
                 </div>
 
                 <div>
-                    <InputLabel :value="`Hrs/Hom Monto`" for="labor_mount" />
-                    <input
-                        id="labor_mount"
-                        v-model="form.labor_mount"
-                        :aria-readonly="!enableRates"
-                        :class="{ 'input-not-allowed': !enableRates }"
-                        :readonly="!enableRates"
-                        class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right"
-                        name="labor_mount"
-                        step="0.1"
-                        type="number"
-                    />
-                    <InputError
-                        :message="form.errors.labor_mount"
-                        class="mt-2"
-                    />
-                </div>
-
-                <div>
                     <InputLabel
-                        :value="`Materiales Monto`"
-                        for="material_mount"
+                        :value="`Fecha de finalización`"
+                        for="completed_date"
                     />
                     <input
-                        id="material_mount"
-                        v-model="form.material_mount"
-                        :aria-readonly="!enableRates"
-                        :class="{ 'input-not-allowed': !enableRates }"
-                        :readonly="!enableRates"
-                        class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right"
-                        name="material_mount"
-                        placeholder="0.00"
-                        step="0.1"
-                        type="number"
+                        id="completed_date"
+                        v-model="form.completed_at"
+                        :aria-readonly="props.user.is_owner"
+                        :class="{
+                            'input-not-allowed': props.user.is_owner,
+                        }"
+                        :readonly="props.user.is_owner"
+                        class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        name="completed_date"
+                        type="date"
                     />
                     <InputError
-                        :message="form.errors.material_mount"
+                        :message="form.errors.completed_at"
                         class="mt-2"
                     />
                 </div>
-            </div>
-
-            <div class="mb-4">
-                <InputLabel :value="`AWR`" for="awr" />
-                <input
-                    id="awr"
-                    v-model="form.awr"
-                    :aria-readonly="props.user.is_owner"
-                    :class="{
-                        'input-not-allowed': props.user.is_owner,
-                    }"
-                    :readonly="props.user.is_owner"
-                    class="w-1/3 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right"
-                    maxlength="191"
-                    name="awr"
-                    type="text"
-                />
-                <InputError :message="form.errors.awr" class="mt-2" />
-            </div>
-
-            <div>
-                <InputLabel
-                    :value="`Fecha de finalización`"
-                    for="completed_date"
-                />
-                <input
-                    id="completed_date"
-                    v-model="form.completed_at"
-                    :aria-readonly="props.user.is_owner"
-                    :class="{
-                        'input-not-allowed': props.user.is_owner,
-                    }"
-                    :readonly="props.user.is_owner"
-                    class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                    name="completed_date"
-                    type="date"
-                />
-                <InputError :message="form.errors.completed_at" class="mt-2" />
             </div>
 
             <UploadImage

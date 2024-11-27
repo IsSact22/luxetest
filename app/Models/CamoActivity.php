@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,7 +48,7 @@ class CamoActivity extends Model implements HasMedia
         'priority',
     ];
 
-    protected $appends = ['images'];
+    protected $appends = ['images', 'get_special_rate'];
 
     public function camo(): BelongsTo
     {
@@ -57,11 +58,6 @@ class CamoActivity extends Model implements HasMedia
     public function laborRate(): BelongsTo
     {
         return $this->belongsTo(LaborRate::class, 'labor_rate_id');
-    }
-
-    public function specialRate(): HasOne
-    {
-        return $this->hasOne(SpecialRate::class, 'camo_activity_id');
     }
 
     #[Override]
@@ -81,6 +77,18 @@ class CamoActivity extends Model implements HasMedia
     public function getImagesAttribute(): MediaCollection
     {
         return $this->getMedia($this->mediaCollectionName);
+    }
+
+    protected function getSpecialRate(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->specialRate()->latest()->first()
+        );
+    }
+
+    public function specialRate(): HasOne
+    {
+        return $this->hasOne(SpecialRate::class, 'camo_activity_id');
     }
 
     #[Override]
