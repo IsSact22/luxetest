@@ -58,7 +58,7 @@ const form = useForm(method, url, {
     completed_at: props.camoActivity?.completed_at ?? null,
     status: props.camoActivity?.status ?? "pending",
     comments: props.camoActivity?.comments ?? null,
-    special_rate: props.camoActivity?.special_rate.amount ?? null,
+    special_rate: props.camoActivity?.special_rate?.amount ?? null,
     labor_mount: props.camoActivity?.labor_mount ?? null,
     material_mount: props.camoActivity?.material_mount ?? null,
     material_information: props.camoActivity?.material_information ?? null,
