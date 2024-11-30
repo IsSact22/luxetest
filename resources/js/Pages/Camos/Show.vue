@@ -251,7 +251,7 @@ onMounted(() => {
                                             {{ $t("Customer") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
-                                            {{ $t("Contract") }}
+                                            {{ $t("Order") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
                                             {{ $t("Project Manager") }}
@@ -535,13 +535,13 @@ onMounted(() => {
                                         <td>
                                             {{ act.name }}
                                             <!--                                            <span
-                            v-tooltip="act.name"
-                            :class="
-                                badgeClass(act.priority)
-                            "
-                        >
-                            {{ act.priority }}
-                        </span>-->
+                        v-tooltip="act.name"
+                        :class="
+                            badgeClass(act.priority)
+                        "
+                    >
+                        {{ act.priority }}
+                    </span>-->
                                         </td>
                                         <td class="text-xs">
                                             <span v-if="act.started_at"></span>

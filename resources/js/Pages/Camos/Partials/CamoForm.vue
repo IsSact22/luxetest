@@ -184,7 +184,7 @@ const cancel = () => {
                 </div>
 
                 <div>
-                    <InputLabel :value="`Contrato`" for="contract" />
+                    <InputLabel :value="`Orden`" for="contract" />
                     <input
                         id="contract"
                         v-model="form.contract"
