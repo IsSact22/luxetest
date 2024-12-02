@@ -82,7 +82,7 @@ class CamoActivity extends Model implements HasMedia
     protected function getSpecialRate(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->specialRate()->latest()->first()
+            get: fn() => $this->specialRate()->latest()->first()
         );
     }
 
@@ -99,12 +99,12 @@ class CamoActivity extends Model implements HasMedia
             'camo_id' => 'integer',
             'labor_rate_id' => 'integer',
             'required' => 'boolean',
-            'date' => 'datetime:Y-m-d',
+            'date' => 'datetime:d-m-Y',
             'name' => 'string',
             'description' => 'string',
             'estimate_time' => 'decimal:2',
-            'started_at' => 'datetime:Y-m-d H:i',
-            'completed_at' => 'datetime:Y-m-d H:i',
+            'started_at' => 'datetime:d-m-Y H:i',
+            'completed_at' => 'datetime:d-m-Y H:i',
             'status' => 'string',
             'comments' => 'string',
             'labor_mount' => 'decimal:2',
