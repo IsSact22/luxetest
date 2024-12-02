@@ -79,26 +79,26 @@ const goBack = () => {
                 <div
                     class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg"
                 >
-                    <p class="w-1/4">
+                    <p class="w-1/3">
                         <strong style="color: #b58a00 !important">Fecha</strong>
                         <br />
                         {{ resource.data.date }}
                     </p>
-                    <p class="w-1/4">
+                    <p class="w-1/3">
                         <strong style="color: #b58a00 !important"
                             >Tarifa/Monto</strong
                         >
                         <br />
                         {{ resource.data.labor_mount }}
                     </p>
-                    <p class="w-1/4">
-                        <strong style="color: #b58a00 !important"
-                            >Nombre</strong
-                        >
-                        <br />
-                        {{ resource.data.name }}
-                    </p>
-                    <p class="w-1/4">
+                    <!--                    <p class="w-1/4">
+                                            <strong style="color: #b58a00 !important"
+                                                >Nombre</strong
+                                            >
+                                            <br />
+                                            {{ resource.data.name }}
+                                        </p>-->
+                    <p class="w-1/3">
                         <strong style="color: #b58a00 !important"
                             >Tiempo Estimado Hrs/Hom</strong
                         >
