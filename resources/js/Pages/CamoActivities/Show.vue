@@ -57,7 +57,7 @@ const goBack = () => {
                             >Estatus de Aprobación</strong
                         >
                         <br />
-                        {{ resource.data.approval_status }}
+                        {{ $t(resource.data.approval_status) }}
                     </p>
                     <p class="w-1/3">
                         <strong style="color: #b58a00 !important"
@@ -137,7 +137,7 @@ const goBack = () => {
                             >Estatus</strong
                         >
                         <br />
-                        {{ resource.data.status }}
+                        {{ $t(resource.data.status) }}
                     </p>
                     <p class="w-1/4">
                         <strong style="color: #b58a00 !important"
