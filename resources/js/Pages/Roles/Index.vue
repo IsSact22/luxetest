@@ -165,10 +165,10 @@ const toggleEditRole = () => {
                                         </svg>
                                     </span>
                                 </button>
-                                <Link
+<!--                                <Link
                                     v-if="role.name !== `super-admin`"
                                     class="btn-delete"
-                                >
+                                >-->
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"

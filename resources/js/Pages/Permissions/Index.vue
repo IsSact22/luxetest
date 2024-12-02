@@ -236,10 +236,10 @@ const handleDelete = (id) => {
                                     </svg>
                                 </span>
                             </button>
-                            <button
+<!--                            <button
                                 class="btn-delete"
                                 @click="handleDelete(permission.id)"
-                            >
+                            >-->
                                 <span>
                                     <svg
                                         class="size-5 stroke-red-700"

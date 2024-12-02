@@ -113,11 +113,7 @@ const destroy = (id) => {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link
-                                    v-if="user.id !== 1"
-                                    class="btn-delete"
-                                    @click="destroy(user.id)"
-                                >
+                                <Link v-if="user.id !== 1" class="btn-delete">
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"
