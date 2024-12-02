@@ -4,10 +4,11 @@ import { Head, Link, router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import { useToast } from "vue-toastification";
 import useFormatCurrency from "@/Composables/formatCurrency.js";
+import { useDateFormatter } from "@/Composables/formatDate.js";
 
 const toast = useToast();
 const { formatCurrency } = useFormatCurrency();
-
+const { formattedDate, formattedDateTime } = useDateFormatter();
 const props = defineProps({
     resource: {
         type: Object,
@@ -57,7 +58,7 @@ const goBack = () => {
                     <p class="w-1/3">
                         <strong style="color: #b58a00 !important">Fecha</strong>
                         <br />
-                        {{ resource.data.date }}
+                        {{ formattedDate(resource.data.date) }}
                     </p>
                     <p class="w-1/3">
                         <strong style="color: #b58a00 !important"
@@ -96,7 +97,7 @@ const goBack = () => {
                             >Fecha de Inicio</strong
                         >
                         <br />
-                        {{ resource.data.started_at }}
+                        {{ formattedDateTime(resource.data.started_at) }}
                     </p>
                     <p class="w-1/3">
                         <strong style="color: #b58a00 !important"

@@ -9,10 +9,12 @@ import Paginator2 from "@/Components/Paginator2.vue";
 import useFormatCurrency from "@/Composables/formatCurrency";
 import { useToast } from "vue-toastification";
 import CamoActivityForm from "@/Pages/CamoActivities/Partials/CamoActivityForm.vue";
+import { useDateFormatter } from "@/Composables/formatDate.js";
 
 const toast = useToast();
 
 const { formatCurrency } = useFormatCurrency();
+const { formattedDate, formattedDateTime } = useDateFormatter();
 
 const props = defineProps({
     resource: {
@@ -309,11 +311,19 @@ onMounted(() => {
                                             {{ resource.data.description }}
                                             &nbsp;
                                         </td>
-                                        <td>{{ resource.data.start_date }}</td>
                                         <td>
                                             {{
-                                                resource.data
-                                                    .estimate_finish_date
+                                                formattedDate(
+                                                    resource.data.start_date,
+                                                )
+                                            }}
+                                        </td>
+                                        <td>
+                                            {{
+                                                formattedDate(
+                                                    resource.data
+                                                        .estimate_finish_date,
+                                                )
                                             }}
                                         </td>
                                     </tr>
@@ -535,17 +545,21 @@ onMounted(() => {
                                         <td>
                                             {{ act.name }}
                                             <!--                                            <span
-                        v-tooltip="act.name"
-                        :class="
-                            badgeClass(act.priority)
-                        "
-                    >
-                        {{ act.priority }}
-                    </span>-->
+v-tooltip="act.name"
+:class="
+    badgeClass(act.priority)
+"
+>
+{{ act.priority }}
+</span>-->
                                         </td>
                                         <td class="text-xs">
                                             <span v-if="act.started_at"></span>
-                                            {{ act.started_at ?? "undefined" }}
+                                            {{
+                                                formattedDateTime(
+                                                    act.started_at,
+                                                ) ?? "undefined"
+                                            }}
                                         </td>
                                         <td class="text-center">
                                             {{ act.estimate_time }}
