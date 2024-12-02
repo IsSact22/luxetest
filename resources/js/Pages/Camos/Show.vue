@@ -547,7 +547,7 @@ onMounted(() => {
                                             <!--                                            <span
 v-tooltip="act.name"
 :class="
-    badgeClass(act.priority)
+badgeClass(act.priority)
 "
 >
 {{ act.priority }}

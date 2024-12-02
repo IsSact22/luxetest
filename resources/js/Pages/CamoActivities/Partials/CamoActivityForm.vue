@@ -71,6 +71,7 @@ onMounted(() => {
     console.log(enableCompletedAt.value);
     console.log(form.started_at);
     console.log(form.completed_at);
+    console.log(props.camo);
 });
 // Validación para que started_at no sea menor que startDate a las 8:00
 watch(
@@ -635,6 +636,7 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                             'input-not-allowed': props.user.is_owner,
                         }"
                         :disabled="enableCompletedAt"
+                        :min="formattedStartDate"
                         :readonly="props.user.is_owner"
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="completed_date"
