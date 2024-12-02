@@ -54,7 +54,7 @@ const form = useForm(method, url, {
     name: props.camoActivity?.name ?? null,
     description: props.camoActivity?.description ?? null,
     estimate_time: props.camoActivity?.estimate_time ?? null,
-    started_at: props.camoActivity?.started_at ?? formattedStartDate.value,
+    started_at: props.camoActivity?.started_at ?? null,
     completed_at: props.camoActivity?.completed_at ?? null,
     status: props.camoActivity?.status ?? "pending",
     comments: props.camoActivity?.comments ?? null,
@@ -69,6 +69,8 @@ const form = useForm(method, url, {
 onMounted(() => {
     console.log(form.status);
     console.log(enableCompletedAt.value);
+    console.log(form.started_at);
+    console.log(form.completed_at);
 });
 // Validación para que started_at no sea menor que startDate a las 8:00
 watch(
@@ -214,7 +216,7 @@ watch(
         }
     },
 );
-const enableCompletedAt = ref(null);
+const enableCompletedAt = ref(true);
 watch(
     () => form.status,
     (newValue) => {

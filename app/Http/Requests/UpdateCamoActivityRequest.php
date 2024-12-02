@@ -34,9 +34,13 @@ class UpdateCamoActivityRequest extends FormRequest
             'completed_at' => [
                 'nullable',
                 'date',
-                'after:started_at',
-                // Si el status es "completed", completed_at debe ser requerido
+                // Condición para aplicar la regla 'after' solo si completed_at no es nulo
                 'required_if:status,completed',
+                function ($attribute, $value, $fail) {
+                    if ($this->filled('started_at') && $value && $value <= $this->started_at) {
+                        $fail('El campo '.$attribute.' debe ser una fecha posterior a started_at.');
+                    }
+                },
             ],
             'status' => ['required', 'string'],
             'comments' => ['nullable', 'string'],

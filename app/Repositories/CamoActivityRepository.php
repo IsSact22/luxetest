@@ -69,6 +69,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
     #[Override]
     public function updateModel(array $data, int $id): ?CamoActivity
     {
+        //dd($data);
         try {
             $this->model->findOrFail($id)->update($data);
             // tarifa especial
