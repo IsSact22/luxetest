@@ -23,6 +23,7 @@ class UserRepository implements UserRepositoryInterface
         $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
 
         return $this->model
+            ->withTrashed()
             ->when($request->get('search'), static function ($query, string $search) {
                 $query->where('name', 'like', $search.'%')
                     ->orWhereHas('roles', static function ($query) use ($search) {

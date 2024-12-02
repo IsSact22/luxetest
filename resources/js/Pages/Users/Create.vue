@@ -90,19 +90,19 @@ const cancelForm = () => {
                                     >Owner (Propietario)</label
                                 >
                             </div>
-                            <div
-                                class="flex-1 justify-items-center items-center space-x-2"
-                            >
-                                <input
-                                    id="crew"
-                                    v-model="form.role"
-                                    type="radio"
-                                    value="crew"
-                                />
-                                <label class="text-xs" for="owner"
-                                    >Crew (Tripulante)</label
-                                >
-                            </div>
+                            <!--                            <div
+                                                            class="flex-1 justify-items-center items-center space-x-2"
+                                                        >
+                                                            <input
+                                                                id="crew"
+                                                                v-model="form.role"
+                                                                type="radio"
+                                                                value="crew"
+                                                            />
+                                                            <label class="text-xs" for="owner"
+                                                                >Crew (Tripulante)</label
+                                                            >
+                                                        </div>-->
                         </div>
                     </div>
                     <div

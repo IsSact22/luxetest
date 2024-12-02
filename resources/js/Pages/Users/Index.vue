@@ -73,7 +73,11 @@ const destroy = (id) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, idx) in resource.data" :key="idx">
+                        <tr
+                            v-for="(user, idx) in resource.data"
+                            :key="idx"
+                            :class="{ 'text-gray-400': user.deleted_at }"
+                        >
                             <td>{{ user.id }}</td>
                             <td>
                                 <div
@@ -113,7 +117,11 @@ const destroy = (id) => {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link v-if="user.id !== 1" class="btn-delete">
+                                <Link
+                                    v-if="user.id !== 1 && !user.deleted_at"
+                                    class="btn-delete"
+                                    @click="destroy(user.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"

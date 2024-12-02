@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Override;
@@ -25,6 +26,7 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     use HasRoles;
     use InteractsWithMedia;
     use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -107,35 +109,35 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     protected function isSuper(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->hasRole('super-admin')
+            get: fn($value) => $this->hasRole('super-admin')
         );
     }
 
     protected function isAdmin(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->hasRole('admin')
+            get: fn($value) => $this->hasRole('admin')
         );
     }
 
     protected function isCam(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->hasRole('cam')
+            get: fn($value) => $this->hasRole('cam')
         );
     }
 
     protected function isOwner(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->hasRole('owner')
+            get: fn($value) => $this->hasRole('owner')
         );
     }
 
     protected function isCrew(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $this->hasRole('crew')
+            get: fn($value) => $this->hasRole('crew')
         );
     }
 }
