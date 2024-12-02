@@ -66,7 +66,10 @@ const form = useForm(method, url, {
     approval_status: props.camoActivity?.approval_status ?? "pending",
     priority: props.camoActivity?.priority ?? 3,
 });
-
+onMounted(() => {
+    console.log(form.status);
+    console.log(enableCompletedAt.value);
+});
 // Validación para que started_at no sea menor que startDate a las 8:00
 watch(
     () => form.started_at,
@@ -211,18 +214,14 @@ watch(
         }
     },
 );
-const enableCompletedAt = ref(true);
+const enableCompletedAt = ref(null);
 watch(
     () => form.status,
     (newValue) => {
         if (newValue === "completed") {
-            // Establecer la fecha y hora actuales en el formato "YYYY-MM-DDTHH:mm"
-            //form.completed_at = moment().format("YYYY-MM-DDTHH:mm"); // Ajusta a datetime-local
             enableCompletedAt.value = false;
         } else {
-            // Establece completed_at a null si el estado no es "completed"
-            //form.completed_at = null;
-            enableCompletedAt.value = true;
+            enableCompletedAt.value = newValue !== "completed";
         }
     },
 );

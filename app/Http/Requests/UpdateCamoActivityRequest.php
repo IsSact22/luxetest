@@ -31,7 +31,13 @@ class UpdateCamoActivityRequest extends FormRequest
             'description' => ['required', 'string'],
             'estimate_time' => ['required', 'numeric'],
             'started_at' => ['nullable', 'date'],
-            'completed_at' => ['nullable', 'date', 'after:started_at'],
+            'completed_at' => [
+                'nullable',
+                'date',
+                'after:started_at',
+                // Si el status es "completed", completed_at debe ser requerido
+                'required_if:status,completed',
+            ],
             'status' => ['required', 'string'],
             'comments' => ['nullable', 'string'],
             'special_rate' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
