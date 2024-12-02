@@ -105,31 +105,6 @@ const goBack = () => {
                 <div
                     class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg"
                 >
-                    <p class="w-1/3">
-                        <strong style="color: #b58a00 !important"
-                            >Descripción</strong
-                        >
-                        <br />
-                        {{ resource.data.description }}
-                    </p>
-                    <p class="w-1/3">
-                        <strong style="color: #b58a00 !important"
-                            >Comentarios</strong
-                        >
-                        <br />
-                        {{ resource.data.comments }}
-                    </p>
-                    <p class="w-1/3">
-                        <strong style="color: #b58a00 !important"
-                            >Información de Materiales</strong
-                        >
-                        <br />
-                        {{ resource.data.material_information }}
-                    </p>
-                </div>
-                <div
-                    class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg"
-                >
                     <p class="w-1/4">
                         <strong style="color: #b58a00 !important"
                             >Estatus</strong
@@ -150,6 +125,31 @@ const goBack = () => {
                         >
                         <br />
                         {{ formatCurrency(resource.data.material_mount) }}
+                    </p>
+                </div>
+                <div
+                    class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg"
+                >
+                    <p class="w-1/3">
+                        <strong style="color: #b58a00 !important"
+                            >Descripción</strong
+                        >
+                        <br />
+                        {{ resource.data.description }}
+                    </p>
+                    <p class="w-1/3">
+                        <strong style="color: #b58a00 !important"
+                            >Comentarios</strong
+                        >
+                        <br />
+                        {{ resource.data.comments }}
+                    </p>
+                    <p class="w-1/3">
+                        <strong style="color: #b58a00 !important"
+                            >Información de Materiales</strong
+                        >
+                        <br />
+                        {{ resource.data.material_information }}
                     </p>
                 </div>
             </div>
