@@ -639,6 +639,7 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="completed_date"
                         type="datetime-local"
+                        @change="form.validate('completed_at')"
                     />
                     <InputError
                         :message="form.errors.completed_at"
