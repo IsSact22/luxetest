@@ -6,6 +6,7 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoActivityRequest;
 use App\Http\Requests\UpdateCamoActivityRequest;
 use App\Http\Resources\CamoActivityResource;
+use App\Http\Resources\CamoResource;
 use App\Models\Camo;
 use App\Models\CamoActivity;
 use App\Repositories\CamoActivityRepository;
@@ -79,7 +80,7 @@ class CamoActivityController extends Controller
     {
         try {
             $this->authorize('create', CamoActivity::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->activity->newModel($payload);
 
             return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
@@ -122,7 +123,7 @@ class CamoActivityController extends Controller
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
             $camo = Camo::query()->findOrFail($camoActivity->camo_id);
-            $camoResource = new CamoActivityResource($camo);
+            $camoResource = new CamoResource($camo);
             $resource = new CamoActivityResource($camoActivity);
 
             return InertiaResponse::content('CamoActivities/Edit', [
@@ -147,7 +148,7 @@ class CamoActivityController extends Controller
             //dd($request->validated());
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->activity->updateModel($payload, $id);
 
             return to_route('camos.show', $id)->with('success', 'Activity update successfully');

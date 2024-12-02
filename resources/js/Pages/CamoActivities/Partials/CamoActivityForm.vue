@@ -26,9 +26,27 @@ const props = defineProps({
         required: true,
     },
 });
-const startDate = ref(props.camo.start_date);
+
+const method = props.camoActivity ? "put" : "post";
+const url = props.camoActivity
+    ? `/camo_activities/${props.camo.id}`
+    : "/camo_activities";
+
+const formattedStartDate = ref(
+    moment(props.camo.start_date).format("YYYY-MM-DDTHH:mm"),
+);
+
 // Computed property to format startDate as datetime-local (YYYY-MM-DDTHH:mm)
-const formattedStartDate = computed(() => {
+/*watch(
+    () => startDate.value,
+    (newValue) => {
+        const momentDate = moment(newValue.value);
+        momentDate.set({ hour: 8, minute: 0 });
+        return momentDate.format("YYYY-MM-DDTHH:mm");
+    }
+)*/
+
+/*const formattedStartDate = computed(() => {
     // Asegúrate de que startDate no sea nulo antes de intentar formatearlo
     if (startDate.value) {
         // Convertir startDate a un objeto moment
@@ -38,13 +56,8 @@ const formattedStartDate = computed(() => {
         // Retornar el valor formateado para datetime-local
         return momentDate.format("YYYY-MM-DDTHH:mm");
     }
-    return null; // O un valor por defecto si fuera necesario
-});
-
-const method = props.camoActivity ? "put" : "post";
-const url = props.camoActivity
-    ? `/camo_activities/${props.camo.id}`
-    : "/camo_activities";
+    return moment().format("YYYY-MM-DDTHH:mm");
+});*/
 
 const form = useForm(method, url, {
     camo_id: props.camo?.id ?? null,
@@ -54,7 +67,9 @@ const form = useForm(method, url, {
     name: props.camoActivity?.name ?? null,
     description: props.camoActivity?.description ?? null,
     estimate_time: props.camoActivity?.estimate_time ?? null,
-    started_at: props.camoActivity?.started_at ?? formattedStartDate,
+    started_at: props.camoActivity?.started_at
+        ? props.camoActivity.started_at
+        : formattedStartDate,
     completed_at: props.camoActivity?.completed_at ?? null,
     status: props.camoActivity?.status ?? "pending",
     comments: props.camoActivity?.comments ?? null,
@@ -66,20 +81,22 @@ const form = useForm(method, url, {
     approval_status: props.camoActivity?.approval_status ?? "pending",
     priority: props.camoActivity?.priority ?? 3,
 });
+
 onMounted(() => {
-    console.log(form.status);
-    console.log(enableCompletedAt.value);
-    console.log(form.started_at);
-    console.log(form.completed_at);
-    console.log(props.camo);
+    if (props.camoActivity && props.camoActivity.started_at) {
+        form.started_at = props.camoActivity.started_at;
+    } else {
+        form.started_at = formattedStartDate.value; // Usa el valor formateado
+    }
 });
+
 // Validación para que started_at no sea menor que startDate a las 8:00
 watch(
     () => form.started_at,
     (newValue) => {
         if (
             moment(newValue).isBefore(
-                moment(startDate.value).set({ hour: 8, minute: 0 }),
+                moment(formattedStartDate.value).set({ hour: 8, minute: 0 }),
             )
         ) {
             form.errors.started_at =
@@ -536,18 +553,19 @@ const enableSpecialRate = computed(() => props.user.is_admin);
             <div
                 class="flex flex-row justify-items-center items-center space-x-5 mb-4"
             >
-                <div>
-                    <InputLabel :value="`Fecha de Inicio`" for="start_date" />
+                <div v-if="form.started_at">
+                    <InputLabel :value="`Fecha de Inicio`" for="started_at" />
                     <input
-                        id="start_date"
+                        id="started_at"
                         v-model="form.started_at"
                         :aria-readonly="props.user.is_owner"
                         :class="{
                             'input-not-allowed': props.user.is_owner,
                         }"
+                        :min="formattedStartDate"
                         :readonly="props.user.is_owner"
                         class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                        name="start_date"
+                        name="started_at"
                         type="datetime-local"
                     />
                     <InputError
@@ -641,7 +659,6 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="completed_date"
                         type="datetime-local"
-                        @change="form.validate('completed_at')"
                     />
                     <InputError
                         :message="form.errors.completed_at"
