@@ -211,17 +211,18 @@ watch(
         }
     },
 );
-
+const enableCompletedAt = ref(true);
 watch(
     () => form.status,
     (newValue) => {
         if (newValue === "completed") {
-            form.validate("completed_at");
             // Establecer la fecha y hora actuales en el formato "YYYY-MM-DDTHH:mm"
-            form.completed_at = moment().format("YYYY-MM-DDTHH:mm"); // Ajusta a datetime-local
+            //form.completed_at = moment().format("YYYY-MM-DDTHH:mm"); // Ajusta a datetime-local
+            enableCompletedAt.value = false;
         } else {
             // Establece completed_at a null si el estado no es "completed"
-            form.completed_at = null;
+            //form.completed_at = null;
+            enableCompletedAt.value = true;
         }
     },
 );
@@ -636,6 +637,7 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                         :class="{
                             'input-not-allowed': props.user.is_owner,
                         }"
+                        :disabled="enableCompletedAt"
                         :readonly="props.user.is_owner"
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="completed_date"
