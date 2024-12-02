@@ -216,6 +216,7 @@ watch(
     () => form.status,
     (newValue) => {
         if (newValue === "completed") {
+            form.validate("completed_at");
             // Establecer la fecha y hora actuales en el formato "YYYY-MM-DDTHH:mm"
             form.completed_at = moment().format("YYYY-MM-DDTHH:mm"); // Ajusta a datetime-local
         } else {
