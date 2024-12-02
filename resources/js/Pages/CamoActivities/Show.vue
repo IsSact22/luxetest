@@ -40,7 +40,11 @@ const goBack = () => {
                 <strong style="color: #b58a00 !important">Avión/Modelo:</strong>
                 {{ props.resource.data.camo.aircraft.model_aircraft.name }} -
                 <strong style="color: #b58a00 !important">Matricula</strong>
-                {{ props.resource.data.camo.aircraft.register }}
+                {{ props.resource.data.camo.aircraft.register }} <br />
+                <strong style="color: #b58a00 !important"
+                    >Nombre de la Actividad</strong
+                >
+                {{ props.resource.data.name }}
             </p>
             <hr class="my-3" />
             <p class="text-lg font-semibold">Información de la Actividad</p>
