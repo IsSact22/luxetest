@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @mixin IdeHelperOwnerAircraft
+ */
 class OwnerAircraft extends Pivot
 {
     public $touches = [

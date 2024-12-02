@@ -1,12 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+/*
+* Estilos personalizados
+ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('fonts.css');
+@import url('table.css');
+@import url('buttons.css');
 @import url('upload.css');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html {
-    font-family: 'Open Sans', sans-serif;
+html, body {
+    font-family: 'Poppins', sans-serif;
 }
 
 h1 {
@@ -15,92 +21,6 @@ h1 {
 
 h2 {
     @apply uppercase font-semibold text-xl text-gray-800 leading-tight
-}
-
-table {
-    @apply mx-auto;
-}
-
-table thead tr th {
-    @apply text-sm uppercase px-4 py-1 bg-neutral-300
-}
-
-table th:first-child {
-    @apply rounded-tl-lg;
-}
-
-table th:last-child {
-    @apply rounded-tr-lg;
-}
-
-table tbody tr td {
-    @apply text-sm  px-4 py-3
-}
-
-table tbody tr:hover {
-    @apply bg-neutral-200;
-}
-
-@layer utilities {
-    tbody tr:nth-child(even) {
-        @apply bg-neutral-200/50;
-    }
-}
-
-.col-actions {
-    @apply space-x-2
-}
-
-.btn-inDev {
-    @apply inline-flex items-center px-4 py-2 bg-gray-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-500 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
-}
-
-.btn-goto {
-    @apply inline-flex items-center px-4 py-2 bg-brand-blue-dark border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
-}
-
-.btn-goto:hover {
-    @apply bg-brand-accent
-}
-
-.btn-show {
-    @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
-}
-
-.btn-show:hover {
-    @apply bg-sky-300
-}
-
-.btn-edit {
-    @apply inline-flex items-center px-4 py-2 bg-neutral-400 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
-}
-
-.btn-edit:hover {
-    @apply bg-amber-500
-}
-
-.btn-delete {
-    @apply inline-flex items-center px-4 py-2 bg-neutral-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
-}
-
-.btn-delete:hover {
-    @apply bg-red-500
-}
-
-.btn-submit {
-    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
-}
-
-.btn-submit:hover {
-    @apply text-emerald-700 bg-emerald-300 border-emerald-300
-}
-
-.btn-cancel {
-    @apply inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150
-}
-
-.btn-cancel:hover {
-    @apply text-amber-700 bg-amber-300 border border-amber-300
 }
 
 .badge-info {

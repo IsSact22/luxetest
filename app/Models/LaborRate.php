@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 
 /**
- * @mixin IdeHelperCamoRate
+ * @mixin IdeHelperLaborRate
  */
 class LaborRate extends Model
 {

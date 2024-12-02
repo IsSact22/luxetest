@@ -50,7 +50,7 @@ const toggleEditRole = () => {
         <template #header>
             <h2>Roles</h2>
         </template>
-        <div class="flex flex-col justify-items-center items-center py-12">
+        <div class="flex flex-col justify-items-center items-center py-2">
             <div class="my-4 border rounded-md px-4 py-4">
                 <form
                     class="my-2 flex flex-row justify-items-center items-center space-x-7"
@@ -77,8 +77,8 @@ const toggleEditRole = () => {
                         Users
                     </Link>
                     <Link :href="route('permissions.index')" class="btn-goto">
-                        Permissions</Link
-                    >
+                        Permissions
+                    </Link>
                 </form>
 
                 <!-- new role -->

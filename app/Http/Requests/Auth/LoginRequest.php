@@ -34,6 +34,18 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Get the custom validation messages.
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'El campo de correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección válida.',
+            'password.required' => 'El campo de contraseña es obligatorio.',
+        ];
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
      *
      * @throws ValidationException

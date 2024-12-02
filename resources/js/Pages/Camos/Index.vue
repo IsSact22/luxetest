@@ -4,7 +4,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
-import DashboardButton from "@/Components/DashboardButton.vue";
 
 const props = defineProps({
     resource: {
@@ -31,7 +30,6 @@ const destroy = (id) => {
     <AuthenticatedLayout>
         <template #header>
             <h2>Camos</h2>
-            <DashboardButton />
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div
@@ -100,7 +98,28 @@ const destroy = (id) => {
                                 <Link
                                     :href="route('camos.show', camo.id)"
                                     class="btn-show"
-                                    >Show
+                                >
+                                    <span>
+                                        <svg
+                                            class="size-5 stroke-yellow-700"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.5"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            />
+                                            <path
+                                                d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            />
+                                        </svg>
+                                    </span>
                                 </Link>
                             </td>
                         </tr>

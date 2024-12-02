@@ -20,7 +20,11 @@ const closeModal = () => {
 
 <template>
     <div class="gallery">
-        <div v-for="image in images" :key="image.id" class="image-container">
+        <div
+            v-for="image in images"
+            :key="image.id"
+            class="image-container bg-black-50 p-4 rounded-md border border-black-100"
+        >
             <img
                 :alt="image.title"
                 :src="image.url"
