@@ -212,6 +212,19 @@ watch(
     },
 );
 
+watch(
+    () => form.status,
+    (newValue) => {
+        if (newValue === "completed") {
+            // Establecer la fecha y hora actuales en el formato "YYYY-MM-DDTHH:mm"
+            form.completed_at = moment().format("YYYY-MM-DDTHH:mm"); // Ajusta a datetime-local
+        } else {
+            // Establece completed_at a null si el estado no es "completed"
+            form.completed_at = null;
+        }
+    },
+);
+
 const emit = defineEmits(["addActivity"]);
 const handleUpload = (eventData) => {
     if (eventData) {
@@ -293,6 +306,7 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                                 props.user.is_owner &&
                                 form.approval_status === `pending`,
                         }"
+                        :disabled="true"
                         class="block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="approval_status"
                     >
@@ -624,7 +638,7 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                         :readonly="props.user.is_owner"
                         class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="completed_date"
-                        type="date"
+                        type="datetime-local"
                     />
                     <InputError
                         :message="form.errors.completed_at"

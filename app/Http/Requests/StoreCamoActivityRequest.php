@@ -31,7 +31,7 @@ class StoreCamoActivityRequest extends FormRequest
             'description' => ['required', 'string'],
             'estimate_time' => ['required', 'numeric'],
             'started_at' => ['nullable', 'date'],
-            'completed_at' => ['nullable', 'date'],
+            'completed_at' => ['nullable', 'date', 'after:started_at'],
             'status' => ['required', 'string'],
             'comments' => ['nullable', 'string'],
             'labor_mount' => ['nullable', 'regex:/^\d+(\.\d{1,2})?$/'],
