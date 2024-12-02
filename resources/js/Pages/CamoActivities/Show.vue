@@ -109,21 +109,21 @@ const goBack = () => {
                 <div
                     class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg"
                 >
-                    <p class="w-1/4">
+                    <p class="w-1/3">
                         <strong style="color: #b58a00 !important"
                             >Estatus</strong
                         >
                         <br />
                         {{ $t(resource.data.status) }}
                     </p>
-                    <p class="w-1/4">
+                    <p class="w-1/3">
                         <strong style="color: #b58a00 !important"
                             >Hrs/Hom Monto</strong
                         >
                         <br />
                         {{ formatCurrency(resource.data.labor_mount) }}
                     </p>
-                    <p class="w-1/4">
+                    <p class="w-1/3">
                         <strong style="color: #b58a00 !important"
                             >Materiales Monto</strong
                         >
