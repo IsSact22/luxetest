@@ -219,7 +219,7 @@ watch(
 
 // Habilitar o deshabilitar el campo based on status
 const enableCompletedAt = computed(() => {
-    return form.status === "completed"; // 'true' si el estado es "completed", 'false' en caso contrario
+    return form.status !== "completed"; // 'true' si el estado es "completed", 'false' en caso contrario
 });
 
 const emit = defineEmits(["addActivity"]);
@@ -608,7 +608,9 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                         class="block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="status"
                     >
-                        <option :value="null">Select</option>
+                        <option :value="null" disabled>
+                            {{ $t("Select") }}
+                        </option>
                         <option
                             v-for="(item, idx) in statusList"
                             :key="idx"
