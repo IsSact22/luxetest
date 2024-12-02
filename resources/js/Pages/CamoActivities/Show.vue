@@ -52,31 +52,6 @@ const goBack = () => {
                 class="flex flex-col justify-items-center items-start space-y-3"
             >
                 <div
-                    class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg shadow-lg"
-                >
-                    <p class="w-1/3">
-                        <strong style="color: #b58a00 !important"
-                            >Estatus de Aprobación</strong
-                        >
-                        <br />
-                        {{ $t(resource.data.approval_status) }}
-                    </p>
-                    <p class="w-1/3">
-                        <strong style="color: #b58a00 !important"
-                            >Fecha de Inicio</strong
-                        >
-                        <br />
-                        {{ resource.data.started_at }}
-                    </p>
-                    <p class="w-1/3">
-                        <strong style="color: #b58a00 !important"
-                            >Fecha de Finalización</strong
-                        >
-                        <br />
-                        {{ resource.data.complete_at }}
-                    </p>
-                </div>
-                <div
                     class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg"
                 >
                     <p class="w-1/3">
@@ -104,6 +79,31 @@ const goBack = () => {
                         >
                         <br />
                         {{ resource.data.estimate_time }}
+                    </p>
+                </div>
+                <div
+                    class="flex flex-row justify-items-center items-start space-x-7 w-full px-4 py-2 border rounded-md shadow-lg shadow-lg"
+                >
+                    <p class="w-1/3">
+                        <strong style="color: #b58a00 !important"
+                            >Estatus de Aprobación</strong
+                        >
+                        <br />
+                        {{ $t(resource.data.approval_status) }}
+                    </p>
+                    <p class="w-1/3">
+                        <strong style="color: #b58a00 !important"
+                            >Fecha de Inicio</strong
+                        >
+                        <br />
+                        {{ resource.data.started_at }}
+                    </p>
+                    <p class="w-1/3">
+                        <strong style="color: #b58a00 !important"
+                            >Fecha de Finalización</strong
+                        >
+                        <br />
+                        {{ resource.data.complete_at }}
                     </p>
                 </div>
                 <div
