@@ -54,7 +54,7 @@ const form = useForm(method, url, {
     name: props.camoActivity?.name ?? null,
     description: props.camoActivity?.description ?? null,
     estimate_time: props.camoActivity?.estimate_time ?? null,
-    started_at: props.camoActivity?.started_at ?? null,
+    started_at: props.camoActivity?.started_at ?? formattedStartDate,
     completed_at: props.camoActivity?.completed_at ?? null,
     status: props.camoActivity?.status ?? "pending",
     comments: props.camoActivity?.comments ?? null,
@@ -216,17 +216,11 @@ watch(
         }
     },
 );
-const enableCompletedAt = ref(true);
-watch(
-    () => form.status,
-    (newValue) => {
-        if (newValue === "completed") {
-            enableCompletedAt.value = false;
-        } else {
-            enableCompletedAt.value = newValue !== "completed";
-        }
-    },
-);
+
+// Habilitar o deshabilitar el campo based on status
+const enableCompletedAt = computed(() => {
+    return form.status === "completed"; // 'true' si el estado es "completed", 'false' en caso contrario
+});
 
 const emit = defineEmits(["addActivity"]);
 const handleUpload = (eventData) => {
