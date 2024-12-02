@@ -25,9 +25,7 @@ const goBack = () => {
     <Head title="Actividad" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>
-                Actividad <small>{{ props.resource.data.id }}</small>
-            </h2>
+            <h2>Actividad</h2>
         </template>
 
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 mt-6">
