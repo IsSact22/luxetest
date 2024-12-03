@@ -15,9 +15,7 @@ use Override;
 
 class AircraftRepository implements AircraftRepositoryInterface
 {
-    public function __construct(protected Aircraft $model)
-    {
-    }
+    public function __construct(protected Aircraft $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -26,10 +24,10 @@ class AircraftRepository implements AircraftRepositoryInterface
 
         return $this->model
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('register', 'like', $search . '%')
-                    ->orWhere('serial', 'like', $search . '%')
+                $query->where('register', 'like', $search.'%')
+                    ->orWhere('serial', 'like', $search.'%')
                     ->orWhereHas('modelAircraft', function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search . '%');
+                        $query->where('name', 'like', $search.'%');
                     });
             })
             ->paginate($perPage)
@@ -56,6 +54,19 @@ class AircraftRepository implements AircraftRepositoryInterface
     public function newModel(array $data): ?Model
     {
         try {
+            // Verifica si existe un registro borrado lógicamente
+            $deletedAircraft = $this->model::onlyTrashed()
+                ->where('model_aircraft_id', $data['model_aircraft_id'])
+                ->where('register', $data['register'])
+                ->where('serial', $data['serial'])
+                ->first();
+
+            if ($deletedAircraft) {
+                $deletedAircraft->restore();
+
+                return $deletedAircraft;
+            }
+
             return $this->model::query()->create($data);
         } catch (Exception $e) {
             throw new RepositoryException($e->getMessage(), 500, $e->getCode());

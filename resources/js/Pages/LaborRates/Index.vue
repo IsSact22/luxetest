@@ -4,7 +4,37 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+import { ref } from "vue";
+import { useToast } from "vue-toastification";
 
+/*confirm*/
+const confirmDialog = ref(null);
+const selectedId = ref(null);
+const handleAction = () => {
+    // Aquí va la lógica de la acción que deseas confirmar
+    if (selectedId.value) {
+        form.delete(route("aircrafts.destroy", selectedId.value), {
+            preserveState: true,
+            preserveScroll: true, // Opcional: Mantiene la posición del scroll
+            onSuccess: () => {
+                selectedId.value = null; // Limpia el ID seleccionado
+                toast.success("Registro eliminado!");
+            },
+        });
+    }
+};
+const showConfirmation = (id) => {
+    console.log("show confirmation: " + id);
+    confirmDialog.value.show(); // Muestra el diálogo de confirmación
+};
+const destroy = (id) => {
+    selectedId.value = id;
+    showConfirmation(); // Muestra el diálogo y guarda el ID del registro
+};
+/*confirm*/
+
+const toast = useToast();
 const props = defineProps({
     resource: {
         type: Object,
@@ -17,14 +47,6 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("labor-rates.index"), { preserveState: true });
 }, 200);
-
-const destroy = (id) => {
-    if (confirm("Seguro desea eliminar el registro")) {
-        form.delete(route("labor-rates.destroy", id), {
-            preserveState: true,
-        });
-    }
-};
 </script>
 <template>
     <Head title="Tarifas laborales" />
@@ -94,7 +116,7 @@ const destroy = (id) => {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link
+                                <button
                                     class="btn-delete"
                                     @click="destroy(item.id)"
                                 >
@@ -114,7 +136,7 @@ const destroy = (id) => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -128,5 +150,15 @@ const destroy = (id) => {
                 </table>
             </div>
         </div>
+        <!-- Componente de Confirmación -->
+        <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este elemento?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>

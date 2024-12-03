@@ -56,6 +56,18 @@ class ModelAircraftRepository implements ModelAircraftRepositoryInterface
     public function newModelAircraft(array $data): ?Model
     {
         try {
+            $deletedModelAircraft = $this->model::onlyTrashed()
+                ->where('name', $data['name'])
+                ->where('brand_aircraft_id', $data['brand_aircraft_id'])
+                ->where('engine_type_id', $data['engine_type_id'])
+                ->first();
+
+            if ($deletedModelAircraft) {
+                $deletedModelAircraft->restore();
+
+                return $deletedModelAircraft;
+            }
+
             return $this->model::query()->create($data);
         } catch (Exception $e) {
             throw new RepositoryException($e->getMessage(), 500, $e->getCode());

@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, router, useForm } from "@inertiajs/vue3";
+import { Head, router, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
@@ -10,19 +10,20 @@ import Modal from "@/Components/Modal.vue";
 import AircraftForm from "@/Pages/Aircrafts/Partials/AircraftForm.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
 
 /*confirm*/
 const confirmDialog = ref(null);
 const selectedId = ref(null);
 const handleAction = () => {
-    console.log("Acción confirmada!");
     // Aquí va la lógica de la acción que deseas confirmar
     if (selectedId.value) {
-        form.delete(route("brand-aircrafts.destroy", selectedId.value), {
+        form.delete(route("aircrafts.destroy", selectedId.value), {
             preserveState: true,
             preserveScroll: true, // Opcional: Mantiene la posición del scroll
             onSuccess: () => {
                 selectedId.value = null; // Limpia el ID seleccionado
+                toast.success("Registro eliminado!");
             },
         });
     }
@@ -30,6 +31,10 @@ const handleAction = () => {
 const showConfirmation = (id) => {
     console.log("show confirmation: " + id);
     confirmDialog.value.show(); // Muestra el diálogo de confirmación
+};
+const destroy = (id) => {
+    selectedId.value = id;
+    showConfirmation(); // Muestra el diálogo y guarda el ID del registro
 };
 /*confirm*/
 
@@ -97,18 +102,6 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("aircrafts.index"), { preserveState: true });
 }, 200);
-
-/*const destroy = (id) => {
-    if (confirm("Seguro desea eliminar el registro")) {
-        form.delete(route("aircrafts.destroy", id), {
-            preserveState: true,
-        });
-    }
-};*/
-const destroy = (id) => {
-    selectedId.value = id;
-    showConfirmation(); // Muestra el diálogo y guarda el ID del registro
-};
 
 const showModal = ref(false);
 const openModal = () => {
@@ -306,7 +299,7 @@ const closeModal = () => {
                                     </span>
                                 </button>
 
-                                <Link
+                                <button
                                     class="btn-delete"
                                     @click="destroy(item.id)"
                                 >
@@ -326,7 +319,7 @@ const closeModal = () => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -441,5 +434,15 @@ const closeModal = () => {
             </div>
             <!-- Modal -->
         </div>
+        <!-- Componente de Confirmación -->
+        <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este elemento?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>
