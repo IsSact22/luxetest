@@ -15,6 +15,8 @@ const props = defineProps({
 });
 
 const rates = ref([]);
+const adminRate = ref([]);
+
 const method = props.laborRate ? "put" : "post";
 const url = props.laborRate
     ? `/labor-rates/${props.laborRate.id}`
@@ -27,19 +29,39 @@ const form = useForm(method, url, {
     amount: props.laborRate?.amount ?? null,
 });
 const isLoading = ref(false);
-const fetchEngineTypes = async () => {
+const fetchRates = async () => {
     try {
         isLoading.value = true;
-        const response = await axios.get(route("labor-rates.select"));
-        rates.value = response.data;
+        const response = await axios.get(route("admin-rates.select"));
+        rates.value = response.data.map((rate) => ({
+            rateable_id: rate.rateable_id,
+            rateable_type: rate.rateable_type,
+            label: rate.label,
+        }));
     } catch (e) {
         console.error(e);
     } finally {
         isLoading.value = false;
     }
 };
+
+// Observador para actualizar rateable_type basado en rateable_id
+watch(
+    () => form.rateable_id,
+    (newValue) => {
+        const selectedRate = rates.value.find(
+            (rate) => rate.rateable_id === newValue,
+        );
+        form.rateable_type = selectedRate ? selectedRate.rateable_type : null; // Asigna el tipo correspondiente
+        console.log(form.rateable_type);
+    },
+);
+
 // Efecto al montar
-onMounted(fetchEngineTypes);
+onMounted(async () => {
+    await fetchRates();
+    // await fetchAdminRates();
+});
 const submitForm = () => {
     form.submit({
         preserveScroll: true,
@@ -61,23 +83,14 @@ const cancel = () => {
     resetForm();
     router.get(route("labor-rates.index"));
 };
-
-// Observador para actualizar rateable_type basado en rateable_id
-watch(
-    () => form.rateable_id,
-    (newValue) => {
-        const selectedRate = rates.value.find((rate) => rate.id === newValue);
-        form.rateable_type = selectedRate ? selectedRate.type : null; // Asigna el tipo correspondiente
-    },
-);
 </script>
 
 <template>
     <form class="flex flex-col space-y-3" @submit.prevent="submitForm">
         <div>
-            <InputLabel for="engine_type_id">Tarifa</InputLabel>
+            <InputLabel for="rateable_id">Tarifas</InputLabel>
             <select
-                id="engine_type_id"
+                id="rateable_id"
                 v-model="form.rateable_id"
                 class="w-full mt-1 border-gray-300 focus:border-indigo-500 rounded-md shadow-sm"
                 required
@@ -87,7 +100,7 @@ watch(
                 <option
                     v-for="(item, idx) in rates"
                     :key="idx"
-                    :value="item.id"
+                    :value="item.rateable_id"
                 >
                     {{ item.label }}
                 </option>

@@ -190,11 +190,16 @@ const statusList = ref([
     { value: "in_progress", label: "en Progreso", selected: false },
     { value: "completed", label: "completado", selected: false },
 ]);
-const statusApproval = ref([
-    { value: "pending", label: "Pendiente", selected: false },
-    { value: "approved", label: "Aprobado", selected: false },
-    { value: "canceled", label: "Cancelado", selected: false },
-]);
+const statusApproval = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get(route("approval-status"));
+        statusApproval.value = response.data;
+    } catch (e) {
+        console.error(e);
+    }
+});
 
 watch(
     () => form.special_rate,
@@ -317,11 +322,11 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                         id="approval_status"
                         v-model="form.approval_status"
                         :class="{
-                            'border border-red-600 bg-red-200':
+                            'border-2 border-orange-400':
                                 props.user.is_owner &&
                                 form.approval_status === `pending`,
                         }"
-                        :disabled="true"
+                        :disabled="!props.user.is_owner"
                         class="block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                         name="approval_status"
                     >
@@ -333,7 +338,7 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                             :key="idx"
                             :value="item.value"
                         >
-                            {{ item.label }}
+                            {{ $t(item.label) }}
                         </option>
                     </select>
                     <InputError

@@ -184,7 +184,6 @@
     "password": "La contraseña es incorrecta.",
     "Payload Too Large": "Solicitud demasiado grande",
     "Payment Required": "Pago requerido",
-    "pending": "Pendiente",
     "Permanent Redirect": "Redirección permanente",
     "Permissions": "Permisos",
     "Please click the button below to verify your email address.": "Por favor, haga clic en el botón de abajo para verificar su dirección de correo electrónico.",
@@ -290,8 +289,12 @@
     "Your email address is unverified.": "Su dirección de correo electrónico no está verificada.",
     "Order": "Orden",
     "Description": "Descripción",
+    "pending": "Pendiente",
+    "Pending": "Pendiente",
     "completed": "Completado",
+    "Completed": "Completado",
     "Approved": "Aprobado",
     "in_progress": "En Progreso",
-    "canceled": "Cancelado"
+    "canceled": "Cancelado",
+    "Canceled": "Cancelado"
 }

@@ -14,7 +14,10 @@ import { useDateFormatter } from "@/Composables/formatDate.js";
 const toast = useToast();
 
 const { formatCurrency } = useFormatCurrency();
-const { formattedDate, formattedDateTime } = useDateFormatter();
+const { formattedDate, formattedDateTime, currentDateInCaracasTimezone } =
+    useDateFormatter();
+
+const currentDate = currentDateInCaracasTimezone();
 
 const props = defineProps({
     resource: {
@@ -78,12 +81,12 @@ const handlePageChange = (page) => {
 };
 
 const filter = ref(null);
+const isOwner = ref(usePage().props.auth.user.is_owner);
 onMounted(() => {
-    if (
-        usePage().props.auth.user.is_owner ||
-        usePage().props.auth.user.is_crew
-    ) {
+    if (isOwner.value && waitingApproval.value.length > 0) {
         filter.value = "approval_status.pending";
+    } else {
+        filter.value = null;
     }
 });
 const getActivities = async () => {
@@ -199,10 +202,23 @@ const checkIfActivitiesHaveImages = async () => {
         console.error("Error fetching images", error);
     }
 };
+const canFinish = ref(false);
+const fetchCanFinish = async () => {
+    try {
+        const response = await axios.get(
+            route("camos.finish", props.resource.data.id),
+            {},
+        );
 
+        canFinish.value = response.data.result;
+    } catch (e) {
+        console.error(e);
+    }
+};
 // Llamar a la función cuando el componente se monta
-onMounted(() => {
-    checkIfActivitiesHaveImages();
+onMounted(async () => {
+    await checkIfActivitiesHaveImages();
+    await fetchCanFinish();
 });
 </script>
 <template>
@@ -214,7 +230,13 @@ onMounted(() => {
         <div class="flex flex-col justify-items-center items-center mx-auto">
             <div class="my-4 border rounded-md px-4 py-4">
                 <div class="inline-flex space-x-5">
-                    <Link :href="route('camos.index')" class="btn-primary"
+                    <Link
+                        v-if="!$page.props.auth.user.is_owner"
+                        :href="route('camos.index')"
+                        class="btn-primary"
+                        >Regresar
+                    </Link>
+                    <Link v-else :href="route('dashboard')" class="btn-primary"
                         >Regresar
                     </Link>
                     <button
@@ -236,6 +258,15 @@ onMounted(() => {
                     >
                         Ver Galeria
                     </Link>
+                    <Link
+                        v-if="canFinish"
+                        :data="{ finish_date: currentDate }"
+                        :href="route('camos.update', props.resource.data.id)"
+                        class="btn-primary"
+                        method="patch"
+                    >
+                        Finalizar
+                    </Link>
                 </div>
 
                 <div
@@ -250,7 +281,7 @@ onMounted(() => {
                                 <thead>
                                     <tr>
                                         <th style="color: #b58a00 !important">
-                                            {{ $t("Customer") }}
+                                            {{ $t("Owner") }}
                                         </th>
                                         <th style="color: #b58a00 !important">
                                             {{ $t("Order") }}
@@ -265,7 +296,7 @@ onMounted(() => {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>{{ resource.data.customer }}</td>
+                                        <td>{{ resource.data.owner }}</td>
                                         <td>{{ resource.data.contract }}</td>
                                         <td>{{ resource.data.cam }}</td>
                                         <td>{{ resource.data.location }}</td>
@@ -558,7 +589,7 @@ badgeClass(act.priority)
                                             {{
                                                 formattedDateTime(
                                                     act.started_at,
-                                                ) ?? "undefined"
+                                                )
                                             }}
                                         </td>
                                         <td class="text-center">

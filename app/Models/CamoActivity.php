@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\ActivityStatus;
+use App\ApprovalStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -82,7 +84,7 @@ class CamoActivity extends Model implements HasMedia
     protected function getSpecialRate(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->specialRate()->latest()->first()
+            get: fn () => $this->specialRate()->latest()->first()
         );
     }
 
@@ -105,13 +107,13 @@ class CamoActivity extends Model implements HasMedia
             'estimate_time' => 'decimal:2',
             'started_at' => 'datetime:Y-m-d H:i',
             'completed_at' => 'datetime:Y-m-d H:i',
-            'status' => 'string',
+            'status' => ActivityStatus::class,
             'comments' => 'string',
             'labor_mount' => 'decimal:2',
             'material_mount' => 'decimal:2',
             'material_information' => 'string',
             'awr' => 'string',
-            'approval_status' => 'string',
+            'approval_status' => ApprovalStatus::class,
             'priority' => 'integer',
             'created_at' => 'datetime:Y-m-d H:i',
             'updated_at' => 'datetime:Y-m-d H:i',

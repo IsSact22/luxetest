@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAdminRateRequest extends FormRequest
 {
@@ -25,8 +26,8 @@ class StoreAdminRateRequest extends FormRequest
         return [
             'name' => [
                 ...$this->isPrecognitive() ?
-                    ['unique:admin_rates,name'] :
-                    ['required', 'unique:admin_rates,name'],
+                    [Rule::unique('admin_rates', 'name')] :
+                    ['required', Rule::unique('admin_rates', 'name')],
             ],
             'description' => ['required', 'string'],
         ];

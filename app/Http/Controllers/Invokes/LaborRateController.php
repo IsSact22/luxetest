@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LaborRate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class LaborRateController extends Controller
 {
@@ -25,6 +26,6 @@ class LaborRateController extends Controller
             ];
         });
 
-        return response()->json($laborRates);
+        return response()->json($laborRates, Response::HTTP_OK);
     }
 }

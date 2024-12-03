@@ -8,8 +8,10 @@ use App\Http\Controllers\DashboardInfoController;
 use App\Http\Controllers\EngineTypeController;
 use App\Http\Controllers\Invokes\ActivityController;
 use App\Http\Controllers\Invokes\AddActivityController;
+use App\Http\Controllers\Invokes\ApprovalStatusController;
 use App\Http\Controllers\Invokes\BrandAircraftController;
 use App\Http\Controllers\Invokes\CamController;
+use App\Http\Controllers\Invokes\FinishCamoController;
 use App\Http\Controllers\Invokes\HandleActivityController;
 use App\Http\Controllers\Invokes\MediaActivityController;
 use App\Http\Controllers\Invokes\OwnerController;
@@ -47,6 +49,7 @@ Route::middleware('auth')->group(static function ($route) {
     $route->get('engine-types/select', \App\Http\Controllers\Invokes\EngineTypeController::class)->name('engine-types.select');
     $route->get('model-aircrafts/select', \App\Http\Controllers\Invokes\ModelAircraftController::class)->name('model-aircrafts.select');
     $route->get('aircrafts/select', \App\Http\Controllers\Invokes\AircraftController::class)->name('aircrafts.select');
+    $route->get('admin-rates/select', \App\Http\Controllers\Invokes\AdminRateController::class)->name('admin-rates.select');
     $route->get('labor-rates/select', \App\Http\Controllers\Invokes\LaborRateController::class)->name('labor-rates.select');
     $route->get('camos/{id?}/select', \App\Http\Controllers\Invokes\CamoController::class)->name('camos.select');
     $route->get('camos/activities', ActivityController::class)->name('camos.activities');
@@ -80,6 +83,7 @@ Route::middleware('auth')->group(static function ($route) {
     // Aircrafts
     $route->resource('aircrafts', AircraftController::class);
     // Camos
+    $route->get('camos/{camo}/finish', FinishCamoController::class)->name('camos.finish');
     $route->get('camos/dashboard', [DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
 
     $route->get('camos/{camo}/get-images', [App\Http\Controllers\MediaController::class, 'getMedia'])->name('camos.images');
@@ -90,6 +94,8 @@ Route::middleware('auth')->group(static function ($route) {
         ->name('camo_activities.add_images');
     // Camo Activities
     $route->resource('camo_activities', CamoActivityController::class);
+
+    $route->get('approval-status', ApprovalStatusController::class)->name('approval-status');
 });
 
 require __DIR__.'/auth.php';

@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from "moment-timezone";
 
 export const useDateFormatter = () => {
     const formattedDate = (string) => {
@@ -6,8 +6,12 @@ export const useDateFormatter = () => {
     };
 
     const formattedDateTime = (string) => {
-        return string ? moment(string).format("DD-MM-YYYY") : "";
+        return string ? moment(string).format("DD-MM-YYYY HH:mm") : "";
     };
 
-    return { formattedDate, formattedDateTime };
+    const currentDateInCaracasTimezone = () => {
+        return moment.tz("America/Caracas").format("DD-MM-YYYY");
+    };
+
+    return { formattedDate, formattedDateTime, currentDateInCaracasTimezone };
 };

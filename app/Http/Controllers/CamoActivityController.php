@@ -80,7 +80,7 @@ class CamoActivityController extends Controller
     {
         try {
             $this->authorize('create', CamoActivity::class);
-            $payload = precognitive(static fn($bail) => $request->validated());
+            $payload = precognitive(static fn ($bail) => $request->validated());
             $this->activity->newModel($payload);
 
             return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
@@ -145,10 +145,9 @@ class CamoActivityController extends Controller
     public function update(UpdateCamoActivityRequest $request, string $id): RedirectResponse|Response
     {
         try {
-            //dd($request->validated());
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
-            $payload = precognitive(static fn($bail) => $request->validated());
+            $payload = precognitive(static fn ($bail) => $request->validated());
             $this->activity->updateModel($payload, $id);
 
             return to_route('camos.show', $id)->with('success', 'Activity update successfully');
