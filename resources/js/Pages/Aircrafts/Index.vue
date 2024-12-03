@@ -11,6 +11,28 @@ import AircraftForm from "@/Pages/Aircrafts/Partials/AircraftForm.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
+/*confirm*/
+const confirmDialog = ref(null);
+const selectedId = ref(null);
+const handleAction = () => {
+    console.log("Acción confirmada!");
+    // Aquí va la lógica de la acción que deseas confirmar
+    if (selectedId.value) {
+        form.delete(route("brand-aircrafts.destroy", selectedId.value), {
+            preserveState: true,
+            preserveScroll: true, // Opcional: Mantiene la posición del scroll
+            onSuccess: () => {
+                selectedId.value = null; // Limpia el ID seleccionado
+            },
+        });
+    }
+};
+const showConfirmation = (id) => {
+    console.log("show confirmation: " + id);
+    confirmDialog.value.show(); // Muestra el diálogo de confirmación
+};
+/*confirm*/
+
 const toast = useToast();
 const props = defineProps({
     resource: {
@@ -76,12 +98,16 @@ const fireSearch = _.throttle(function () {
     form.get(route("aircrafts.index"), { preserveState: true });
 }, 200);
 
-const destroy = (id) => {
+/*const destroy = (id) => {
     if (confirm("Seguro desea eliminar el registro")) {
         form.delete(route("aircrafts.destroy", id), {
             preserveState: true,
         });
     }
+};*/
+const destroy = (id) => {
+    selectedId.value = id;
+    showConfirmation(); // Muestra el diálogo y guarda el ID del registro
 };
 
 const showModal = ref(false);
