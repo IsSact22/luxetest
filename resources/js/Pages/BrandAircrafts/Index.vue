@@ -8,12 +8,13 @@ import { ref } from "vue";
 import Modal from "@/Components/Modal.vue";
 import BrandAircraftForm from "@/Pages/BrandAircrafts/Partials/BrandAircraftForm.vue";
 import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 /*confirm*/
 const confirmDialog = ref(null);
 const selectedId = ref(null);
 const handleAction = () => {
-    console.log("Acción confirmada!");
     // Aquí va la lógica de la acción que deseas confirmar
     if (selectedId.value) {
         form.delete(route("brand-aircrafts.destroy", selectedId.value), {
@@ -21,6 +22,7 @@ const handleAction = () => {
             preserveScroll: true, // Opcional: Mantiene la posición del scroll
             onSuccess: () => {
                 selectedId.value = null; // Limpia el ID seleccionado
+                toast.success("Registro eliminado!");
             },
         });
     }
