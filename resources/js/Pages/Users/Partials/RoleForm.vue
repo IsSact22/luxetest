@@ -1,12 +1,23 @@
 <template>
     <div>
-        <h2 class="text-lg font-medium text-gray-900">Actualizar Rol</h2>
-        <p class="mt-1 text-sm text-gray-600">
+        <h2
+            v-if="props.user.role !== 'owner'"
+            class="text-lg font-medium text-gray-900"
+        >
+            Actualizar Rol
+        </h2>
+        <h2 v-else class="text-lg font-medium text-gray-900">
+            Permisos del Rol
+        </h2>
+        <p
+            v-if="props.user.role !== 'owner'"
+            class="mt-1 text-sm text-gray-600"
+        >
             Asegúrese de que el usuario tenga un rol asignado.
         </p>
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="flex flex-row justify-items-center items-center">
-                <div class="w-1/2">
+                <div v-if="props.user.role !== 'owner'" class="w-1/2">
                     <InputLabel :value="$t('Role')" for="role" />
                     <select
                         id="role"
@@ -35,8 +46,8 @@
 
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing"
-                    >Guardar</PrimaryButton
-                >
+                    >Guardar
+                </PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

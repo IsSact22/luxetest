@@ -30,13 +30,13 @@ class UpdateUserRequest extends FormRequest
             'email' => [
                 ...$this->isPrecognitive() ?
                     [Rule::unique('users', 'email')->ignore($this->id)] :
-                    ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
+                    ['sometimes', 'email', Rule::unique('users', 'email')->ignore($this->id)],
             ],
             'password' => ['sometimes'],
             'password_confirmation' => [
-                ...$this->isPrecognitive() ?
-                    ['present_if:password', 'same:password'] :
-                    ['present_if:password', 'same:password'],
+                // Cuando password está presente, password_confirmation debe estar presente y ser igual a password
+                'present_if:password,!=,', // Verifica si password está presente y no vacío
+                'same:password',
             ],
             'avatar' => ['nullable', 'image'],
         ];

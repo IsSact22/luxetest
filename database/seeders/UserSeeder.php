@@ -53,16 +53,16 @@ class UserSeeder extends Seeder
             $admin->syncRoles('cam');
         });
 
-        $users = User::factory(3)
-            ->create();
+        /*$users = User::factory(3)
+            ->create();*/
 
-        $ownerIds = [5, 6, 7];
+        /*$ownerIds = [5, 6, 7];
         $owners = $users->whereIn('id', $ownerIds);
         $owners->each(static function ($user) {
             $user->syncRoles('owner');
             $crew = User::factory()->create(['owner_id' => $user->id]);
             $crew->syncRoles('crew');
-        });
+        });*/
 
         // User Admin Test
         $userAdminTest = User::factory()
@@ -89,11 +89,11 @@ class UserSeeder extends Seeder
         $userOwnerTest->syncRoles('owner');
 
         // User Crew Test
-        $userCrewTest = User::factory()
+        /*$userCrewTest = User::factory()
             ->create([
                 'name' => 'Crew Test',
                 'email' => 'crew@luxeplus.com',
             ]);
-        $userCrewTest->syncRoles('crew');
+        $userCrewTest->syncRoles('crew');*/
     }
 }
