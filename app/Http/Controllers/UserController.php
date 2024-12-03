@@ -193,4 +193,27 @@ class UserController extends Controller
             ]);
         }
     }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(int $id): Response|RedirectResponse
+    {
+        try {
+            $this->authorize('restore', User::class); // Asegúrate de tener esta autorización configurada.
+
+            $this->userRepository->restoreModel($id); // Llama al método restoreModel de tu repositorio.
+
+            return to_route('users.index')->with('success', 'User restored successfully');
+        } catch (ModelNotFoundException) {
+            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (Throwable $e) {
+            Log::error('restoreUser:'.$e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
 }

@@ -141,4 +141,19 @@ class UserRepository implements UserRepositoryInterface
             throw new RepositoryException($e->getMessage(), 500, $e->getCode());
         }
     }
+
+    /**
+     * @throws RepositoryException
+     */
+    public function restoreModel(int $id): bool
+    {
+        try {
+            // Busca el usuario incluso si está eliminado.
+            return $this->model::withTrashed()->findOrFail($id)->restore(); // Restaura el usuario.
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
+    }
 }

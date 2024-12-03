@@ -61,6 +61,7 @@ Route::middleware('auth')->group(static function ($route) {
     // Permissions
     $route->resource('permissions', \App\Http\Controllers\PermissionController::class);
     // Users
+    $route->post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     $route->resource('users', UserController::class);
     // Profile
     $route->get('profile', static fn (\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)->edit($request))->name('profile.edit');
