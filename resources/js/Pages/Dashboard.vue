@@ -78,6 +78,7 @@ onMounted(queryPendingRate);
                     >
                         <div v-for="(camo, idx) in camos" :key="idx">
                             <SmallCardComponent
+                                v-if="!camo.finish_date"
                                 :id="camo.id"
                                 :activities="camo.activities"
                                 :aircraft="camo.aircraft"
