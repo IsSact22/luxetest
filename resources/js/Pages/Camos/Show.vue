@@ -83,10 +83,8 @@ const handlePageChange = (page) => {
 const filter = ref(null);
 const isOwner = ref(usePage().props.auth.user.is_owner);
 onMounted(() => {
-    if (isOwner.value && waitingApproval.value.length > 0) {
+    if (isOwner.value) {
         filter.value = "approval_status.pending";
-    } else {
-        filter.value = null;
     }
 });
 const getActivities = async () => {

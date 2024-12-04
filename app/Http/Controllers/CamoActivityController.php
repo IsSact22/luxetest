@@ -122,6 +122,7 @@ class CamoActivityController extends Controller
         try {
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
+
             $camo = Camo::query()->findOrFail($camoActivity->camo_id);
             $camoResource = new CamoResource($camo);
             $resource = new CamoActivityResource($camoActivity);
@@ -148,7 +149,7 @@ class CamoActivityController extends Controller
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
             $payload = precognitive(static fn ($bail) => $request->validated());
-            $this->activity->updateModel($payload, $id);
+            $activity = $this->activity->updateModel($payload, $id);
 
             return to_route('camos.show', $id)->with('success', 'Activity update successfully');
         } catch (ModelNotFoundException) {

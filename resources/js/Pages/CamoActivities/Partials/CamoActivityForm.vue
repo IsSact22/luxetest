@@ -33,7 +33,9 @@ const url = props.camoActivity
     : "/camo_activities";
 
 const formattedStartDate = ref(
-    moment(props.camo.start_date).format("YYYY-MM-DDTHH:mm"),
+    moment(props.camo.start_date)
+        .set({ hour: 8, minute: 0 })
+        .format("YYYY-MM-DDTHH:mm"),
 );
 
 // Computed property to format startDate as datetime-local (YYYY-MM-DDTHH:mm)
@@ -273,6 +275,9 @@ const submit = async () => {
             form.reset();
             emit("addActivity", false);
             router.get(route("camos.show", props.camo.id));
+        },
+        onError: (res) => {
+            alert(res.message);
         },
     });
 };

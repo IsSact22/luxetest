@@ -2,7 +2,10 @@
 
 namespace App\Repositories;
 
+use App\ActivityStatus;
+use App\ApprovalStatus;
 use App\Contracts\CamoActivityRepositoryInterface;
+use App\DTOs\CamoActivityDTO;
 use App\Exceptions\RepositoryException;
 use App\Models\CamoActivity;
 use App\Models\LaborRate;
@@ -71,7 +74,51 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
     {
         //dd($data);
         try {
-            $this->model->findOrFail($id)->update($data);
+            $camoActivity = $this->model->findOrFail($id);
+
+            $status = ActivityStatus::from($data['status']);
+            $approvalStatus = ApprovalStatus::from($data['approval_status']);
+
+            $dto = new CamoActivityDTO(
+                $id,
+                $data['camo_id'],
+                $data['labor_rate_id'],
+                $data['required'],
+                $data['date'],
+                $data['name'],
+                $data['description'] ?? null,
+                $data['estimate_time'],
+                $data['started_at'] ?? null,
+                $data['completed_at'] ?? null,
+                $status,
+                $data['comments'] ?? null,
+                (float) $data['labor_mount'],
+                $data['material_mount'] ?? 0,
+                $data['material_information'] ?? null,
+                $data['awr'] ?? null,
+                $approvalStatus
+            );
+            //dd($dto);
+            $camoActivity->update([
+                'id' => $id,
+                'camo_id' => $dto->camoId,
+                'labor_rate_id' => $dto->laborRateId,
+                'required' => $dto->required,
+                'date' => $dto->date,
+                'name' => $dto->name,
+                'description' => $dto->description,
+                'estimate_time' => $dto->estimateTime,
+                'started_at' => $dto->startedAt,
+                'completed_at' => $dto->completedAt,
+                'status' => $dto->status->value, // Asumiendo que status es un enum
+                'comments' => $dto->comments,
+                'labor_mount' => $dto->laborMount,
+                'material_mount' => $dto->materialMount,
+                'material_information' => $dto->materialInformation,
+                'awr' => $dto->awr,
+                'approval_status' => $dto->approvalStatus->value,
+            ]);
+
             // tarifa especial
             if (! is_null($data['special_rate']) && $data['special_rate'] > 0) {
                 SpecialRate::create([
@@ -83,11 +130,12 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 ]);
             }
 
-            return $this->model->fresh();
+            return $camoActivity->fresh();
+
         } catch (ModelNotFoundException $e) {
+            Log::error('Model not found: '.$e->getMessage());
             throw new RepositoryException($e->getMessage(), 404, $e->getCode());
         } catch (Exception|Throwable $e) {
-            Log::error('Error inesperado en updateModel: '.$e->getMessage());
             throw new RepositoryException($e->getMessage(), 500, $e->getCode());
         }
     }
