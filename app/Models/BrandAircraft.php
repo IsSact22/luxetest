@@ -27,6 +27,9 @@ class BrandAircraft extends Model
         static::creating(static function ($model) {
             $model->name = strtoupper($model->name);
         });
+        static::updating(static function ($model) {
+            $model->name = strtoupper($model->name);
+        });
     }
 
     #[Override]
