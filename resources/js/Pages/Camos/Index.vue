@@ -350,6 +350,7 @@ const handleNewCamo = () => {
                                 </Link>
 
                                 <button
+                                    v-if="!camo.finish_date"
                                     class="btn-edit"
                                     @click="openModal(camo)"
                                 >
