@@ -289,7 +289,7 @@ const handleNewCamo = () => {
                 <table class="table-auto">
                     <thead>
                         <tr>
-                            <th>{{ $t("Customer") }}</th>
+                            <th>{{ $t("Owner") }}</th>
                             <th>Orden</th>
                             <th>{{ $t("Cam") }}</th>
                             <th>{{ $t("Airplane") }}</th>
@@ -304,7 +304,7 @@ const handleNewCamo = () => {
                     </thead>
                     <tbody>
                         <tr v-for="(camo, idx) in resource.data" :key="idx">
-                            <td class="uppercase">{{ camo.customer }}</td>
+                            <td class="uppercase">{{ camo.owner }}</td>
                             <td>{{ camo.contract }}</td>
                             <td>{{ camo.cam }}</td>
                             <td>
