@@ -29,7 +29,7 @@ const props = defineProps({
 
 const method = props.camoActivity ? "put" : "post";
 const url = props.camoActivity
-    ? `/camo_activities/${props.camo.id}`
+    ? `/camo_activities/${props.camoActivity.id}`
     : "/camo_activities";
 
 const formattedStartDate = ref(

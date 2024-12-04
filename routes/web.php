@@ -11,6 +11,7 @@ use App\Http\Controllers\Invokes\AddActivityController;
 use App\Http\Controllers\Invokes\ApprovalStatusController;
 use App\Http\Controllers\Invokes\BrandAircraftController;
 use App\Http\Controllers\Invokes\CamController;
+use App\Http\Controllers\Invokes\CloseCamoController;
 use App\Http\Controllers\Invokes\FinishCamoController;
 use App\Http\Controllers\Invokes\HandleActivityController;
 use App\Http\Controllers\Invokes\MediaActivityController;
@@ -84,6 +85,8 @@ Route::middleware('auth')->group(static function ($route) {
     $route->resource('aircrafts', AircraftController::class);
     // Camos
     $route->get('camos/{camo}/finish', FinishCamoController::class)->name('camos.finish');
+    $route->patch('camos/{camo}/close', CloseCamoController::class)
+        ->name('camos.close');
     $route->get('camos/dashboard', [DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
 
     $route->get('camos/{camo}/get-images', [App\Http\Controllers\MediaController::class, 'getMedia'])->name('camos.images');

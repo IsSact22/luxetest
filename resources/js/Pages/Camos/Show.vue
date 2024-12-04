@@ -14,10 +14,14 @@ import { useDateFormatter } from "@/Composables/formatDate.js";
 const toast = useToast();
 
 const { formatCurrency } = useFormatCurrency();
-const { formattedDate, formattedDateTime, currentDateInCaracasTimezone } =
-    useDateFormatter();
+const {
+    formattedDate,
+    formattedDateTime,
+    currentDateInCaracasTimezoneVE,
+    currentDateInCaracasTimezoneInt,
+} = useDateFormatter();
 
-const currentDate = currentDateInCaracasTimezone();
+const currentDate = currentDateInCaracasTimezoneInt();
 
 const props = defineProps({
     resource: {
@@ -218,6 +222,23 @@ onMounted(async () => {
     await checkIfActivitiesHaveImages();
     await fetchCanFinish();
 });
+
+const finishCamo = async () => {
+    try {
+        const response = await axios.patch(
+            route("camos.close", props.resource.data.id),
+            {
+                finish_date: currentDate,
+            },
+        );
+        console.log(response.data);
+    } catch (e) {
+        console.error(e);
+    } finally {
+        console.log("finishCamo successfully");
+        router.get(route("camos.show", props.resource.data.id));
+    }
+};
 </script>
 <template>
     <Head title="Camos" />
@@ -239,8 +260,9 @@ onMounted(async () => {
                     </Link>
                     <button
                         v-if="
-                            $page.props.auth.user.is_cam ||
-                            $page.props.auth.user.is_super
+                            ($page.props.auth.user.is_cam ||
+                                $page.props.auth.user.is_super) &&
+                            !props.resource.data.finish_date
                         "
                         class="btn-primary"
                         @click="addActivity = true"
@@ -256,16 +278,21 @@ onMounted(async () => {
                     >
                         Ver Galeria
                     </Link>
-                    <Link
+                    <button
                         v-if="canFinish"
-                        :data="{ finish_date: currentDate }"
-                        :href="route('camos.update', props.resource.data.id)"
                         class="btn-primary"
-                        method="patch"
+                        @click="finishCamo"
                     >
                         Finalizar
-                    </Link>
+                    </button>
                 </div>
+
+                <span
+                    v-if="props.resource.data.finish_date"
+                    class="px-4 text-gray-400 text-lg font-bold uppercase"
+                >
+                    Finalizado
+                </span>
 
                 <div
                     class="flex flex-row justify-items-center items-start space-x-5 mb-7"
@@ -641,6 +668,16 @@ badgeClass(act.priority)
                                                 }}</span
                                             >
                                             <span
+                                                v-else-if="
+                                                    act.approval_status ===
+                                                    'canceled'
+                                                "
+                                                class="badge-alert"
+                                                >{{
+                                                    $t(act.approval_status)
+                                                }}</span
+                                            >
+                                            <span
                                                 v-else
                                                 class="badge-approval"
                                                 >{{
@@ -682,6 +719,10 @@ badgeClass(act.priority)
                                             </Link>
 
                                             <Link
+                                                v-if="
+                                                    !props.resource.data
+                                                        .finish_date
+                                                "
                                                 :href="
                                                     route(
                                                         'camo_activities.edit',

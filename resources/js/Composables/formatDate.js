@@ -9,9 +9,18 @@ export const useDateFormatter = () => {
         return string ? moment(string).format("DD-MM-YYYY HH:mm") : "";
     };
 
-    const currentDateInCaracasTimezone = () => {
+    const currentDateInCaracasTimezoneVE = () => {
         return moment.tz("America/Caracas").format("DD-MM-YYYY");
     };
 
-    return { formattedDate, formattedDateTime, currentDateInCaracasTimezone };
+    const currentDateInCaracasTimezoneInt = () => {
+        return moment.tz("America/Caracas").format("YYYY-MM-DD");
+    };
+
+    return {
+        formattedDate,
+        formattedDateTime,
+        currentDateInCaracasTimezoneVE,
+        currentDateInCaracasTimezoneInt,
+    };
 };

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Invokes;
 
+use App\ActivityStatus;
+use App\ApprovalStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Camo;
 use Illuminate\Http\JsonResponse;
@@ -22,12 +24,12 @@ class FinishCamoController extends Controller
 
         foreach ($camo->camoActivity as $activity) {
             // Verificar si la actividad ha sido cancelada
-            if ($activity->approval_status === 'canceled') {
+            if ($activity->approval_status === ApprovalStatus::canceled) {
                 $hasCanceled = true;
             }
 
             // Si alguna actividad no cumple con las condiciones, ajustamos la bandera
-            if ($activity->approval_status !== 'approved' || $activity->status !== 'completed') {
+            if ($activity->approval_status !== ApprovalStatus::approved || $activity->status !== ActivityStatus::completed) {
                 $allApprovedAndCompleted = false; // Al menos una actividad no cumple las condiciones requeridas
             }
         }
@@ -36,7 +38,7 @@ class FinishCamoController extends Controller
         // 1. Hay al menos una actividad cancelada o
         // 2. Todas las actividades están aprobadas y completadas
         return response()->json([
-            'result' => $hasCanceled || $allApprovedAndCompleted,
+            'result' => ($hasCanceled || $allApprovedAndCompleted) && ! $camo->finish_date,
         ], 200);
     }
 }
