@@ -21,6 +21,7 @@ class CamoActivityResource extends JsonResource
             'camo_id' => $this->camo_id,
             'camo' => $this->camo,
             'labor_rate_id' => $this->labor_rate_id,
+            'labor_rate_value_id' => $this->labor_rate_value_id,
             'required' => $this->required,
             'date' => $this->date ? $this->date->format('Y-m-d') : null,
             'name' => $this->name,
@@ -37,6 +38,8 @@ class CamoActivityResource extends JsonResource
             'awr' => $this->awr,
             'approval_status' => $this->approval_status,
             'priority' => $this->priority,
+            'missing_rate_value' => $this->missing_rate_value,
+            'missing_rate_name' => $this->when($this->missing_rate_value, $this->missing_rate_name),
             'images' => $this->images,
         ];
     }

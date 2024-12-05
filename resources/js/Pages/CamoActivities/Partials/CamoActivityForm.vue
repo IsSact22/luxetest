@@ -27,7 +27,7 @@ const props = defineProps({
     },
 });
 
-const method = props.camoActivity ? "put" : "post";
+const method = props.camoActivity ? "patch" : "post";
 const url = props.camoActivity
     ? `/camo_activities/${props.camoActivity.id}`
     : "/camo_activities";
@@ -64,6 +64,7 @@ const formattedStartDate = ref(
 const form = useForm(method, url, {
     camo_id: props.camo?.id ?? null,
     labor_rate_id: props.camoActivity?.labor_rate_id ?? null,
+    labor_rate_value_id: props.camoActivity?.labor_rate_value_id ?? null,
     required: props.camoActivity?.required ?? false,
     date: now.value,
     name: props.camoActivity?.name ?? null,
@@ -178,6 +179,7 @@ watch(
     },
 );
 const laborRates = ref(null);
+const selectedLaborRate = ref(null);
 const getLaborRates = async () => {
     try {
         const response = await axios.get(route("labor-rates.select"));
@@ -187,6 +189,25 @@ const getLaborRates = async () => {
     }
 };
 onMounted(getLaborRates);
+watch(
+    () => form.labor_rate_id,
+    (newValue) => {
+        if (newValue && laborRates.value) {
+            selectedLaborRate.value = laborRates.value.find(
+                (rate) => rate.id === newValue,
+            );
+
+            // Aquí puedes hacer algo con los datos de la tarifa seleccionada
+            // Por ejemplo, actualizar otros campos del formulario
+            if (selectedLaborRate.value) {
+                // Ejemplo: actualizar un campo de precio
+                form.labor_rate_value_id =
+                    selectedLaborRate.value.labor_rate_value_id;
+                // console.log(selectedLaborRate.value.labor_rate_value_id);
+            }
+        }
+    },
+);
 const statusList = ref([
     { value: "pending", label: "Pendiente", selected: false },
     { value: "in_progress", label: "en Progreso", selected: false },
@@ -230,6 +251,9 @@ watch(
                 (item) => item.id === newLaborRateId,
             );
             mount = selected[0]?.amount; // Usar el monto de la tasa laboral seleccionada
+            if (mount === 0) {
+                toast.info("Tarifa sin Monto definido");
+            }
         }
 
         // Si se obtuvo un monto (ya sea de la tasa especial o de la tasa laboral), calcula el monto laboral

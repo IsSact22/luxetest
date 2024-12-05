@@ -7,6 +7,7 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreLaborRateRequest;
 use App\Http\Requests\UpdateLaborRateRequest;
 use App\Http\Resources\LaborRateResource;
+use App\Models\CamoActivity;
 use App\Models\LaborRate;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -14,6 +15,7 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests as Precogni
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -194,7 +196,26 @@ class LaborRateController extends Controller
             $payload = precognitive(static fn ($bail) => $request->validated());
             $this->laborRateRepository->updateModel($payload, $id);
 
+            // Depuración: Verificar el valor de la variable de sesión
+            Log::info('Camo Activity ID in session: '.Session::get('camo_activity_id'));
+
+            // Verificación más explícita de la variable de sesión
+            $camoActivityId = Session::get('camo_activity_id');
+            if ($camoActivityId !== null) {
+                // Limpiar la variable de sesión
+                Session::forget('camo_activity_id');
+
+                Session::flash('success', 'La tarifa de la actividad se ha actualizado correctamente.');
+
+                // Buscar la actividad Camo
+                $camoActivity = CamoActivity::findOrFail($camoActivityId);
+                $camoId = $camoActivity->camo_id;
+
+                return to_route('camos.show', $camoId);
+            }
+
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been updated.');
+
         } catch (AuthorizationException $e) {
             Log::error($e->getMessage());
 

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Observers\CamoObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +17,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperCamo
  */
+#[ObservedBy(CamoObserver::class)]
 class Camo extends Model implements HasMedia
 {
     use HasFactory;
@@ -37,17 +40,6 @@ class Camo extends Model implements HasMedia
     ];
 
     protected $appends = ['camo_rate'];
-
-    #[Override]
-    protected static function boot(): void
-    {
-        parent::boot();
-        static::creating(static function ($model) {
-            $aircraft = \App\Models\Aircraft::query()->find($model->aircraft_id);
-            $owner = \App\Models\User::query()->find($model->owner_id);
-            $aircraft->aircraftOwner()->attach($owner);
-        });
-    }
 
     public function isCrewOfOwner(User $user): bool
     {

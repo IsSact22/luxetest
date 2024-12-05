@@ -16,7 +16,7 @@ class RepositoryException extends Exception
     public function __construct(
         string $message = 'An error occurred in Repository',
         int $statusCode = ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
-        int $code = 0,
+        mixed $code = 0,
         ?Throwable $previous = null
     ) {
         $this->statusCode = $statusCode;

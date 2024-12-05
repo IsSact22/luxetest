@@ -22,6 +22,7 @@ class LaborRateController extends Controller
                 'type' => $rate->rateable_type,
                 'rateable_id' => $rate->rateable_id,
                 'code' => $rate->code,
+                'labor_rate_value_id' => $rate->values()->latest()->first()->id,
                 'amount' => $rate->amount,
             ];
         });

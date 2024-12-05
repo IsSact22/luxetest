@@ -67,7 +67,7 @@ const submitForm = () => {
         preserveScroll: true,
         onSuccess: () => {
             resetForm();
-            router.get(route("labor-rates.index"));
+            // router.get(route("labor-rates.index"));
         },
     });
 };

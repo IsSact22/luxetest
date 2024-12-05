@@ -47,6 +47,13 @@ const goBack = () => {
                 >
                 {{ props.resource.data.name }}
             </p>
+            <p
+                v-if="props.resource.data.missing_rate_value"
+                class="px-4 py-2 text-slate-800 bg-orange-200 border border-orange-200 rounded-md"
+            >
+                Tarifa Pendiente:
+                <strong>{{ props.resource.data.missing_rate_name }}</strong>
+            </p>
             <hr class="my-3" />
             <p class="text-lg font-semibold">Información de la Actividad</p>
             <div

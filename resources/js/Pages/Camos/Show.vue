@@ -279,7 +279,10 @@ const finishCamo = async () => {
                         Ver Galeria
                     </Link>
                     <button
-                        v-if="canFinish"
+                        v-if="
+                            canFinish &&
+                            props.resource.data.activities.length > 0
+                        "
                         class="btn-primary"
                         @click="finishCamo"
                     >
@@ -643,9 +646,43 @@ badgeClass(act.priority)
                                             >
                                         </td>
                                         <td class="text-right">
-                                            {{
-                                                formatCurrency(act.labor_mount)
-                                            }}
+                                            <span
+                                                v-if="!act.missing_rate_value"
+                                            >
+                                                {{
+                                                    formatCurrency(
+                                                        act.labor_mount,
+                                                    )
+                                                }}
+                                            </span>
+                                            <span
+                                                v-else
+                                                class="text-xs text-red-700 font-semibold"
+                                            >
+                                                <Link
+                                                    v-if="
+                                                        $page.props.auth.user
+                                                            .is_admin
+                                                    "
+                                                    v-tooltip="`Asignar Tarifa`"
+                                                    :data="{
+                                                        camo_activity_id:
+                                                            act.id,
+                                                    }"
+                                                    :href="
+                                                        route(
+                                                            'labor-rates.edit',
+                                                            act.labor_rate_id,
+                                                        )
+                                                    "
+                                                    class="px-2 py-1 border border-orange-200 hover:bg-orange-200 border-md rounded-md text-orange-700 text-xs font-medium"
+                                                    method="get"
+                                                    >Tarifa Pendiente</Link
+                                                >
+                                                <span v-else
+                                                    >Tarifa Pendiente</span
+                                                >
+                                            </span>
                                         </td>
                                         <td class="text-right">
                                             {{

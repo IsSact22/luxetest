@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\ActivityStatus;
 use App\ApprovalStatus;
+use App\Helpers\HasRateValue;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +34,7 @@ class CamoActivity extends Model implements HasMedia
     protected $fillable = [
         'camo_id',
         'labor_rate_id',
+        'labor_rate_value_id',
         'required',
         'date',
         'name',
@@ -50,7 +52,7 @@ class CamoActivity extends Model implements HasMedia
         'priority',
     ];
 
-    protected $appends = ['images', 'get_special_rate'];
+    protected $appends = ['images', 'get_special_rate', 'missing_rate_value', 'missing_rate_name'];
 
     public function camo(): BelongsTo
     {
@@ -59,7 +61,12 @@ class CamoActivity extends Model implements HasMedia
 
     public function laborRate(): BelongsTo
     {
-        return $this->belongsTo(LaborRate::class, 'labor_rate_id');
+        return $this->belongsTo(LaborRate::class, 'labor_rate_id')->with('amount');
+    }
+
+    public function laborRateValue(): BelongsTo
+    {
+        return $this->belongsTo(LaborRateValue::class, 'labor_rate_value_id');
     }
 
     #[Override]
@@ -93,6 +100,20 @@ class CamoActivity extends Model implements HasMedia
         return $this->hasOne(SpecialRate::class, 'camo_activity_id');
     }
 
+    protected function missingRateValue(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => HasRateValue::hasRate($this->labor_rate_id)
+        );
+    }
+
+    protected function missingRateName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => HasRateValue::getRate($this->labor_rate_id)
+        );
+    }
+
     #[Override]
     protected function casts(): array
     {
@@ -100,6 +121,7 @@ class CamoActivity extends Model implements HasMedia
             'id' => 'integer',
             'camo_id' => 'integer',
             'labor_rate_id' => 'integer',
+            'labor_rate_value_id',
             'required' => 'boolean',
             'date' => 'datetime:Y-m-d',
             'name' => 'string',

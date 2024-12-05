@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Camo::class)->constrained();
             $table->unsignedBigInteger('labor_rate_id');
+            $table->unsignedBigInteger('labor_rate_value_id');
             $table->boolean('required')->default(false);
             $table->date('date')->nullable();
             $table->string('name');

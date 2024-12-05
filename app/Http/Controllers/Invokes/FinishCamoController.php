@@ -19,26 +19,50 @@ class FinishCamoController extends Controller
         $camo->load('camoActivity');
 
         // Inicializamos las banderas
-        $hasCanceled = false; // Bandera para verificar si hay una actividad 'canceled'
-        $allApprovedAndCompleted = true; // Asumimos que todas las actividades están aprobadas y completadas
+        $hasCanceled = false; // Bandera para actividades 'canceled'
+        $allApprovedCompleted = true; // Bandera para verificar si todas las actividades aprobadas están completadas
+        $onlyCanceled = true; // Bandera para verificar si todas las actividades son 'canceled'
 
         foreach ($camo->camoActivity as $activity) {
             // Verificar si la actividad ha sido cancelada
             if ($activity->approval_status === ApprovalStatus::canceled) {
-                $hasCanceled = true;
-            }
+                $hasCanceled = true; // Hay al menos una actividad cancelada
+            } else {
+                $onlyCanceled = false; // Si encontramos una actividad que no está cancelada, esta bandera se pone en false
 
-            // Si alguna actividad no cumple con las condiciones, ajustamos la bandera
-            if ($activity->approval_status !== ApprovalStatus::approved || $activity->status !== ActivityStatus::completed) {
-                $allApprovedAndCompleted = false; // Al menos una actividad no cumple las condiciones requeridas
+                // Si la actividad está aprobada, verificar si está completada
+                if ($activity->approval_status === ApprovalStatus::approved) {
+                    if ($activity->status !== ActivityStatus::completed) {
+                        $allApprovedCompleted = false; // Al menos una actividad aprobada no está completada
+                    }
+                }
             }
         }
 
-        // Podemos finalizar el camo si:
-        // 1. Hay al menos una actividad cancelada o
-        // 2. Todas las actividades están aprobadas y completadas
+        // Verificación de las condiciones
+        $canFinishCamo = false;
+
+        // 1. Si todas las actividades están con approval_status 'canceled'
+        if ($onlyCanceled) {
+            $canFinishCamo = true;
+        }
+
+        // 2. Si hay actividades 'canceled' y hay actividades aprobadas y completadas
+        if ($hasCanceled && $allApprovedCompleted) {
+            $canFinishCamo = true;
+        }
+
+        // 3. Si hay actividades 'canceled' y también hay actividades aprobadas y no todas completadas, no se puede finalizar
+        if ($hasCanceled && !$allApprovedCompleted) {
+            $canFinishCamo = false; // Dejar esto implícito
+        }
+
+        // 4. Todas las actividades aprobadas están completadas
+        // 5. Y el camo no tiene un finish_date
+        $canFinishCamo = $canFinishCamo && !$camo->finish_date;
+
         return response()->json([
-            'result' => ($hasCanceled || $allApprovedAndCompleted) && ! $camo->finish_date,
+            'result' => $canFinishCamo,
         ], 200);
     }
 }

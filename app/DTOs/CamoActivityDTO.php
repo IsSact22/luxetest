@@ -13,6 +13,8 @@ class CamoActivityDTO
 
     public int $laborRateId;
 
+    public int $laborRateValueId;
+
     public bool $required;
 
     public string $date;
@@ -45,6 +47,7 @@ class CamoActivityDTO
         ?int $id,
         int $camoId,
         int $laborRateId,
+        int $laborRateValueId,
         bool $required,
         string $date,
         string $name,
@@ -63,6 +66,7 @@ class CamoActivityDTO
         $this->id = $id;
         $this->camoId = $camoId;
         $this->laborRateId = $laborRateId;
+        $this->laborRateValueId = $laborRateValueId;
         $this->required = $required;
         $this->date = $date;
         $this->name = $name;

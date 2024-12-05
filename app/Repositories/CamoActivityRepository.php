@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Override;
 use Throwable;
@@ -60,8 +61,57 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
     public function newModel(array $data): CamoActivity
     {
         try {
-            return $this->model::query()->create($data);
-        } catch (Exception $e) {
+            $status = ActivityStatus::from($data['status']);
+            $approvalStatus = ApprovalStatus::from($data['approval_status']);
+            $dto = new CamoActivityDTO(
+                null,
+                $data['camo_id'],
+                $data['labor_rate_id'],
+                $data['labor_rate_value_id'],
+                $data['required'],
+                $data['date'],
+                $data['name'],
+                $data['description'] ?? null,
+                $data['estimate_time'],
+                $data['started_at'] ?? null,
+                $data['completed_at'] ?? null,
+                $status,
+                $data['comments'] ?? null,
+                (float) $data['labor_mount'],
+                $data['material_mount'] ?? 0,
+                $data['material_information'] ?? null,
+                $data['awr'] ?? null,
+                $approvalStatus
+            );
+
+            //dd($dto);
+            return DB::transaction(function () use ($dto) {
+                return $this->model::query()->create([
+                    'camo_id' => $dto->camoId,
+                    'labor_rate_id' => $dto->laborRateId,
+                    'labor_rate_value_id' => $dto->laborRateValueId,
+                    'required' => $dto->required,
+                    'date' => $dto->date,
+                    'name' => $dto->name,
+                    'description' => $dto->description,
+                    'estimate_time' => $dto->estimateTime,
+                    'started_at' => $dto->startedAt,
+                    'completed_at' => $dto->completedAt,
+                    'status' => $dto->status->value, // Asumiendo que status es un enum
+                    'comments' => $dto->comments,
+                    'labor_mount' => $dto->laborMount,
+                    'material_mount' => $dto->materialMount,
+                    'material_information' => $dto->materialInformation,
+                    'awr' => $dto->awr,
+                    'approval_status' => $dto->approvalStatus->value,
+                ]);
+            });
+
+        } catch (Exception|Throwable $e) {
+            Log::error('Error al crear la camo activity', [
+                'exception' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
             throw new RepositoryException($e->getMessage(), 500, $e->getCode());
         }
     }
@@ -72,7 +122,6 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
     #[Override]
     public function updateModel(array $data, int $id): ?CamoActivity
     {
-        //dd($data);
         try {
             $camoActivity = $this->model->findOrFail($id);
 
@@ -83,6 +132,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 $id,
                 $data['camo_id'],
                 $data['labor_rate_id'],
+                $data['labor_rate_value_id'],
                 $data['required'],
                 $data['date'],
                 $data['name'],
@@ -103,6 +153,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 'id' => $id,
                 'camo_id' => $dto->camoId,
                 'labor_rate_id' => $dto->laborRateId,
+                'labor_rate_value_id' => $dto->laborRateValueId,
                 'required' => $dto->required,
                 'date' => $dto->date,
                 'name' => $dto->name,

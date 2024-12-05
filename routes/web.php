@@ -54,8 +54,10 @@ Route::middleware('auth')->group(static function ($route) {
     $route->get('labor-rates/select', \App\Http\Controllers\Invokes\LaborRateController::class)->name('labor-rates.select');
     $route->get('camos/{id?}/select', \App\Http\Controllers\Invokes\CamoController::class)->name('camos.select');
     $route->get('camos/activities', ActivityController::class)->name('camos.activities');
+
     $route->match(['put', 'patch'], 'camo_activities/{id}/handle', HandleActivityController::class)
         ->name('camo_activities.handle');
+
     $route->post('camo_activities/add', AddActivityController::class)
         ->name('camo_activities.add');
     $route->post('set-owner-aircraft', SetOwnerAircraftController::class)->name('set-owner-aircraft');
@@ -68,13 +70,19 @@ Route::middleware('auth')->group(static function ($route) {
     $route->post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     $route->resource('users', UserController::class);
     // Profile
-    $route->get('profile', static fn (\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)->edit($request))->name('profile.edit');
-    $route->patch('profile', static fn (ProfileUpdateRequest $request): RedirectResponse => (new ProfileController)->update($request))->name('profile.update');
-    $route->delete('profile', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new ProfileController)->destroy($request))->name('profile.destroy');
+    $route->get('profile', static fn (\Illuminate\Http\Request $request): \Inertia\Response => (new ProfileController)
+        ->edit($request))->name('profile.edit');
+    $route->patch('profile', static fn (ProfileUpdateRequest $request): RedirectResponse => (new ProfileController)
+        ->update($request))->name('profile.update');
+    $route->delete('profile', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new ProfileController)
+        ->destroy($request))->name('profile.destroy');
     // Admin Rate
     $route->resource('admin-rates', AdminRateController::class);
     // Labor Rates
-    $route->resource('labor-rates', LaborRateController::class);
+    $route->resource('labor-rates', LaborRateController::class)->except('edit');
+    $route->get('labora-rates/{labor_rate}/edit', [LaborRateController::class, 'edit'])
+        ->middleware('capture.labor.rate')
+        ->name('labor-rates.edit');
     // Engine Types
     $route->resource('engine-types', EngineTypeController::class);
     // Model Aircraft

@@ -82,10 +82,18 @@ class CamoController extends Controller
             $camo = $this->camo->newModel($payload);
 
             return InertiaResponse::content('CamoActivities/Create', ['camo' => $camo]);
-        } catch (AuthorizationException) {
+        } catch (AuthorizationException $e) {
+            Log::error('Error de autorización', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
-            Log::error($e->getMessage());
+            Log::error('controller error al crear camo', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
 
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }

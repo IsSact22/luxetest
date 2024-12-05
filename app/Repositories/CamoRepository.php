@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Contracts\CamoRepositoryInterface;
+use App\DTOs\CamoDTO;
 use App\Exceptions\RepositoryException;
 use App\Models\Camo;
 use Exception;
@@ -11,13 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Override;
+use Throwable;
 
 class CamoRepository implements CamoRepositoryInterface
 {
-    public function __construct(protected ?Camo $model)
-    {
-    }
+    public function __construct(protected ?Camo $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -44,17 +46,17 @@ class CamoRepository implements CamoRepositoryInterface
                 });
             })
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('customer', 'like', $search . '%')
-                    ->orWhere('contract', 'like', $search . '%')
-                    ->orWhere('location', 'like', $search . '%')
+                $query->where('customer', 'like', $search.'%')
+                    ->orWhere('contract', 'like', $search.'%')
+                    ->orWhere('location', 'like', $search.'%')
                     ->orWhereHas('aircraft', static function (Builder $query) use ($search) {
-                        $query->where('register', 'like', $search . '%');
+                        $query->where('register', 'like', $search.'%');
                     })
                     ->orWhereHas('owner', static function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search . '%');
+                        $query->where('name', 'like', $search.'%');
                     })
                     ->orWhereHas('cam', static function (Builder $query) use ($search) {
-                        $query->where('name', 'like', $search . '%');
+                        $query->where('name', 'like', $search.'%');
                     });
             })
             ->paginate($perPage)
@@ -81,8 +83,39 @@ class CamoRepository implements CamoRepositoryInterface
     public function newModel(array $data): ?Model
     {
         try {
-            return $this->model::query()->create($data);
-        } catch (Exception $e) {
+            $dto = new CamoDTO(
+                $data['customer'],
+                $data['owner_id'],
+                $data['contract'],
+                $data['cam_id'],
+                $data['aircraft_id'],
+                $data['description'],
+                $data['start_date'],
+                $data['estimate_finish_date'],
+                $data['finish_date'],
+                $data['location'],
+            );
+
+            return DB::transaction(function () use ($dto) {
+                return $this->model::query()->create([
+                    'customer' => $dto->customer,
+                    'owner_id' => $dto->ownerId,
+                    'contract' => $dto->contract,
+                    'cam_id' => $dto->camId,
+                    'aircraft_id' => $dto->aircraftId,
+                    'description' => $dto->description,
+                    'start_date' => $dto->startDate,
+                    'estimate_finish_date' => $dto->estimatedFinishDate,
+                    'finish_date' => $dto->finishDate,
+                    'location' => $dto->location,
+                ]);
+            });
+
+        } catch (Throwable $e) {
+            Log::error('Error al crear CAMO', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
             throw new RepositoryException($e->getMessage(), 500, $e->getCode());
         }
     }

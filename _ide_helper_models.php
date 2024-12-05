@@ -171,13 +171,13 @@ namespace App\Models{
  * @property numeric $estimate_time
  * @property \Illuminate\Support\Carbon|null $started_at
  * @property \Illuminate\Support\Carbon|null $completed_at
- * @property string $status
+ * @property \App\ActivityStatus $status
  * @property string|null $comments
  * @property numeric|null $labor_mount
  * @property numeric|null $material_mount
  * @property string|null $material_information
  * @property string|null $awr
- * @property string|null $approval_status
+ * @property \App\ApprovalStatus|null $approval_status
  * @property int $priority
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -428,6 +428,7 @@ namespace App\Models{
  * @property bool $disabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $crew
  * @property-read int|null $crew_count
  * @property-read mixed $is_admin
@@ -449,10 +450,12 @@ namespace App\Models{
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User permission($permissions, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User role($roles, $guard = null, $without = false)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDisabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
@@ -462,8 +465,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutTrashed()
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

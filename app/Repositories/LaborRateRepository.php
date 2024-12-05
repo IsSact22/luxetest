@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\LaborRateRepositoryInterface;
 use App\Exceptions\RepositoryException;
+use App\Helpers\RecalculateRateActivity;
 use App\Models\LaborRate;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Override;
 use Throwable;
 
@@ -89,6 +91,13 @@ class LaborRateRepository implements LaborRateRepositoryInterface
                         'date' => now()->toDateString(),
                         'amount' => $amount,
                     ]);
+                    if (session()->has('camo_activity_id')) {
+                        $camoActivityId = session('camo_activity_id');
+                        $hasCalculation = RecalculateRateActivity::calculate($camoActivityId, $laborRate);
+                        if ($hasCalculation) {
+                            Log::info('se recalculo la tarifa de la actividad');
+                        }
+                    }
                 }
             });
 
