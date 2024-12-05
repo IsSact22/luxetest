@@ -3,7 +3,11 @@ import { useForm } from "laravel-precognition-vue-inertia";
 import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { route } from "ziggy-js";
+import { router } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const props = defineProps({
     brandAircraft: {
         type: Object,
@@ -19,18 +23,23 @@ const form = useForm(method, url, {
 const submit = () => {
     form.submit({
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            toast.success("Marca creada exitosamente");
+            router.get(route("brand-aircrafts.index"));
+        },
     });
 };
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("brand-aircrafts.index"));
 };
 </script>
 <template>
     <form @submit.prevent="submit">
         <div>
-            <label class="block" for="name">Name</label>
+            <label class="block" for="name">Nombre</label>
             <input
                 id="name"
                 v-model="form.name"
@@ -45,9 +54,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Save
+                >Guardar
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>

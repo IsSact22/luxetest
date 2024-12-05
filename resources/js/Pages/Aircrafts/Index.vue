@@ -1,11 +1,42 @@
 <script setup>
-import { Head, Link, router, useForm } from "@inertiajs/vue3";
+import { Head, router, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import { onMounted, ref } from "vue";
 import { useToast } from "vue-toastification";
 import _ from "lodash";
+import Modal from "@/Components/Modal.vue";
+import AircraftForm from "@/Pages/Aircrafts/Partials/AircraftForm.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+
+/*confirm*/
+const confirmDialog = ref(null);
+const selectedId = ref(null);
+const handleAction = () => {
+    // Aquí va la lógica de la acción que deseas confirmar
+    if (selectedId.value) {
+        form.delete(route("aircrafts.destroy", selectedId.value), {
+            preserveState: true,
+            preserveScroll: true, // Opcional: Mantiene la posición del scroll
+            onSuccess: () => {
+                selectedId.value = null; // Limpia el ID seleccionado
+                toast.success("Registro eliminado!");
+            },
+        });
+    }
+};
+const showConfirmation = (id) => {
+    console.log("show confirmation: " + id);
+    confirmDialog.value.show(); // Muestra el diálogo de confirmación
+};
+const destroy = (id) => {
+    selectedId.value = id;
+    showConfirmation(); // Muestra el diálogo y guarda el ID del registro
+};
+/*confirm*/
 
 const toast = useToast();
 const props = defineProps({
@@ -14,6 +45,16 @@ const props = defineProps({
         default: () => ({}),
     },
 });
+const brandAircrafts = ref(false);
+const fetchBrandAircraft = async () => {
+    try {
+        const response = await axios.get(route("brand-aircrafts.select"));
+        brandAircrafts.value = response.data.length > 0;
+    } catch (e) {
+        console.error(e);
+    }
+};
+onMounted(fetchBrandAircraft);
 const owners = ref(null);
 const getOwners = async () => {
     try {
@@ -24,18 +65,18 @@ const getOwners = async () => {
     }
 };
 onMounted(getOwners);
-const showModal = ref(false);
+const showModalOwner = ref(false);
 
 const ownerForm = useForm({
     owner_id: null,
     aircraft_id: null,
 });
-const openModal = (id) => {
-    showModal.value = true;
+const openModalOwner = (id) => {
+    showModalOwner.value = true;
     ownerForm.aircraft_id = id;
 };
-const closeModal = () => {
-    showModal.value = false;
+const closeModalOwner = () => {
+    showModalOwner.value = false;
     ownerForm.reset();
 };
 
@@ -47,7 +88,7 @@ const submit = async () => {
         );
         if (response.status === 201) {
             toast.success(response.data.message);
-            closeModal();
+            closeModalOwner();
             router.get(route("aircrafts.index"));
         }
     } catch (e) {
@@ -61,15 +102,38 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("aircrafts.index"), { preserveState: true });
 }, 200);
+
+const showModal = ref(false);
+const openModal = () => {
+    if (!brandAircrafts.value) {
+        toast.info("No hay marcas registradas");
+        setTimeout(() => {
+            router.get(route("brand-aircrafts.create"));
+        }, 1000);
+    } else {
+        showModal.value = true;
+    }
+};
+
+const selected = ref(null);
+const handleSelected = (object) => {
+    selected.value = object;
+    openModal();
+};
+
+const closeModal = () => {
+    selected.value = null;
+    showModal.value = false;
+};
 </script>
 <template>
-    <Head title="Aircrafts" />
+    <Head title="Avión" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Aircraft</h2>
+            <h2>Avión</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
-            <div class="my-4 border rounded-md p-4">
+            <div class="my-4 p-4">
                 <form
                     class="my-2 flex flex-row justify-items-center items-center space-x-7"
                 >
@@ -79,25 +143,97 @@ const fireSearch = _.throttle(function () {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="search"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
                     </div>
-                    <Link :href="route('aircrafts.create')" class="btn-primary">
-                        <span class="ml-1">New Aircraft</span>
-                    </Link>
+                    <button
+                        class="btn-primary"
+                        type="button"
+                        @click="openModal"
+                    >
+                        <span class="ml-1">{{ $t("New Plane") }}</span>
+                    </button>
                 </form>
-                <table class="table-auto">
+
+                <!-- Modal -->
+                <Modal
+                    :show="showModal"
+                    closeable
+                    maxWidth="md"
+                    @close="closeModal"
+                >
+                    <template #default>
+                        <div class="float-right">
+                            <!--                            <button
+                                                            class="mt-2 mr-2 px-1 py-0.5"
+                                                            @click="closeModal"
+                                                        >
+                                                            <svg
+                                                                class="size-6 stroke-red-700 hover:fill-red-100"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                stroke-width="1.5"
+                                                                viewBox="0 0 24 24"
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                            >
+                                                                <path
+                                                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                />
+                                                            </svg>
+                                                        </button>-->
+                        </div>
+                        <div class="p-4">
+                            <div
+                                v-if="!selected"
+                                class="w-full flex flex-col justify-items-center items-center"
+                            >
+                                <svg
+                                    class="fill-yellow-500"
+                                    fill="none"
+                                    height="72"
+                                    viewBox="0 0 61 72"
+                                    width="61"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <g id="Iconos/ creacion de nuevo aircraft">
+                                        <path
+                                            id="Vector"
+                                            d="M42.875 48C42.875 48.7957 42.5589 49.5587 41.9963 50.1213C41.4337 50.684 40.6706 51 39.875 51H33.875V57C33.875 57.7957 33.5589 58.5587 32.9963 59.1213C32.4337 59.6839 31.6706 60 30.875 60C30.0793 60 29.3163 59.6839 28.7537 59.1213C28.191 58.5587 27.875 57.7957 27.875 57V51H21.875C21.0793 51 20.3163 50.684 19.7537 50.1213C19.1911 49.5587 18.875 48.7957 18.875 48C18.875 47.2044 19.1911 46.4413 19.7537 45.8787C20.3163 45.3161 21.0793 45 21.875 45H27.875V39C27.875 38.2044 28.191 37.4413 28.7537 36.8787C29.3163 36.3161 30.0793 36 30.875 36C31.6706 36 32.4337 36.3161 32.9963 36.8787C33.5589 37.4413 33.875 38.2044 33.875 39V45H39.875C40.6706 45 41.4337 45.3161 41.9963 45.8787C42.5589 46.4413 42.875 47.2044 42.875 48ZM60.8749 31.455V57C60.8702 60.9768 59.2883 64.7893 56.4763 67.6013C53.6643 70.4134 49.8517 71.9952 45.875 72H15.875C11.8982 71.9952 8.08567 70.4134 5.27366 67.6013C2.46164 64.7893 0.879764 60.9768 0.875 57V15.0001C0.879764 11.0233 2.46164 7.21074 5.27366 4.39872C8.08567 1.58671 11.8982 0.00483271 15.875 6.9146e-05H29.42C32.1788 -0.00703162 34.9117 0.532832 37.4606 1.58845C40.0096 2.64406 42.3239 4.19448 44.27 6.15006L54.7219 16.6081C56.6787 18.5528 58.23 20.8664 59.2862 23.415C60.3424 25.9635 60.8824 28.6963 60.8749 31.455ZM40.028 10.3921C39.0838 9.47754 38.0238 8.69083 36.875 8.05206V21C36.875 21.7957 37.191 22.5588 37.7536 23.1214C38.3163 23.684 39.0793 24 39.875 24H52.823C52.1838 22.8516 51.396 21.7925 50.48 20.85L40.028 10.3921ZM54.8749 31.455C54.8749 30.96 54.7789 30.486 54.7339 30H39.875C37.488 30 35.1988 29.0518 33.511 27.364C31.8232 25.6762 30.875 23.387 30.875 21V6.14106C30.389 6.09606 29.912 6.00006 29.42 6.00006H15.875C13.488 6.00006 11.1989 6.94827 9.51103 8.6361C7.8232 10.3239 6.87499 12.6131 6.87499 15.0001V57C6.87499 59.387 7.8232 61.6761 9.51103 63.364C11.1989 65.0518 13.488 66 15.875 66H45.875C48.2619 66 50.5511 65.0518 52.2389 63.364C53.9267 61.6761 54.8749 59.387 54.8749 57V31.455Z"
+                                            opacity="0.72"
+                                        />
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <h2
+                                class="text-2xl font-bold w-full text-center mt-12"
+                            >
+                                <span v-if="selected">Editar Avión</span>
+                                <span v-else>Nuevo Avión</span>
+                            </h2>
+                            <AircraftForm
+                                :aircraft="selected"
+                                @close="closeModal"
+                            />
+                        </div>
+                    </template>
+                </Modal>
+                <!-- Modal -->
+
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Aircraft Model</th>
-                            <th>Register</th>
-                            <th>Owner</th>
-                            <th>Engine Type</th>
-                            <th>Serial</th>
-                            <th>Actions</th>
+                            <th>{{ $t("Aircraft Model") }}</th>
+                            <th>{{ $t("Registration") }}</th>
+                            <th>{{ $t("Owner") }}</th>
+                            <th>{{ $t("Engine Type") }}</th>
+                            <th>{{ $t("Serial") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,9 +253,10 @@ const fireSearch = _.throttle(function () {
                             </td>
                             <td class="uppercase">{{ item.serial }}</td>
                             <td class="col-actions">
-                                <Link
-                                    :href="route('aircrafts.edit', item.id)"
+                                <button
                                     class="btn-edit"
+                                    type="button"
+                                    @click="handleSelected(item)"
                                 >
                                     <span>
                                         <svg
@@ -137,12 +274,12 @@ const fireSearch = _.throttle(function () {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                                 <button
                                     v-if="item.owner.length === 0"
                                     class="btn-edit"
                                     title="Set Owner"
-                                    @click="openModal(item.id)"
+                                    @click="openModalOwner(item.id)"
                                 >
                                     <span>
                                         <svg
@@ -162,7 +299,10 @@ const fireSearch = _.throttle(function () {
                                     </span>
                                 </button>
 
-                                <Link class="btn-delete">
+                                <button
+                                    class="btn-delete"
+                                    @click="destroy(item.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"
@@ -179,7 +319,7 @@ const fireSearch = _.throttle(function () {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -194,36 +334,36 @@ const fireSearch = _.throttle(function () {
             </div>
             <!-- Modal -->
             <div
-                v-if="showModal"
-                class="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4"
+                v-if="showModalOwner"
+                class="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full"
             >
                 <div
-                    class="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-md"
+                    class="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-md py-7"
                 >
-                    <div class="flex justify-end p-2">
-                        <button
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                            type="button"
-                            @click="closeModal"
-                        >
-                            <svg
-                                class="w-5 h-5"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    clip-rule="evenodd"
-                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                    fill-rule="evenodd"
-                                ></path>
-                            </svg>
-                        </button>
-                    </div>
+                    <!--                    <div class="flex justify-end p-2">
+                                                                    <button
+                                                                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                                                                        type="button"
+                                                                        @click="closeModalOwner"
+                                                                    >
+                                                                        <svg
+                                                                            class="w-5 h-5"
+                                                                            fill="currentColor"
+                                                                            viewBox="0 0 20 20"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                            <path
+                                                                                clip-rule="evenodd"
+                                                                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                                                fill-rule="evenodd"
+                                                                            ></path>
+                                                                        </svg>
+                                                                    </button>
+                                        </div>-->
 
-                    <div class="p-6 pt-0 text-center">
+                    <div class="px-4 py-7 pt-0 text-center">
                         <svg
-                            class="w-20 h-20 text-red-600 mx-auto"
+                            class="w-20 h-20 stroke-yellow-500 mx-auto"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -236,47 +376,73 @@ const fireSearch = _.throttle(function () {
                                 stroke-width="2"
                             ></path>
                         </svg>
-                        <div class="flex flex-col mb-4">
+                        <div class="flex flex-col">
                             <h3
-                                class="text-xl font-normal text-gray-500 mt-5 mb-6"
+                                class="text-2xl text-gray-800 font-medium mt-5 mb-6"
                             >
-                                Set Aircraft Owner.
+                                Asignar propietario.
                             </h3>
                             <form @submit.prevent="submit">
                                 <div
                                     class="flex flex-col justify-items-center items-center space-x-1"
                                 >
-                                    <label class="block" for="owner_id"
-                                        >Owner</label
-                                    >
-                                    <select
-                                        id="owner_id"
-                                        v-model="ownerForm.owner_id"
-                                        class="rounded-md border-gray-300"
-                                        name="owner_id"
-                                    >
-                                        <option :value="null">Select</option>
-                                        <option
-                                            v-for="(item, idx) in owners"
-                                            :key="idx"
-                                            :value="item.id"
+                                    <div class="w-80 mb-12">
+                                        <label
+                                            class="block leading-loose text-left"
+                                            for="owner_id"
+                                            >Seleccionar Cliente</label
                                         >
-                                            {{ item.name }}
-                                        </option>
-                                    </select>
+                                        <select
+                                            id="owner_id"
+                                            v-model="ownerForm.owner_id"
+                                            class="w-full rounded-md border-gray-300"
+                                            name="owner_id"
+                                        >
+                                            <option :value="null">
+                                                Selección
+                                            </option>
+                                            <option
+                                                v-for="(item, idx) in owners"
+                                                :key="idx"
+                                                :value="item.id"
+                                            >
+                                                {{ item.name }}
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </form>
                         </div>
-                        <button class="btn-submit mx-4" @click="submit">
-                            Save
-                        </button>
-                        <button class="btn-cancel mx-4" @click="closeModal">
-                            No, cancel
-                        </button>
+                        <div class="flex justify-around">
+                            <SecondaryButton
+                                class="btn-secondary"
+                                type="button"
+                                @click="closeModalOwner"
+                            >
+                                Cancelar
+                            </SecondaryButton>
+                            <PrimaryButton
+                                class="btn-primary"
+                                type="button"
+                                @click="submit"
+                            >
+                                Guardar
+                            </PrimaryButton>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- Modal -->
         </div>
+        <!-- Componente de Confirmación -->
+        <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este elemento?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>

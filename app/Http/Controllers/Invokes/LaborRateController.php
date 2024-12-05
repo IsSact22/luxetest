@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\LaborRate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class LaborRateController extends Controller
 {
@@ -14,9 +15,18 @@ class LaborRateController extends Controller
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $laborRate = LaborRate::query()
-            ->get();
+        $laborRates = LaborRate::all()->map(function ($rate) {
+            return [
+                'id' => $rate->id,
+                'label' => $rate->name,
+                'type' => $rate->rateable_type,
+                'rateable_id' => $rate->rateable_id,
+                'code' => $rate->code,
+                'labor_rate_value_id' => $rate->values()->latest()->first()->id,
+                'amount' => $rate->amount,
+            ];
+        });
 
-        return response()->json($laborRate, 200);
+        return response()->json($laborRates, Response::HTTP_OK);
     }
 }

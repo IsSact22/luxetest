@@ -4,7 +4,37 @@ import { Head, Link, useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+import { ref } from "vue";
+import { useToast } from "vue-toastification";
 
+/*confirm*/
+const confirmDialog = ref(null);
+const selectedId = ref(null);
+const handleAction = () => {
+    // Aquí va la lógica de la acción que deseas confirmar
+    if (selectedId.value) {
+        form.delete(route("aircrafts.destroy", selectedId.value), {
+            preserveState: true,
+            preserveScroll: true, // Opcional: Mantiene la posición del scroll
+            onSuccess: () => {
+                selectedId.value = null; // Limpia el ID seleccionado
+                toast.success("Registro eliminado!");
+            },
+        });
+    }
+};
+const showConfirmation = (id) => {
+    console.log("show confirmation: " + id);
+    confirmDialog.value.show(); // Muestra el diálogo de confirmación
+};
+const destroy = (id) => {
+    selectedId.value = id;
+    showConfirmation(); // Muestra el diálogo y guarda el ID del registro
+};
+/*confirm*/
+
+const toast = useToast();
 const props = defineProps({
     resource: {
         type: Object,
@@ -19,15 +49,15 @@ const fireSearch = _.throttle(function () {
 }, 200);
 </script>
 <template>
-    <Head title="Labor Rates" />
+    <Head title="Tarifas laborales" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Labor Rates</h2>
+            <h2>Tarifas laborales</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
-            <div class="my-4 border rounded-md p-4">
+            <div class="my-4 p-4">
                 <form
-                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                 >
                     <div>
                         <input
@@ -35,7 +65,7 @@ const fireSearch = _.throttle(function () {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="search"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -43,18 +73,18 @@ const fireSearch = _.throttle(function () {
                     <Link
                         :href="route('labor-rates.create')"
                         class="btn-primary"
-                        >New Rate
+                        >Nueva Tarifa
                     </Link>
                 </form>
-                <table class="table-auto">
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Code</th>
-                            <th>RateableS</th>
-                            <th>Name</th>
-                            <th>Mount</th>
-                            <th>Actions</th>
+                            <th>Código</th>
+                            <th>Sujetos a tasa</th>
+                            <th>Nombre</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,7 +93,7 @@ const fireSearch = _.throttle(function () {
                             <td>{{ item.code }}</td>
                             <td class="uppercase">{{ item.rateable.name }}</td>
                             <td>{{ item.name }}</td>
-                            <td>{{ item.mount }}</td>
+                            <td class="text-right">{{ item.amount }}</td>
                             <td class="col-actions">
                                 <Link
                                     :href="route('labor-rates.edit', item.id)"
@@ -86,7 +116,10 @@ const fireSearch = _.throttle(function () {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link class="btn-delete">
+                                <button
+                                    class="btn-delete"
+                                    @click="destroy(item.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"
@@ -103,7 +136,7 @@ const fireSearch = _.throttle(function () {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -117,5 +150,15 @@ const fireSearch = _.throttle(function () {
                 </table>
             </div>
         </div>
+        <!-- Componente de Confirmación -->
+        <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este elemento?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>

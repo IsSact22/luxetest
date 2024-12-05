@@ -39,3 +39,7 @@
 .btn-primary {
     @apply flex w-auto h-10 px-4 py-2 justify-between items-center flex-shrink-0 rounded-full text-black-800 font-medium font-poppins text-base bg-yellow-500;
 }
+
+.btn-secondary {
+    @apply flex w-auto h-10 px-4 py-2 justify-between items-center flex-shrink-0 rounded-full text-black-800 font-medium font-poppins text-base bg-yellow-500;
+}

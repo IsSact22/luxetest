@@ -2,9 +2,14 @@
 
 namespace App\Models;
 
+use App\ActivityStatus;
+use App\ApprovalStatus;
+use App\Helpers\HasRateValue;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Override;
 use Spatie\Image\Enums\Fit;
@@ -29,6 +34,7 @@ class CamoActivity extends Model implements HasMedia
     protected $fillable = [
         'camo_id',
         'labor_rate_id',
+        'labor_rate_value_id',
         'required',
         'date',
         'name',
@@ -46,7 +52,7 @@ class CamoActivity extends Model implements HasMedia
         'priority',
     ];
 
-    protected $appends = ['images'];
+    protected $appends = ['images', 'get_special_rate', 'missing_rate_value', 'missing_rate_name'];
 
     public function camo(): BelongsTo
     {
@@ -55,7 +61,12 @@ class CamoActivity extends Model implements HasMedia
 
     public function laborRate(): BelongsTo
     {
-        return $this->belongsTo(LaborRate::class, 'labor_rate_id');
+        return $this->belongsTo(LaborRate::class, 'labor_rate_id')->with('amount');
+    }
+
+    public function laborRateValue(): BelongsTo
+    {
+        return $this->belongsTo(LaborRateValue::class, 'labor_rate_value_id');
     }
 
     #[Override]
@@ -77,6 +88,32 @@ class CamoActivity extends Model implements HasMedia
         return $this->getMedia($this->mediaCollectionName);
     }
 
+    protected function getSpecialRate(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->specialRate()->latest()->first()
+        );
+    }
+
+    public function specialRate(): HasOne
+    {
+        return $this->hasOne(SpecialRate::class, 'camo_activity_id');
+    }
+
+    protected function missingRateValue(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => HasRateValue::hasRate($this->labor_rate_id)
+        );
+    }
+
+    protected function missingRateName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => HasRateValue::getRate($this->labor_rate_id)
+        );
+    }
+
     #[Override]
     protected function casts(): array
     {
@@ -84,6 +121,7 @@ class CamoActivity extends Model implements HasMedia
             'id' => 'integer',
             'camo_id' => 'integer',
             'labor_rate_id' => 'integer',
+            'labor_rate_value_id',
             'required' => 'boolean',
             'date' => 'datetime:Y-m-d',
             'name' => 'string',
@@ -91,13 +129,13 @@ class CamoActivity extends Model implements HasMedia
             'estimate_time' => 'decimal:2',
             'started_at' => 'datetime:Y-m-d H:i',
             'completed_at' => 'datetime:Y-m-d H:i',
-            'status' => 'string',
+            'status' => ActivityStatus::class,
             'comments' => 'string',
             'labor_mount' => 'decimal:2',
             'material_mount' => 'decimal:2',
             'material_information' => 'string',
             'awr' => 'string',
-            'approval_status' => 'string',
+            'approval_status' => ApprovalStatus::class,
             'priority' => 'integer',
             'created_at' => 'datetime:Y-m-d H:i',
             'updated_at' => 'datetime:Y-m-d H:i',

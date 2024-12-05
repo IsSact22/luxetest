@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', static function (Blueprint $table) {
@@ -18,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('owner_id')->nullable();
             $table->boolean('disabled')->default(false);
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('owner_id')->references('id')->on('users');
         });
     }

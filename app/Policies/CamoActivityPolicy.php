@@ -20,7 +20,7 @@ class CamoActivityPolicy
      */
     public function view(User $user, CamoActivity $camoActivity): bool
     {
-        if (($camoActivity->owner_id === $user->id || $camoActivity->owner_id === $user->owner_id) && $user->can('read-activity')) {
+        if ($camoActivity->camo->owner_id === $user->id && $user->can('read-activity')) {
             return true;
         }
 
@@ -40,7 +40,7 @@ class CamoActivityPolicy
      */
     public function update(User $user, CamoActivity $camoActivity): bool
     {
-        if (($camoActivity->owner_id === $user->id || $camoActivity->owner_id === $user->owner_id) && $user->can('read-activity')) {
+        if ($camoActivity->camo->owner_id === $user->id && $user->can('read-activity')) {
             return true;
         }
 

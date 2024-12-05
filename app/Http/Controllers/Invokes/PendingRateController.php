@@ -20,7 +20,12 @@ class PendingRateController extends Controller
             ->orderBy('camo_id', 'desc')
             ->whereHas('laborRate', function (Builder $query) {
                 $query->where('rateable_type', AdminRate::class)
-                    ->where('mount', 0);
+                    ->whereIn('id', function ($subQuery) {
+                        $subQuery->select('labor_rate_id')
+                            ->from('labor_rate_values')
+                            ->groupBy('labor_rate_id')
+                            ->havingRaw('ROUND(SUM(amount), 2) = 0');
+                    });
             })
             ->get();
 

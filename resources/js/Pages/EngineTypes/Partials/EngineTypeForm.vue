@@ -3,7 +3,12 @@ import { useForm } from "laravel-precognition-vue-inertia";
 import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
+import { useToast } from "vue-toastification";
+import { onMounted } from "vue";
 
+const toast = useToast();
 const props = defineProps({
     engineType: {
         type: Object,
@@ -16,24 +21,34 @@ const url = props.engineType
 const form = useForm(method, url, {
     name: props.engineType?.name ?? "",
 });
+
 const submit = () => {
     form.submit({
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            router.get(route("engine-types.index"));
+        },
     });
 };
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("engine-types.index"));
 };
+
+onMounted(() => {
+    console.log(props.engineType);
+});
 </script>
 <template>
     <form @submit.prevent="submit">
         <div>
-            <label class="block" for="name">Name</label>
+            <label class="block" for="name">Nombre</label>
             <input
                 id="name"
                 v-model="form.name"
+                :autocomplete="false"
                 class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm uppercase"
                 name="name"
                 type="text"
@@ -45,9 +60,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Save
+                >Guardar
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>

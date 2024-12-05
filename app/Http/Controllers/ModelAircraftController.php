@@ -72,7 +72,7 @@ class ModelAircraftController extends Controller
     {
         try {
             $this->authorize('create', ModelAircraft::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->modelAircraftRepository->newModelAircraft($payload);
 
             return to_route('model-aircrafts.index')->with('success', 'Model Aircraft has been created.');
@@ -138,7 +138,7 @@ class ModelAircraftController extends Controller
         try {
             $modelAircraft = $this->modelAircraftRepository->getById($id);
             $this->authorize('update', $modelAircraft);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->modelAircraftRepository->updateModelAircraft($payload, $id);
 
             return to_route('model-aircrafts.index')->with('success', 'Model Aircraft has been updated.');

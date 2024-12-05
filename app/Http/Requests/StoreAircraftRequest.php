@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Aircraft;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -23,14 +24,40 @@ class StoreAircraftRequest extends FormRequest
      */
     public function rules(): array
     {
+        $modelExists = Aircraft::onlyTrashed()
+            ->where('model_aircraft_id', $this->model_aircraft_id)
+            ->exists();
+
+        $registerExists = Aircraft::onlyTrashed()
+            ->where('register', $this->register)
+            ->exists();
+
+        $serialExists = Aircraft::onlyTrashed()
+            ->where('serial', $this->serial)
+            ->exists();
+
         return [
-            'model_aircraft_id' => ['required', 'integer', 'exists:aircrafts,id'],
-            'register' => [
-                ...$this->isPrecognitive() ?
-                    [Rule::unique('aircrafts', 'register')] :
-                    ['required', 'unique:aircrafts,register'],
+            'model_aircraft_id' => [
+                ...$modelExists ? [] : [
+                    ...$this->isPrecognitive() ?
+                        [Rule::unique('model_aircrafts', 'id')] :
+                        ['required', 'integer', 'exists:model_aircrafts,id']
+                ]
             ],
-            'serial' => ['required'],
+            'register' => [
+                ...$registerExists ? [] : [
+                    ...$this->isPrecognitive() ?
+                        [Rule::unique('aircrafts', 'register')] :
+                        ['required', 'unique:aircrafts,register'],
+                ],
+            ],
+            'serial' => [
+                ...$serialExists ? [] : [
+                    ...$this->isPrecognitive() ?
+                        [Rule::unique('aircrafts', 'serial')] :
+                        ['required', Rule::unique('aircrafts', 'serial')],
+                ],
+            ],
         ];
     }
 }

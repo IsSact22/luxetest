@@ -3,17 +3,18 @@
 namespace App\Repositories;
 
 use App\Contracts\EngineTypeRepositoryInterface;
+use App\Exceptions\RepositoryException;
 use App\Models\EngineType;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Override;
 
 class EngineTypeRepository implements EngineTypeRepositoryInterface
 {
-    public function __construct(protected EngineType $model)
-    {
-    }
+    public function __construct(protected EngineType $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -28,29 +29,64 @@ class EngineTypeRepository implements EngineTypeRepositoryInterface
             ->withQueryString();
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        try {
+            return $this->model::query()->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function newEngineType(array $data): ?Model
     {
-        return $this->model->create($data);
+        try {
+            return $this->model::query()->create($data);
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
+
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function updateEngineType(array $data, int $id): ?Model
     {
-        $this->model->findOrFail($id)->update($data);
+        try {
+            $this->model->findOrFail($id)->update($data);
 
-        return $this->model->fresh();
+            return $this->model->fresh();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
+
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function deleteEngineType(int $id): bool
     {
-        return $this->model->findOrFail($id)->delete();
+        try {
+            return $this->model->findOrFail($id)->delete();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
+
     }
 }

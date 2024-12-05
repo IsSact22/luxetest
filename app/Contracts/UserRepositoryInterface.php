@@ -23,4 +23,6 @@ interface UserRepositoryInterface
     public function updateModel(array $data, int $id): ?Model;
 
     public function deleteModel(int $id): bool;
+
+    public function restoreModel(int $id): bool;
 }

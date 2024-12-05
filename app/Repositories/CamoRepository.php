@@ -3,18 +3,23 @@
 namespace App\Repositories;
 
 use App\Contracts\CamoRepositoryInterface;
+use App\DTOs\CamoDTO;
+use App\Exceptions\RepositoryException;
 use App\Models\Camo;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Override;
+use Throwable;
 
 class CamoRepository implements CamoRepositoryInterface
 {
-    public function __construct(protected ?Camo $model)
-    {
-    }
+    public function __construct(protected ?Camo $model) {}
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -58,29 +63,92 @@ class CamoRepository implements CamoRepositoryInterface
             ->withQueryString();
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function getById(int $id): ?Model
     {
-        return $this->model->findOrFail($id);
+        try {
+            return $this->model::query()->findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function newModel(array $data): ?Model
     {
-        return $this->model->create($data);
+        try {
+            $dto = new CamoDTO(
+                $data['customer'],
+                $data['owner_id'],
+                $data['contract'],
+                $data['cam_id'],
+                $data['aircraft_id'],
+                $data['description'],
+                $data['start_date'],
+                $data['estimate_finish_date'],
+                $data['finish_date'],
+                $data['location'],
+            );
+
+            return DB::transaction(function () use ($dto) {
+                return $this->model::query()->create([
+                    'customer' => $dto->customer,
+                    'owner_id' => $dto->ownerId,
+                    'contract' => $dto->contract,
+                    'cam_id' => $dto->camId,
+                    'aircraft_id' => $dto->aircraftId,
+                    'description' => $dto->description,
+                    'start_date' => $dto->startDate,
+                    'estimate_finish_date' => $dto->estimatedFinishDate,
+                    'finish_date' => $dto->finishDate,
+                    'location' => $dto->location,
+                ]);
+            });
+
+        } catch (Throwable $e) {
+            Log::error('Error al crear CAMO', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function updateModel(array $data, int $id): ?Model
     {
-        $this->model->findOrFail($id)->update($data);
+        try {
+            $this->model->findOrFail($id)->update($data);
 
-        return $this->model->fresh();
+            return $this->model->fresh();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 
+    /**
+     * @throws RepositoryException
+     */
     #[Override]
     public function deleteModel(int $id): bool
     {
-        return $this->model->findOrFail($id)->delete();
+        try {
+            return $this->model->findOrFail($id)->delete();
+        } catch (ModelNotFoundException $e) {
+            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+        } catch (Exception $e) {
+            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+        }
     }
 }

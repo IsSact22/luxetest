@@ -25,7 +25,15 @@ const camoId = computed(() => props.resource[0].camo_id);
             </Link>
         </div>
         <div class="flex flex-col justify-items-center items-center py-12">
+            <div class="my-2">
+                <h2>Actividad {{ resource[0].id }}</h2>
+            </div>
             <MediaComponent :images="resource" class="my-2" />
+            <div>
+                <strong>Avión</strong>:
+                {{ resource[0].camo.aircraft.model_aircraft.name }} /
+                {{ resource[0].camo.aircraft.register }}
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

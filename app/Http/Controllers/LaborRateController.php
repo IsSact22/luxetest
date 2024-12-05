@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Contracts\LaborRateRepositoryInterface;
 use App\Helpers\InertiaResponse;
-use App\Http\Requests\StoreCamoRateRequest;
-use App\Http\Requests\UpdateCamoRateRequest;
+use App\Http\Requests\StoreLaborRateRequest;
+use App\Http\Requests\UpdateLaborRateRequest;
 use App\Http\Resources\LaborRateResource;
+use App\Models\CamoActivity;
 use App\Models\LaborRate;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -14,6 +15,7 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests as Precogni
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -39,14 +41,19 @@ class LaborRateController extends Controller
             $resource = LaborRateResource::collection($laborRates);
 
             return InertiaResponse::content('LaborRates/Index', ['resource' => $resource]);
-        } catch (AuthorizationException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (AuthorizationException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_UNAUTHORIZED,
+                'message' => $e->getMessage(),
+            ]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
             return Inertia::render('Errors/Error', [
                 'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
-                'description' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ]);
         }
 
@@ -61,32 +68,49 @@ class LaborRateController extends Controller
             $this->authorize('create', LaborRate::class);
 
             return InertiaResponse::content('LaborRates/Create');
-        } catch (AuthorizationException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (AuthorizationException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_UNAUTHORIZED,
+                'message' => $e->getMessage(),
+            ]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCamoRateRequest $request): Response|RedirectResponse
+    public function store(StoreLaborRateRequest $request): Response|RedirectResponse
     {
         try {
             $this->authorize('create', LaborRate::class);
             $payload = precognitive(static fn ($bail) => $request->validated());
+            //dd($payload);
             $this->laborRateRepository->newModel($payload);
 
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been created.');
-        } catch (AuthorizationException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
+        } catch (AuthorizationException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_UNAUTHORIZED,
+                'message' => $e->getMessage(),
+            ]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -101,14 +125,27 @@ class LaborRateController extends Controller
             $resource = new LaborRateResource($laborRate);
 
             return InertiaResponse::content('LaborRates/Show', ['resource' => $resource]);
-        } catch (AuthorizationException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (AuthorizationException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_UNAUTHORIZED,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -124,21 +161,34 @@ class LaborRateController extends Controller
             $resource = new LaborRateResource($laborRate);
 
             return InertiaResponse::content('LaborRates/Edit', ['resource' => $resource]);
-        } catch (AuthorizationException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+        } catch (AuthorizationException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_UNAUTHORIZED,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCamoRateRequest $request, int $id): Response|RedirectResponse
+    public function update(UpdateLaborRateRequest $request, int $id): Response|RedirectResponse
     {
         try {
             $laborRate = $this->laborRateRepository->getById($id);
@@ -146,15 +196,47 @@ class LaborRateController extends Controller
             $payload = precognitive(static fn ($bail) => $request->validated());
             $this->laborRateRepository->updateModel($payload, $id);
 
+            // Depuración: Verificar el valor de la variable de sesión
+            Log::info('Camo Activity ID in session: '.Session::get('camo_activity_id'));
+
+            // Verificación más explícita de la variable de sesión
+            $camoActivityId = Session::get('camo_activity_id');
+            if ($camoActivityId !== null) {
+                // Limpiar la variable de sesión
+                Session::forget('camo_activity_id');
+
+                Session::flash('success', 'La tarifa de la actividad se ha actualizado correctamente.');
+
+                // Buscar la actividad Camo
+                $camoActivity = CamoActivity::findOrFail($camoActivityId);
+                $camoId = $camoActivity->camo_id;
+
+                return to_route('camos.show', $camoId);
+            }
+
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been updated.');
-        } catch (AuthorizationException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
+
+        } catch (AuthorizationException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_UNAUTHORIZED,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -169,10 +251,16 @@ class LaborRateController extends Controller
             $this->laborRateRepository->deleteModel($id);
 
             return to_route('labor-rates.index')->with('success', 'Camo Rate has been deleted.');
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (Throwable $e) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

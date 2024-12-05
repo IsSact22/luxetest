@@ -4,7 +4,11 @@ import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { onMounted, ref } from "vue";
+import { useToast } from "vue-toastification";
+import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
 
+const toast = useToast();
 const props = defineProps({
     aircraft: {
         type: Object,
@@ -27,28 +31,38 @@ const form = useForm(method, url, {
     register: props.aircraft?.register ?? "",
     serial: props.aircraft?.serial ?? "",
 });
+
+const emit = defineEmits(["close"]);
 const submit = () => {
     form.submit({
         preserveScroll: true,
-        onSuccess: () => form.reset(),
+        onSuccess: () => {
+            form.reset();
+            emit("close", true);
+            toast.success("Avión creado");
+        },
     });
 };
 const cancel = () => {
     form.clearErrors();
     form.reset();
+    router.get(route("aircrafts.index"));
 };
 </script>
 <template>
-    <form @submit.prevent="submit">
-        <div>
-            <label class="block" for="model_aircraft_id">Model Aircraft</label>
+    <form
+        class="justify-items-center items-center px-7 py-3 space-y-5"
+        @submit.prevent="submit"
+    >
+        <div class="my-2">
+            <label class="block" for="model_aircraft_id">Modelo</label>
             <select
                 id="model_aircraft_id"
                 v-model="form.model_aircraft_id"
                 class="w-full mt-1 block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                 name="model_aircraft_id"
             >
-                <option :value="null">Select</option>
+                <option :value="null">{{ $t("Select") }}</option>
                 <option
                     v-for="(item, idx) in modelAircraftOptions"
                     :key="idx"
@@ -57,8 +71,8 @@ const cancel = () => {
                 ></option>
             </select>
         </div>
-        <div>
-            <label class="block" for="register">Register</label>
+        <div class="my-2">
+            <label class="block" for="register">Registro/Matricula</label>
             <input
                 id="register"
                 v-model="form.register"
@@ -69,7 +83,7 @@ const cancel = () => {
             />
             <InputError :message="form.errors.register" class="mt-2" />
         </div>
-        <div>
+        <div class="my-2">
             <label class="block" for="serial">Serial</label>
             <input
                 id="serial"
@@ -81,13 +95,9 @@ const cancel = () => {
             />
             <InputError :message="form.errors.serial" class="mt-2" />
         </div>
-        <div
-            class="flex flex-row justify-items-center items-center space-x-7 my-2"
-        >
-            <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Save
-            </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+        <div class="flex flex-row justify-around items-center space-x-7 my-2">
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
+            <PrimaryButton :disable="form.processing">Guardar</PrimaryButton>
         </div>
     </form>
 </template>

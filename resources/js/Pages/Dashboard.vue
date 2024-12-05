@@ -41,14 +41,14 @@ onMounted(queryPendingRate);
                     class="bg-white overflow-hidden shadow-sm sm:rounded-lg px-2"
                 >
                     <h2 class="text-xl p-6 text-black-900">
-                        <span>Hello</span> {{ $page.props.auth.user.name }}
+                        <span>Bienvenido</span> {{ $page.props.auth.user.name }}
                         <small class="text-yellow-700 capitalize">{{
                             $page.props.auth.user.roles[0].name
                         }}</small>
                     </h2>
 
                     <div
-                        v-if="hasPendingRate.length > 0"
+                        v-if="hasPendingRate && hasPendingRate.length > 0"
                         class="bg-yellow-100 rounded-md px-4 py-2 my-5"
                     >
                         <h3
@@ -68,7 +68,7 @@ onMounted(queryPendingRate);
                                     stroke-linejoin="round"
                                 />
                             </svg>
-                            <span> Pending activities by rate </span>
+                            <span> Actividades pendientes por tasa </span>
                         </h3>
                     </div>
 
@@ -78,6 +78,7 @@ onMounted(queryPendingRate);
                     >
                         <div v-for="(camo, idx) in camos" :key="idx">
                             <SmallCardComponent
+                                v-if="!camo.finish_date"
                                 :id="camo.id"
                                 :activities="camo.activities"
                                 :aircraft="camo.aircraft"

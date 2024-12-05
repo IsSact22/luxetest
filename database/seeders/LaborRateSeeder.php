@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\AdminRate;
 use App\Models\EngineType;
 use App\Models\LaborRate;
+use App\Models\LaborRateValue;
 use Illuminate\Database\Seeder;
 
 class LaborRateSeeder extends Seeder
@@ -19,96 +20,109 @@ class LaborRateSeeder extends Seeder
                 'rateable_id' => 2,
                 'rateable_type' => EngineType::class,
                 'code' => 'I05',
-                'name' => 'Man Hours Workshop TURBO-FAN',
-                'mount' => 80,
+                'name' => 'Horas de Trabajo TURBO-FAN',
+                'amount' => 80,
             ],
             [
                 'rateable_id' => 1,
                 'rateable_type' => EngineType::class,
                 'code' => 'I06',
-                'name' => 'Man Hours Workshop - PISTON',
-                'mount' => 60,
+                'name' => 'Horas de Trabajo - PISTON',
+                'amount' => 60,
             ],
             [
                 'rateable_id' => 3,
                 'rateable_type' => EngineType::class,
                 'code' => 'I07',
-                'name' => 'Man Hours Workshop - TURBINES',
-                'mount' => 90,
+                'name' => 'Horas de Trabajo - TURBINAS',
+                'amount' => 90,
             ],
             [
                 'rateable_id' => 1,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I08',
-                'name' => 'Man Hours Workshop Avionics',
-                'mount' => 60,
+                'name' => 'Horas de Trabajo Aviónica',
+                'amount' => 60,
             ],
             [
                 'rateable_id' => 1,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I09',
-                'name' => 'Man Hours Workshop Electrical',
-                'mount' => 50,
+                'name' => 'Horas de Trabajo Eléctrico',
+                'amount' => 50,
             ],
             [
                 'rateable_id' => 1,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I10',
-                'name' => 'Man Hours Workshop Laminate',
-                'mount' => 45,
+                'name' => 'Horas de Trabajo Laminado',
+                'amount' => 45,
             ],
             [
                 'rateable_id' => 1,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I11',
-                'name' => 'Man Hours Workshop Painting',
-                'mount' => 50,
+                'name' => 'Horas de Trabajo Pintura',
+                'amount' => 50,
             ],
             [
                 'rateable_id' => 2,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I20',
-                'name' => 'Sales of Parts',
-                'mount' => 0,
+                'name' => 'Venta de repuestos',
+                'amount' => 0,
             ],
             [
                 'rateable_id' => 3,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I25',
-                'name' => 'Equipment Rental & Technical Service',
-                'mount' => 0,
+                'name' => 'Alquiler de Equipos y Servicio Técnico',
+                'amount' => 0,
             ],
             [
                 'rateable_id' => 1,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I30',
-                'name' => 'Serv. Engineering & Planning',
-                'mount' => 0,
+                'name' => 'Servicio de Ingeniería y Planificación',
+                'amount' => 0,
             ],
             [
                 'rateable_id' => 1,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I35',
                 'name' => 'CAM',
-                'mount' => 0,
+                'amount' => 0,
             ],
             [
                 'rateable_id' => 3,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I40',
-                'name' => 'Space Rental',
-                'mount' => 0,
+                'name' => 'Alquiler de espacios',
+                'amount' => 0,
             ],
             [
                 'rateable_id' => 4,
                 'rateable_type' => AdminRate::class,
                 'code' => 'I90',
-                'name' => 'Administrative Management',
-                'mount' => 0,
+                'name' => 'Gestión Administrativa',
+                'amount' => 0,
             ],
         ];
         foreach ($laborRates as $camoRate) {
-            LaborRate::query()->create($camoRate);
+            // Crear el LaborRate
+            $laborRate = LaborRate::query()->create([
+                'rateable_id' => $camoRate['rateable_id'],
+                'rateable_type' => $camoRate['rateable_type'],
+                'code' => $camoRate['code'],
+                'name' => $camoRate['name'],
+            ]);
+
+            // Añadir el valor del LaborRate en labor_rate_values
+            LaborRateValue::query()->create([
+                'labor_rate_id' => $laborRate->id,
+                //'date' => now()->toDateString(),
+                'amount' => $camoRate['amount'],
+            ]);
         }
     }
 }

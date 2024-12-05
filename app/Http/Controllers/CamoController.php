@@ -29,8 +29,6 @@ class CamoController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @throws AuthorizationException
      */
     public function index(Request $request): Response
     {
@@ -84,10 +82,18 @@ class CamoController extends Controller
             $camo = $this->camo->newModel($payload);
 
             return InertiaResponse::content('CamoActivities/Create', ['camo' => $camo]);
-        } catch (AuthorizationException) {
+        } catch (AuthorizationException $e) {
+            Log::error('Error de autorización', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
+
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_UNAUTHORIZED]);
         } catch (Throwable $e) {
-            Log::error($e->getMessage());
+            Log::error('controller error al crear camo', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
 
             return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
         }
@@ -100,14 +106,21 @@ class CamoController extends Controller
     {
         try {
             $camo = $this->camo->getById($id);
+            $camo->load('camoActivity');
             $this->authorize('view', $camo);
             $resource = new CamoResource($camo);
 
             return InertiaResponse::content('Camos/Show', ['resource' => $resource]);
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (Throwable $e) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 

@@ -1,45 +1,59 @@
 <template>
     <div>
-        <h2 class="text-lg font-medium text-gray-900">Update User</h2>
+        <h2 class="text-lg font-medium text-gray-900">Actualizar Usuario</h2>
         <p class="mt-1 text-sm text-gray-600">
-            Update your user's information and email address.
+            Actualice la información de su usuario y su dirección de correo
+            electrónico.
         </p>
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Name"></InputLabel>
+                <InputLabel :value="$t('Name')" for="name"></InputLabel>
                 <TextInput
                     id="name"
-                    type="text"
+                    v-model="form.name"
+                    autocomplete="name"
+                    autofocus
                     class="mt-1 block w-1/3"
                     required
-                    autofocus
-                    autocomplete="name"
-                    v-model="form.name"
+                    type="text"
                 />
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError :message="form.errors.name" class="mt-2" />
             </div>
             <div>
-                <InputLabel for="email" value="Email"></InputLabel>
+                <InputLabel :value="$t('Email')" for="email"></InputLabel>
                 <TextInput
                     id="email"
-                    type="email"
-                    class="mt-1 block w-1/3"
                     v-model="form.email"
-                    required
                     autocomplete="username"
+                    class="mt-1 block w-1/3"
+                    required
+                    type="email"
                 />
                 <InputError :message="form.errors.email" class="mt-2" />
             </div>
-            <div class="flex flex-col my-2 space-y-2 rounded-md border border-gray-300 px-2 py-2 w-1/2">
+            <div
+                class="flex flex-col my-2 space-y-2 rounded-md border border-gray-300 px-2 py-2 w-1/2"
+            >
                 <label for="avatar">Avatar:</label>
-                <input id="avatar" name="avatar" type="file" @input="form.avatar = $event.target.files[0]" />
-                <progress v-if="form.progress" :value="form.progress.percentage" max="100">
+                <input
+                    id="avatar"
+                    name="avatar"
+                    type="file"
+                    @input="form.avatar = $event.target.files[0]"
+                />
+                <progress
+                    v-if="form.progress"
+                    :value="form.progress.percentage"
+                    max="100"
+                >
                     {{ form.progress.percentage }}%
                 </progress>
-                <InputError class="mt-2" :message="form.errors.avatar" />
+                <InputError :message="form.errors.avatar" class="mt-2" />
             </div>
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton :disabled="form.processing"
+                    >Guardar</PrimaryButton
+                >
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -47,7 +61,12 @@
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                    <p
+                        v-if="form.recentlySuccessful"
+                        class="text-sm text-gray-600"
+                    >
+                        Saved.
+                    </p>
                 </Transition>
             </div>
         </form>
@@ -57,28 +76,27 @@
 import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
-import {useForm} from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {route} from "ziggy-js";
-import {ref} from "vue";
-import { router } from '@inertiajs/vue3'
+import { route } from "ziggy-js";
+import { ref } from "vue";
 
 const props = defineProps({
-    user: Object
-})
-const userId = ref(props.user.id)
+    user: Object,
+});
+const userId = ref(props.user.id);
 const form = useForm({
     name: props.user.name,
     email: props.user.email,
     avatar: null,
-    _method: 'PATCH'
-})
+    _method: "PATCH",
+});
 const submit = () => {
-    router.post(route('users.update', userId.value), {
-        _method: 'patch',
+    router.post(route("users.update", userId.value), {
+        _method: "patch",
         name: form.name,
         email: form.email,
         avatar: form.avatar,
     });
-}
+};
 </script>

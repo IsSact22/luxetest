@@ -9,10 +9,19 @@ import Paginator2 from "@/Components/Paginator2.vue";
 import useFormatCurrency from "@/Composables/formatCurrency";
 import { useToast } from "vue-toastification";
 import CamoActivityForm from "@/Pages/CamoActivities/Partials/CamoActivityForm.vue";
+import { useDateFormatter } from "@/Composables/formatDate.js";
 
 const toast = useToast();
 
 const { formatCurrency } = useFormatCurrency();
+const {
+    formattedDate,
+    formattedDateTime,
+    currentDateInCaracasTimezoneVE,
+    currentDateInCaracasTimezoneInt,
+} = useDateFormatter();
+
+const currentDate = currentDateInCaracasTimezoneInt();
 
 const props = defineProps({
     resource: {
@@ -76,11 +85,9 @@ const handlePageChange = (page) => {
 };
 
 const filter = ref(null);
+const isOwner = ref(usePage().props.auth.user.is_owner);
 onMounted(() => {
-    if (
-        usePage().props.auth.user.is_owner ||
-        usePage().props.auth.user.is_crew
-    ) {
+    if (isOwner.value) {
         filter.value = "approval_status.pending";
     }
 });
@@ -183,6 +190,55 @@ const badgeClass = (priority) => {
             return "badge-alert";
     }
 };
+// Ref para manejar la visibilidad del botón
+const showGallery = ref(false);
+
+// Función para verificar si alguna actividad tiene imágenes
+const checkIfActivitiesHaveImages = async () => {
+    try {
+        const response = await axios.get(
+            `/camo/${props.resource.data.id}/has-images-in-activities`,
+        );
+        showGallery.value = response.data.hasImages; // Se establece el valor del botón
+    } catch (error) {
+        console.error("Error fetching images", error);
+    }
+};
+const canFinish = ref(false);
+const fetchCanFinish = async () => {
+    try {
+        const response = await axios.get(
+            route("camos.finish", props.resource.data.id),
+            {},
+        );
+
+        canFinish.value = response.data.result;
+    } catch (e) {
+        console.error(e);
+    }
+};
+// Llamar a la función cuando el componente se monta
+onMounted(async () => {
+    await checkIfActivitiesHaveImages();
+    await fetchCanFinish();
+});
+
+const finishCamo = async () => {
+    try {
+        const response = await axios.patch(
+            route("camos.close", props.resource.data.id),
+            {
+                finish_date: currentDate,
+            },
+        );
+        console.log(response.data);
+    } catch (e) {
+        console.error(e);
+    } finally {
+        console.log("finishCamo successfully");
+        router.get(route("camos.show", props.resource.data.id));
+    }
+};
 </script>
 <template>
     <Head title="Camos" />
@@ -193,160 +249,237 @@ const badgeClass = (priority) => {
         <div class="flex flex-col justify-items-center items-center mx-auto">
             <div class="my-4 border rounded-md px-4 py-4">
                 <div class="inline-flex space-x-5">
-                    <Link :href="route('camos.index')" class="btn-primary"
-                        >back to Camos
+                    <Link
+                        v-if="!$page.props.auth.user.is_owner"
+                        :href="route('camos.index')"
+                        class="btn-primary"
+                        >Regresar
+                    </Link>
+                    <Link v-else :href="route('dashboard')" class="btn-primary"
+                        >Regresar
                     </Link>
                     <button
-                        v-if="$page.props.auth.user.is_cam"
+                        v-if="
+                            ($page.props.auth.user.is_cam ||
+                                $page.props.auth.user.is_super) &&
+                            !props.resource.data.finish_date
+                        "
                         class="btn-primary"
                         @click="addActivity = true"
                     >
-                        new activity for this CAMO
+                        Agregar Actividad
                     </button>
                     <Link
+                        v-if="showGallery"
                         :href="route('camos.images', props.resource.data.id)"
                         class="btn-primary"
                         title="Gallery of Camo"
                         @click.passive.prevent
                     >
-                        View Media
+                        Ver Galeria
                     </Link>
-                    <!--                    <button
-                                            class="btn-inDev"
-                                            title="Under development"
-                                            type="button"
-                                            @click.passive.prevent
-                                        >
-                                            Archive Camo
-                                        </button>-->
+                    <button
+                        v-if="
+                            canFinish &&
+                            props.resource.data.activities.length > 0
+                        "
+                        class="btn-primary"
+                        @click="finishCamo"
+                    >
+                        Finalizar
+                    </button>
                 </div>
-                <div class="grid grid-cols-3 gap-4 my-3">
-                    <div
-                        class="flex flex-col px-4 border rounded-md bg-gray-100/50"
-                    >
-                        <h1 class="text-gray-700">Customer Data</h1>
-                        <hr class="h-0.5 bg-neutral-400" />
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <p>Customer</p>
-                                <p>Contract</p>
-                                <p>Project Manager</p>
-                                <p>Location</p>
-                            </div>
-                            <div>
-                                <p>{{ resource.data.customer }}</p>
-                                <p>{{ resource.data.contract }}</p>
-                                <p>{{ resource.data.cam }}</p>
-                                <p>{{ resource.data.location }}</p>
-                            </div>
+
+                <span
+                    v-if="props.resource.data.finish_date"
+                    class="px-4 text-gray-400 text-lg font-bold uppercase"
+                >
+                    Finalizado
+                </span>
+
+                <div
+                    class="flex flex-row justify-items-center items-start space-x-5 mb-7"
+                >
+                    <div class="flex flex-col">
+                        <!-- customer -->
+                        <div
+                            class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
+                        >
+                            <table class="table-auto">
+                                <thead>
+                                    <tr>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Owner") }}
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Order") }}
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Project Manager") }}
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Location") }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ resource.data.owner }}</td>
+                                        <td>{{ resource.data.contract }}</td>
+                                        <td>{{ resource.data.cam }}</td>
+                                        <td>{{ resource.data.location }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- aircraft -->
+                        <div
+                            class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
+                        >
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Airplane") }}
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Description") }}
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Start Date") }}
+                                        </th>
+                                        <th style="color: #b58a00 !important">
+                                            {{ $t("Estimate Finish Date") }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            {{
+                                                resource.data.aircraft
+                                                    .model_aircraft.name
+                                            }}
+                                            /
+                                            {{
+                                                resource.data.aircraft.register
+                                            }}
+                                        </td>
+                                        <td>
+                                            {{ resource.data.description }}
+                                            &nbsp;
+                                        </td>
+                                        <td>
+                                            {{
+                                                formattedDate(
+                                                    resource.data.start_date,
+                                                )
+                                            }}
+                                        </td>
+                                        <td>
+                                            {{
+                                                formattedDate(
+                                                    resource.data
+                                                        .estimate_finish_date,
+                                                )
+                                            }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div
-                        class="flex flex-col px-4 border rounded-md bg-gray-100/50"
-                    >
-                        <h1 class="text-gray-700">Project</h1>
-                        <hr class="h-0.5 bg-neutral-400" />
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <p>Aircraft</p>
-                                <p>Description</p>
-                                <p>Start Date</p>
-                                <p>Estimate Finish Date</p>
+
+                    <div class="w-1/2 flex flex-col px-4">
+                        <div
+                            class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
+                        >
+                            <h1 class="text-gray-700">Sumario</h1>
+                            <hr class="h-0.5 my-2 bg-neutral-400" />
+
+                            <div
+                                class="flex flex-row justify-between text-xl my-2"
+                            >
+                                <span>Mano de Obra</span>
+                                <span
+                                    class="px-2 py-1 bg-yellow-500 rounded-md"
+                                    >{{ formatCurrency(totalLaborMount) }}</span
+                                >
                             </div>
-                            <div>
-                                <p class="text-right">
-                                    {{
-                                        resource.data.aircraft.model_aircraft
-                                            .name
-                                    }}
-                                    / {{ resource.data.aircraft.register }}
-                                </p>
-                                <p class="text-right line-clamp-1">
-                                    {{ resource.data.description }} &nbsp;
-                                </p>
-                                <p class="text-right">
-                                    {{ resource.data.start_date }}
-                                </p>
-                                <p class="text-right">
-                                    {{ resource.data.estimate_finish_date }}
-                                </p>
+
+                            <div
+                                class="flex flex-row justify-between text-xl my-2"
+                            >
+                                <span>Materiales</span>
+                                <span
+                                    class="px-2 py-1 bg-yellow-500 rounded-md"
+                                    >{{
+                                        formatCurrency(totalMaterialMount)
+                                    }}</span
+                                >
                             </div>
-                        </div>
-                    </div>
-                    <div
-                        class="flex flex-col px-4 border rounded-md bg-gray-100/50"
-                    >
-                        <h1 class="text-gray-700">Summary</h1>
-                        <hr class="h-0.5 bg-neutral-400" />
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <p>Labor Mount</p>
-                                <p>Material Mount</p>
-                                <p>Total</p>
-                                <p>Waiting Approval</p>
-                                <p>Pending</p>
-                                <p>In Progress</p>
-                                <p>Completed</p>
-                                <p>Total Activities</p>
-                            </div>
-                            <div>
-                                <p class="text-right">
-                                    {{ formatCurrency(totalLaborMount) }}
-                                </p>
-                                <p class="text-right">
-                                    {{ formatCurrency(totalMaterialMount) }}
-                                </p>
-                                <hr class="h-0.5 bg-gray-300" />
-                                <p class="text-right text-green-700">
-                                    {{
+
+                            <hr class="my-2" />
+                            <div class="flex flex-row justify-between text-xl">
+                                <span>Total</span>
+                                <span
+                                    class="px-2 py-1 bg-yellow-500 rounded-md"
+                                    >{{
                                         formatCurrency(
                                             Number(totalLaborMount) +
                                                 Number(totalMaterialMount),
                                         )
-                                    }}
-                                </p>
-                                <hr />
-                                <p v-if="waitingApproval" class="text-right">
-                                    <span class="badge-alert">{{
-                                        waitingApproval.length
-                                    }}</span>
-                                </p>
-                                <p v-if="pendingExecution" class="text-right">
-                                    <span class="badge-pending">{{
-                                        pendingExecution.length
-                                    }}</span>
-                                </p>
-                                <p v-if="completed" class="text-right">
-                                    <span class="badge-progress">{{
-                                        inProgress.length
-                                    }}</span>
-                                </p>
-                                <p v-if="completed" class="text-right">
-                                    <span class="badge-completed">{{
-                                        completed.length
-                                    }}</span>
-                                </p>
-                                <p
-                                    v-if="activities && activities.total"
-                                    class="text-right"
+                                    }}</span
                                 >
-                                    <span class="badge-info">{{
-                                        activities.total
-                                    }}</span>
-                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- progress information -->
+                <div
+                    class="flex flex-row justify-between px-2 py-2 my-5 shadow border rounded-md border-gray-200"
+                >
+                    <p v-if="waitingApproval" class="text-right">
+                        Esperando Aprobación
+                        <span class="badge-alert">{{
+                            waitingApproval.length
+                        }}</span>
+                    </p>
+                    <p v-if="pendingExecution" class="text-right">
+                        Pendiente
+                        <span class="badge-pending">{{
+                            pendingExecution.length
+                        }}</span>
+                    </p>
+                    <p v-if="completed" class="text-right">
+                        en Progreso
+                        <span class="badge-progress">{{
+                            inProgress.length
+                        }}</span>
+                    </p>
+                    <p v-if="completed" class="text-right">
+                        Completado
+                        <span class="badge-completed">{{
+                            completed.length
+                        }}</span>
+                    </p>
+                    <p v-if="activities && activities.total" class="text-right">
+                        Total de Actividades
+                        <span class="badge-info">{{ activities.total }}</span>
+                    </p>
+                </div>
+
                 <div>
                     <form v-show="!addActivity" class="my-2">
-                        <InputLabel for="search">Search</InputLabel>
+                        <InputLabel for="search">Buscar</InputLabel>
                         <input
                             id="search"
                             v-model="search"
-                            class="px-4 py-2 rounded-md border-gray-300 w-3/12"
+                            class="px-4 py-2 rounded-md border-gray-300 w-1/3"
                             name="search"
-                            placeholder="type for search and clear to reset"
+                            placeholder="Escriba para buscar y borre para restablecer"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -359,13 +492,6 @@ const badgeClass = (priority) => {
                             :user="usePage().props.auth.user"
                             @add-activity="handleAddActivity"
                         />
-                        <!--                        <AddActivityComponent
-                                                    v-show="addActivity"
-                                                    ref="addActivityComponent"
-                                                    :camo-id="resource.data.id"
-                                                    @event-close="handleAddActivity"
-                                                    @sent-activity="getActivities"
-                                                />-->
                     </Transition>
                     <!-- add activity -->
 
@@ -385,7 +511,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = null"
                                 >
-                                    All
+                                    Todas
                                 </button>
                                 <button
                                     :class="{
@@ -399,7 +525,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'approval_status.approved'"
                                 >
-                                    Approved
+                                    Aprobadas
                                 </button>
                                 <button
                                     :class="{
@@ -413,7 +539,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'approval_status.pending'"
                                 >
-                                    Pending Approval
+                                    Aprobación pendiente
                                 </button>
                                 <button
                                     :class="{
@@ -426,7 +552,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.pending'"
                                 >
-                                    Pending
+                                    Pendiente
                                 </button>
                                 <button
                                     :class="{
@@ -439,7 +565,7 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.in_progress'"
                                 >
-                                    In Progress
+                                    en Progreso
                                 </button>
                                 <button
                                     :class="{
@@ -452,25 +578,21 @@ const badgeClass = (priority) => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.completed'"
                                 >
-                                    Completed
+                                    Completado
                                 </button>
                             </div>
                             <!-- pending approval -->
-                            <table class="table-auto w-full">
+                            <table class="table-fixed w-full">
                                 <thead>
                                     <tr>
-                                        <th>id</th>
-                                        <th>Priority</th>
-                                        <th>Date</th>
-                                        <th>Start at</th>
-                                        <th>Estimate Time</th>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                        <th>Labor/Mount</th>
-                                        <th>Material/Mount</th>
-                                        <th>AWR</th>
-                                        <th>Approval/Status</th>
-                                        <th>Actions</th>
+                                        <th>Nombre</th>
+                                        <th>Inicia</th>
+                                        <th>Hrs</th>
+                                        <th>Estatus</th>
+                                        <th>H/H</th>
+                                        <th>Material</th>
+                                        <th>Aprobado</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -479,61 +601,35 @@ const badgeClass = (priority) => {
                                         activities.resource"
                                         :key="idx"
                                     >
-                                        <td>{{ act.id }}</td>
                                         <td>
-                                            <span
-                                                :class="
-                                                    badgeClass(act.priority)
-                                                "
-                                            >
-                                                {{ act.priority }}
-                                            </span>
+                                            {{ act.name }}
+                                            <!--                                            <span
+v-tooltip="act.name"
+:class="
+badgeClass(act.priority)
+"
+>
+{{ act.priority }}
+</span>-->
                                         </td>
-                                        <td class="text-xs">{{ act.date }}</td>
                                         <td class="text-xs">
                                             <span v-if="act.started_at"></span>
-                                            {{ act.started_at ?? "undefined" }}
+                                            {{
+                                                formattedDateTime(
+                                                    act.started_at,
+                                                )
+                                            }}
                                         </td>
                                         <td class="text-center">
                                             {{ act.estimate_time }}
-                                            <small>H/m</small>
                                         </td>
-                                        <td>
-                                            <div
-                                                class="flex flex-row justify-items-center items-center space-x-2"
-                                            >
-                                                <span>
-                                                    <svg
-                                                        class="w-4 h-4"
-                                                        viewBox="0 0 21 21"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <g
-                                                            fill="none"
-                                                            fill-rule="evenodd"
-                                                            stroke="currentColor"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                        >
-                                                            <circle
-                                                                cx="8.5"
-                                                                cy="8.5"
-                                                                r="5"
-                                                            />
-                                                            <path
-                                                                d="m17.571 17.5-5.571-5.5"
-                                                            />
-                                                        </g>
-                                                    </svg>
-                                                </span>
-                                                <span>{{ act.name }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="flex place-content-center">
+                                        <td
+                                            class="flex items-center justify-center h-12"
+                                        >
                                             <span
                                                 v-if="act.status === 'pending'"
                                                 class="badge-pending"
-                                                >{{ act.status }}</span
+                                                >{{ $t(act.status) }}</span
                                             >
                                             <span
                                                 v-else-if="
@@ -541,18 +637,52 @@ const badgeClass = (priority) => {
                                                 "
                                                 class="badge-progress"
                                             >
-                                                {{ act.status }}
+                                                {{ $t(act.status) }}
                                             </span>
                                             <span
                                                 v-else
                                                 class="badge-completed"
-                                                >{{ act.status }}</span
+                                                >{{ $t(act.status) }}</span
                                             >
                                         </td>
                                         <td class="text-right">
-                                            {{
-                                                formatCurrency(act.labor_mount)
-                                            }}
+                                            <span
+                                                v-if="!act.missing_rate_value"
+                                            >
+                                                {{
+                                                    formatCurrency(
+                                                        act.labor_mount,
+                                                    )
+                                                }}
+                                            </span>
+                                            <span
+                                                v-else
+                                                class="text-xs text-red-700 font-semibold"
+                                            >
+                                                <Link
+                                                    v-if="
+                                                        $page.props.auth.user
+                                                            .is_admin
+                                                    "
+                                                    v-tooltip="`Asignar Tarifa`"
+                                                    :data="{
+                                                        camo_activity_id:
+                                                            act.id,
+                                                    }"
+                                                    :href="
+                                                        route(
+                                                            'labor-rates.edit',
+                                                            act.labor_rate_id,
+                                                        )
+                                                    "
+                                                    class="px-2 py-1 border border-orange-200 hover:bg-orange-200 border-md rounded-md text-orange-700 text-xs font-medium"
+                                                    method="get"
+                                                    >Tarifa Pendiente</Link
+                                                >
+                                                <span v-else
+                                                    >Tarifa Pendiente</span
+                                                >
+                                            </span>
                                         </td>
                                         <td class="text-right">
                                             {{
@@ -561,35 +691,82 @@ const badgeClass = (priority) => {
                                                 )
                                             }}
                                         </td>
-                                        <td>
-                                            <span class="line-clamp-1">{{
-                                                act.awr
-                                            }}</span>
-                                        </td>
-                                        <td class="flex place-content-center">
+                                        <td
+                                            class="flex items-center justify-center h-12"
+                                        >
                                             <span
                                                 v-if="
                                                     act.approval_status ===
                                                     'pending'
                                                 "
                                                 class="badge-pending"
-                                                >{{ act.approval_status }}</span
+                                                >{{
+                                                    $t(act.approval_status)
+                                                }}</span
+                                            >
+                                            <span
+                                                v-else-if="
+                                                    act.approval_status ===
+                                                    'canceled'
+                                                "
+                                                class="badge-alert"
+                                                >{{
+                                                    $t(act.approval_status)
+                                                }}</span
                                             >
                                             <span
                                                 v-else
                                                 class="badge-approval"
-                                                >{{ act.approval_status }}</span
+                                                >{{
+                                                    $t(act.approval_status)
+                                                }}</span
                                             >
                                         </td>
                                         <td class="col-actions">
                                             <Link
                                                 :href="
                                                     route(
-                                                        'camo_activities.edit',
+                                                        'camo_activities.show',
                                                         act.id,
                                                     )
                                                 "
                                                 class="btn-show"
+                                            >
+                                                <span>
+                                                    <svg
+                                                        class="size-5 stroke-yellow-700"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        stroke-width="1.5"
+                                                        viewBox="0 0 24 24"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        />
+                                                        <path
+                                                            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        />
+                                                    </svg>
+                                                </span>
+                                            </Link>
+
+                                            <Link
+                                                v-if="
+                                                    !props.resource.data
+                                                        .finish_date
+                                                "
+                                                :href="
+                                                    route(
+                                                        'camo_activities.edit',
+                                                        act.id,
+                                                    )
+                                                "
+                                                class="btn-edit"
                                             >
                                                 <span>
                                                     <svg

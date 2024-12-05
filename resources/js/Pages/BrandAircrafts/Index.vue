@@ -1,8 +1,41 @@
 <script setup>
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
+import { route } from "ziggy-js";
+import { ref } from "vue";
+import Modal from "@/Components/Modal.vue";
+import BrandAircraftForm from "@/Pages/BrandAircrafts/Partials/BrandAircraftForm.vue";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+/*confirm*/
+const confirmDialog = ref(null);
+const selectedId = ref(null);
+const handleAction = () => {
+    // Aquí va la lógica de la acción que deseas confirmar
+    if (selectedId.value) {
+        form.delete(route("brand-aircrafts.destroy", selectedId.value), {
+            preserveState: true,
+            preserveScroll: true, // Opcional: Mantiene la posición del scroll
+            onSuccess: () => {
+                selectedId.value = null; // Limpia el ID seleccionado
+                toast.success("Registro eliminado!");
+            },
+        });
+    }
+};
+const showConfirmation = (id) => {
+    console.log("show confirmation: " + id);
+    confirmDialog.value.show(); // Muestra el diálogo de confirmación
+};
+const destroy = (id) => {
+    selectedId.value = id;
+    showConfirmation(); // Muestra el diálogo y guarda el ID del registro
+};
+/*confirm*/
 
 const props = defineProps({
     resource: {
@@ -16,17 +49,33 @@ const form = useForm({
 const fireSearch = _.throttle(function () {
     form.get(route("brand-aircrafts.index"), { preserveState: true });
 }, 200);
+
+const showModal = ref(false);
+const openModal = () => {
+    showModal.value = true;
+};
+
+const selected = ref(null);
+const handleSelected = (object) => {
+    selected.value = object;
+    openModal();
+};
+
+const closeModal = () => {
+    selected.value = null;
+    showModal.value = false;
+};
 </script>
 <template>
-    <Head title="Brand Aircrafts" />
+    <Head title="Marcas de Aviones" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Brand Aircraft</h2>
+            <h2>Marcas de Aviones</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
-            <div class="my-4 border rounded-md p-4">
+            <div class="my-4 p-4">
                 <form
-                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                 >
                     <div>
                         <input
@@ -34,23 +83,66 @@ const fireSearch = _.throttle(function () {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="search"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
                     </div>
-                    <Link
-                        :href="route('brand-aircrafts.create')"
+                    <button
                         class="btn-primary"
-                        >New Brand Aircraft
-                    </Link>
+                        type="button"
+                        @click="openModal"
+                    >
+                        Nueva Marca
+                    </button>
                 </form>
-                <table class="table-auto">
+
+                <!-- Modal -->
+                <Modal
+                    :show="showModal"
+                    closeable
+                    maxWidth="md"
+                    @close="closeModal"
+                >
+                    <template #default>
+                        <div class="float-right">
+                            <button
+                                class="mt-2 mr-2 px-1 py-0.5"
+                                @click="closeModal"
+                            >
+                                <svg
+                                    class="size-6 stroke-red-700 hover:fill-red-100"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.5"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h2 class="text-lg font-bold">
+                                <span v-if="selected">Editar Marca</span>
+                                <span v-else>Registrar nueva Marca</span>
+                            </h2>
+                            <BrandAircraftForm :brand-aircraft="selected" />
+                        </div>
+                    </template>
+                </Modal>
+                <!-- Modal -->
+
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Brand Name</th>
-                            <th>Actions</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,11 +150,9 @@ const fireSearch = _.throttle(function () {
                             <td>{{ item.id }}</td>
                             <td>{{ item.name }}</td>
                             <td class="col-actions">
-                                <Link
-                                    :href="
-                                        route('brand-aircrafts.edit', item.id)
-                                    "
+                                <button
                                     class="btn-edit"
+                                    @click="handleSelected(item)"
                                 >
                                     <span>
                                         <svg
@@ -80,8 +170,11 @@ const fireSearch = _.throttle(function () {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
-                                <Link class="btn-delete">
+                                </button>
+                                <button
+                                    class="btn-delete"
+                                    @click="destroy(item.id)"
+                                >
                                     <span>
                                         <svg
                                             class="size-5 stroke-red-700"
@@ -98,7 +191,7 @@ const fireSearch = _.throttle(function () {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -112,5 +205,16 @@ const fireSearch = _.throttle(function () {
                 </table>
             </div>
         </div>
+
+        <!-- Componente de Confirmación -->
+        <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este elemento?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>

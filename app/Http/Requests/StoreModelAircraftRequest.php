@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ModelAircraft;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -18,18 +19,26 @@ class StoreModelAircraftRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
+        // Verifica si existe un modelo borrado lógicamente con el mismo nombre
+        $exists = ModelAircraft::onlyTrashed()
+            ->where('name', $this->name)
+            ->where('brand_aircraft_id', $this->brand_aircraft_id)
+            ->where('engine_type_id', $this->brand_aircraft_id)
+            ->exists();
+
         return [
             'brand_aircraft_id' => ['required'],
-            'engine_aircraft_id' => ['required'],
+            'engine_type_id' => ['required'],
             'name' => [
-                ...$this->isPrecognitive() ?
-                    ['unique:model_aircrafts,name'] :
-                    ['required', 'min:3', 'max:191', 'unique:model_aircrafts,name'],
-
+                ...$exists ? [] : [
+                    ...$this->isPrecognitive() ?
+                        ['unique:model_aircrafts,name'] :
+                        ['required', 'min:3', 'max:191', 'unique:model_aircrafts,name'],
+                ],
             ],
         ];
     }

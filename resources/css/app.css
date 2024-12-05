@@ -12,7 +12,7 @@
 @tailwind utilities;
 
 html, body {
-    font-family: 'Poppins', sans-serif;
+    @apply font-poppins;
 }
 
 h1 {
@@ -24,35 +24,35 @@ h2 {
 }
 
 .badge-info {
-    @apply bg-blue-100 text-blue-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .badge-approval {
-    @apply bg-emerald-100 text-emerald-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-emerald-100 text-emerald-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .badge-progress {
-    @apply bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .badge-in_progress {
-    @apply bg-indigo-100 text-indigo-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-indigo-100 text-indigo-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .badge-approved {
-    @apply bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .badge-completed {
-    @apply bg-green-100 text-green-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .badge-pending {
-    @apply bg-amber-100 text-amber-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-amber-100 text-amber-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .badge-alert {
-    @apply bg-red-100 text-red-800 text-sm font-medium me-2 px-2.5 py-0.5 rounded
+    @apply bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded
 }
 
 .placeholder-custom::placeholder {

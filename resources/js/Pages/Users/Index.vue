@@ -1,9 +1,10 @@
 <script setup>
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, Link, router, useForm } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
     resource: {
@@ -11,7 +12,7 @@ const props = defineProps({
         default: () => ({}),
     },
 });
-
+const toast = useToast();
 const form = useForm({
     search: "",
 });
@@ -24,17 +25,29 @@ const destroy = (id) => {
         form.delete(route("users.destroy", id), { preserveState: true });
     }
 };
+const restore = (id) => {
+    router.post(
+        route("users.restore", id),
+        {},
+        {
+            preserveState: true,
+            onSuccess: () => {
+                toast.success("Usuario restaurado");
+            },
+        },
+    );
+};
 </script>
 <template>
-    <Head title="Users" />
+    <Head title="Usuarios" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Users</h2>
+            <h2>Usuarios</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
-            <div class="my-4 border rounded-md px-4 py-4">
+            <div class="mt-4 px-4 py-4 bg-white">
                 <form
-                    class="my-2 flex flex-row justify-items-center items-center space-x-7"
+                    class="mt-2 mb-7 flex flex-row justify-items-center items-center space-x-7"
                 >
                     <div>
                         <input
@@ -48,32 +61,36 @@ const destroy = (id) => {
                         />
                     </div>
                     <Link :href="route('users.create')" class="btn-primary">
-                        New User
+                        {{ $t("New User") }}
                     </Link>
                     <Link :href="route('roles.index')" class="btn-primary">
-                        Roles
+                        {{ $t("Roles") }}
                     </Link>
                     <Link
                         :href="route('permissions.index')"
                         class="btn-primary"
                     >
-                        Permissions
+                        {{ $t("Permissions") }}
                     </Link>
                 </form>
-                <table class="table-auto">
+                <table class="table-fixed">
                     <thead>
                         <tr>
                             <th>Id</th>
                             <th>Avatar</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Register</th>
-                            <th>Actions</th>
+                            <th>{{ $t("Name") }}</th>
+                            <th>{{ $t("Email") }}</th>
+                            <th>{{ $t("Role") }}</th>
+                            <th>{{ $t("Member since") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(user, idx) in resource.data" :key="idx">
+                        <tr
+                            v-for="(user, idx) in resource.data"
+                            :key="idx"
+                            :class="{ 'text-gray-400': user.deleted_at }"
+                        >
                             <td>{{ user.id }}</td>
                             <td>
                                 <div
@@ -88,12 +105,12 @@ const destroy = (id) => {
                                 </div>
                             </td>
                             <td>{{ user.name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
+                            <td class="px-2">{{ user.email }}</td>
+                            <td>{{ $t(`${user.role}`) }}</td>
                             <td class="text-center">{{ user.created_at }}</td>
                             <td class="col-actions">
                                 <Link
-                                    v-if="user.id !== 1"
+                                    v-if="user.id !== 1 && !user.deleted_at"
                                     :href="route('users.show', user.id)"
                                     class="btn-edit"
                                     ><span>
@@ -114,7 +131,7 @@ const destroy = (id) => {
                                     </span>
                                 </Link>
                                 <Link
-                                    v-if="user.id !== 1"
+                                    v-if="user.id !== 1 && !user.deleted_at"
                                     class="btn-delete"
                                     @click="destroy(user.id)"
                                 >
@@ -135,10 +152,32 @@ const destroy = (id) => {
                                         </svg>
                                     </span>
                                 </Link>
+                                <Link
+                                    v-if="user.id !== 1 && user.deleted_at"
+                                    class="btn-edit"
+                                    @click="restore(user.id)"
+                                >
+                                    <span>
+                                        <svg
+                                            class="size-5 stroke-green-700"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="1.5"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            />
+                                        </svg>
+                                    </span>
+                                </Link>
                                 <span
                                     v-if="user.id === 1"
                                     class="font-bold text-red-800"
-                                    >Actions not allowed</span
+                                    >{{ $t("Actions not allowed") }}</span
                                 >
                             </td>
                         </tr>

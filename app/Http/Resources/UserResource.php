@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Override;
-
 use function App\Helpers\CarbonParse;
 
 class UserResource extends JsonResource
@@ -29,6 +28,7 @@ class UserResource extends JsonResource
             'avatar' => $this->getFirstMediaUrl('avatars', 'thumb'),
             'created_at' => CarbonParse($this->created_at),
             'updated_at' => CarbonParse($this->updated_at),
+            'deleted_at' => $this->deleted_at ? CarbonParse($this->deleted_at) : null,
         ];
     }
 }

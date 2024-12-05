@@ -12,6 +12,10 @@ class AircraftSeeder extends Seeder
      */
     public function run(): void
     {
-        Aircraft::factory(7)->create();
+        Aircraft::create([
+            'model_aircraft_id' => 1,
+            'register' => 'YV-1234',
+            'serial' => '650-1234',
+        ]);
     }
 }

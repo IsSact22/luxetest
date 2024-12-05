@@ -21,6 +21,17 @@ class BrandAircraft extends Model
         'name',
     ];
 
+    public static function boot(): void
+    {
+        parent::boot();
+        static::creating(static function ($model) {
+            $model->name = strtoupper($model->name);
+        });
+        static::updating(static function ($model) {
+            $model->name = strtoupper($model->name);
+        });
+    }
+
     #[Override]
     protected function casts(): array
     {
@@ -32,4 +43,5 @@ class BrandAircraft extends Model
             'deleted_at' => 'datetime:Y-m-d H:i',
         ];
     }
+
 }

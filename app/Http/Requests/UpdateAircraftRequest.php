@@ -13,7 +13,7 @@ class UpdateAircraftRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,13 +24,13 @@ class UpdateAircraftRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'model_aircraft_id' => ['required', 'integer', 'exists:aircrafts,id'],
+            'model_aircraft_id' => ['required', 'integer', 'exists:model_aircrafts,id'],
             'register' => [
                 ...$this->isPrecognitive() ?
                     [Rule::unique('aircrafts', 'register')->ignore($this->aircraft)] :
                     ['required', Rule::unique('aircrafts', 'register')->ignore($this->aircraft)],
             ],
-            'serial' => ['required'],
+            'serial' => ['required', Rule::unique('aircrafts', 'serial')->ignore($this->aircraft)],
         ];
     }
 }

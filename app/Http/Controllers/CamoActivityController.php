@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\RepositoryException;
 use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoActivityRequest;
 use App\Http\Requests\UpdateCamoActivityRequest;
 use App\Http\Resources\CamoActivityResource;
+use App\Http\Resources\CamoResource;
 use App\Models\Camo;
 use App\Models\CamoActivity;
 use App\Repositories\CamoActivityRepository;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -77,7 +82,7 @@ class CamoActivityController extends Controller
     {
         try {
             $this->authorize('create', CamoActivity::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->activity->newModel($payload);
 
             return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
@@ -119,8 +124,9 @@ class CamoActivityController extends Controller
         try {
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
+
             $camo = Camo::query()->findOrFail($camoActivity->camo_id);
-            $camoResource = new CamoActivityResource($camo);
+            $camoResource = new CamoResource($camo);
             $resource = new CamoActivityResource($camoActivity);
 
             return InertiaResponse::content('CamoActivities/Edit', [
@@ -145,16 +151,41 @@ class CamoActivityController extends Controller
 
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
+
             $this->activity->updateModel($payload, $id);
 
-            return to_route('camos.show', $id)->with('success', 'Activity update successfully');
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable $e) {
-            Log::error($e->getMessage());
+            Session::flash('success', 'Actividad actualizada correctamente');
+            Log::info('redireccionando a camo');
+            return to_route('camos.show', $camoActivity->camo->id);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Modelo no encontrado: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
 
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        } catch (QueryException $e) {
+            Log::error('Error de base de datos: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
+
+        } catch (RepositoryException $e) {
+            // Manejar específicamente las excepciones del repositorio
+            Log::error('Repository error: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
+
+        } catch (Exception|Throwable $e) {
+            Log::error('Error general: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 

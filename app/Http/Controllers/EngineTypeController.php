@@ -7,7 +7,6 @@ use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreEngineTypeRequest;
 use App\Http\Requests\UpdateEngineTypeRequest;
 use App\Http\Resources\EngineTypeResource;
-use App\Http\Resources\LaborRateResource;
 use App\Models\EngineType;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -76,7 +75,7 @@ class EngineTypeController extends Controller
     {
         try {
             $this->authorize('create', EngineType::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->engineTypeRepository->newEngineType($payload);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been created.');
@@ -117,10 +116,10 @@ class EngineTypeController extends Controller
     public function edit(Request $request, int $id): Response
     {
         try {
-            $camoRate = $this->engineTypeRepository->getById($id);
-            $this->authorize('update', $camoRate);
+            $engineType = $this->engineTypeRepository->getById($id);
+            $this->authorize('update', $engineType);
 
-            $resource = new LaborRateResource($camoRate);
+            $resource = new EngineTypeResource($engineType);
 
             return InertiaResponse::content('EngineTypes/Edit', ['resource' => $resource]);
         } catch (AuthorizationException) {
@@ -142,7 +141,7 @@ class EngineTypeController extends Controller
         try {
             $engineType = $this->engineTypeRepository->getById($id);
             $this->authorize('update', $engineType);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->engineTypeRepository->updateEngineType($payload, $id);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been updated.');
@@ -168,10 +167,16 @@ class EngineTypeController extends Controller
             $this->engineTypeRepository->deleteEngineType($id);
 
             return to_route('engine-types.index')->with('success', 'Camo Rate has been deleted.');
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (Throwable $th) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $th->getMessage(),
+            ]);
         }
     }
 }
