@@ -27,7 +27,7 @@ const props = defineProps({
     },
 });
 
-const method = props.camoActivity ? "patch" : "post";
+const method = props.camoActivity ? "put" : "post";
 const url = props.camoActivity
     ? `/camo_activities/${props.camoActivity.id}`
     : "/camo_activities";
@@ -298,10 +298,12 @@ const submit = async () => {
         onSuccess: () => {
             form.reset();
             emit("addActivity", false);
-            router.get(route("camos.show", props.camo.id));
         },
         onError: (res) => {
             alert(res.message);
+        },
+        onFinish: () => {
+            // router.get(route("camos.show", props.camo.id));
         },
     });
 };

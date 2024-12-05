@@ -31,10 +31,9 @@ class FinishCamoController extends Controller
                 $onlyCanceled = false; // Si encontramos una actividad que no está cancelada, esta bandera se pone en false
 
                 // Si la actividad está aprobada, verificar si está completada
-                if ($activity->approval_status === ApprovalStatus::approved) {
-                    if ($activity->status !== ActivityStatus::completed) {
-                        $allApprovedCompleted = false; // Al menos una actividad aprobada no está completada
-                    }
+                if ($activity->approval_status === ApprovalStatus::approved &&
+                    $activity->status !== ActivityStatus::completed) {
+                    $allApprovedCompleted = false; // Al menos una actividad aprobada no está completada
                 }
             }
         }
@@ -53,13 +52,13 @@ class FinishCamoController extends Controller
         }
 
         // 3. Si hay actividades 'canceled' y también hay actividades aprobadas y no todas completadas, no se puede finalizar
-        if ($hasCanceled && !$allApprovedCompleted) {
-            $canFinishCamo = false; // Dejar esto implícito
-        }
+        // Esto ya se maneja implícitamente.
 
-        // 4. Todas las actividades aprobadas están completadas
-        // 5. Y el camo no tiene un finish_date
-        $canFinishCamo = $canFinishCamo && !$camo->finish_date;
+        // 4. Todas las actividades aprobadas deben estar completadas para poder finalizar el Camo
+        // Y el camo no tiene un finish_date
+        if ($allApprovedCompleted && !$camo->finish_date) {
+            $canFinishCamo = true; // Se puede finalizar
+        }
 
         return response()->json([
             'result' => $canFinishCamo,

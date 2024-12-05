@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 
 class ClearLog extends Command
 {
@@ -11,26 +12,29 @@ class ClearLog extends Command
      *
      * @var string
      */
-    protected $signature = 'app:clear-log';
+    protected $signature = 'log:clear {file=laravel.log : The log file to clear}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Clear the laravel.log file';
+    protected $description = 'Clear a specified log file in the storage/logs directory';
 
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(Filesystem $filesystem): int
     {
-        $logFile = storage_path('logs/laravel.log');
-        if (file_exists($logFile)) {
-            file_put_contents($logFile, '');
-            $this->info('laravel.log file cleared.');
+        // Obtener el nombre del archivo de log
+        $fileName = $this->argument('file');
+        $logFile = storage_path('logs/'.$fileName);
+
+        if ($filesystem->exists($logFile)) {
+            $filesystem->put($logFile, '');
+            $this->info(sprintf("Log file '%s' has been cleared.", $fileName));
         } else {
-            $this->error('laravel.log file not found.');
+            $this->error(sprintf("Log file '%s' not found.", $fileName));
         }
 
         return 0;

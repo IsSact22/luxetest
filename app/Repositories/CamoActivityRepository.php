@@ -13,6 +13,7 @@ use App\Models\SpecialRate;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,9 @@ use Throwable;
 
 class CamoActivityRepository implements CamoActivityRepositoryInterface
 {
-    public function __construct(protected ?CamoActivity $model) {}
+    public function __construct(protected CamoActivity $model)
+    {
+    }
 
     #[Override]
     public function getAll(Request $request): LengthAwarePaginator
@@ -34,7 +37,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 $query->where('camo_id', $camoId);
             })
             ->when($request->get('search'), static function ($query, string $search) {
-                $query->where('name', 'like', $search.'%');
+                $query->where('name', 'like', $search . '%');
             })
             ->paginate($perPage)
             ->withQueryString();
@@ -77,7 +80,7 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 $data['completed_at'] ?? null,
                 $status,
                 $data['comments'] ?? null,
-                (float) $data['labor_mount'],
+                (float)$data['labor_mount'],
                 $data['material_mount'] ?? 0,
                 $data['material_information'] ?? null,
                 $data['awr'] ?? null,
@@ -120,9 +123,10 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
      * @throws RepositoryException
      */
     #[Override]
-    public function updateModel(array $data, int $id): ?CamoActivity
+    public function updateModel(array $data, int $id): CamoActivity
     {
         try {
+
             $camoActivity = $this->model->findOrFail($id);
 
             $status = ActivityStatus::from($data['status']);
@@ -142,14 +146,14 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 $data['completed_at'] ?? null,
                 $status,
                 $data['comments'] ?? null,
-                (float) $data['labor_mount'],
+                (float)$data['labor_mount'],
                 $data['material_mount'] ?? 0,
                 $data['material_information'] ?? null,
                 $data['awr'] ?? null,
                 $approvalStatus
             );
-            //dd($dto);
-            $camoActivity->update([
+
+            $result = $camoActivity->update([
                 'id' => $id,
                 'camo_id' => $dto->camoId,
                 'labor_rate_id' => $dto->laborRateId,
@@ -169,9 +173,11 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 'awr' => $dto->awr,
                 'approval_status' => $dto->approvalStatus->value,
             ]);
-
+            Log::info('La camo activity actualizada', [
+                'result' => $result,
+            ]);
             // tarifa especial
-            if (! is_null($data['special_rate']) && $data['special_rate'] > 0) {
+            if (!is_null($data['special_rate']) && $data['special_rate'] > 0) {
                 SpecialRate::create([
                     'camo_activity_id' => $id,
                     'name' => $this->getLaborRateName($data['labor_rate_id']),
@@ -181,13 +187,25 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 ]);
             }
 
-            return $camoActivity->fresh();
+            return $camoActivity;
 
         } catch (ModelNotFoundException $e) {
-            Log::error('Model not found: '.$e->getMessage());
-            throw new RepositoryException($e->getMessage(), 404, $e->getCode());
+            Log::error('Modelo no encontrado: ' . $e->getMessage(), ['id' => $id]);
+            throw new RepositoryException('CamoActivity no encontrado', 404);
+
+        } catch (QueryException $e) {
+            Log::error('Error de base de datos: ' . $e->getMessage(), [
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings(),
+                'id' => $id,
+            ]);
+            throw new RepositoryException('Error al actualizar el modelo', 500);
+
         } catch (Exception|Throwable $e) {
-            throw new RepositoryException($e->getMessage(), 500, $e->getCode());
+            Log::error('Error general en el repositorio: ' . $e->getMessage(), [
+                'trace' => $e->getTrace(),
+            ]);
+            throw new RepositoryException('Error desconocido al actualizar el modelo', 500);
         }
     }
 

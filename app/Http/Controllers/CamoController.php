@@ -77,7 +77,7 @@ class CamoController extends Controller
     {
         try {
             $this->authorize('create', Camo::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
 
             $camo = $this->camo->newModel($payload);
 
@@ -111,10 +111,16 @@ class CamoController extends Controller
             $resource = new CamoResource($camo);
 
             return InertiaResponse::content('Camos/Show', ['resource' => $resource]);
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Throwable) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+        } catch (Throwable $e) {
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
@@ -146,7 +152,7 @@ class CamoController extends Controller
         try {
             $camo = $this->camo->getById($id);
             $this->authorize('update', $camo);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->camo->updateModel($payload, $id);
 
             return to_route('camos.index')->with('success', 'CAMO created successfully');

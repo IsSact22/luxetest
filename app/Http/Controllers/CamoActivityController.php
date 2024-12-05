@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\RepositoryException;
 use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoActivityRequest;
 use App\Http\Requests\UpdateCamoActivityRequest;
@@ -18,6 +19,7 @@ use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -80,7 +82,7 @@ class CamoActivityController extends Controller
     {
         try {
             $this->authorize('create', CamoActivity::class);
-            $payload = precognitive(static fn ($bail) => $request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
             $this->activity->newModel($payload);
 
             return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
@@ -146,18 +148,44 @@ class CamoActivityController extends Controller
     public function update(UpdateCamoActivityRequest $request, string $id): RedirectResponse|Response
     {
         try {
+
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
-            $payload = precognitive(static fn ($bail) => $request->validated());
-            $activity = $this->activity->updateModel($payload, $id);
+            $payload = precognitive(static fn($bail) => $request->validated());
 
-            return to_route('camos.show', $id)->with('success', 'Activity update successfully');
-        } catch (ModelNotFoundException) {
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_NOT_FOUND]);
-        } catch (Exception|Throwable|QueryException $e) {
-            Log::error($e->getMessage());
+            $this->activity->updateModel($payload, $id);
 
-            return Inertia::render('Errors/Error', ['status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR]);
+            Session::flash('success', 'Actividad actualizada correctamente');
+            Log::info('redireccionando a camo');
+            return to_route('camos.show', $camoActivity->camo->id);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Modelo no encontrado: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_NOT_FOUND,
+                'message' => $e->getMessage(),
+            ]);
+
+        } catch (QueryException $e) {
+            Log::error('Error de base de datos: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
+
+        } catch (RepositoryException $e) {
+            // Manejar específicamente las excepciones del repositorio
+            Log::error('Repository error: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
+
+        } catch (Exception|Throwable $e) {
+            Log::error('Error general: ' . $e->getMessage());
+            return Inertia::render('Errors/Error', [
+                'status' => ResponseAlias::HTTP_INTERNAL_SERVER_ERROR,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 

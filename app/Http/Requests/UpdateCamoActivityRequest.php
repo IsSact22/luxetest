@@ -23,7 +23,7 @@ class UpdateCamoActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'camo_id' => ['required', 'integer', 'exists:camo_activities,id'],
+            'camo_id' => ['required', 'integer', 'exists:camos,id'],
             'labor_rate_id' => ['required', 'exists:labor_rates,id'],
             'labor_rate_value_id' => ['required', 'exists:labor_rate_values,id'],
             'required' => ['sometimes', 'boolean'],
