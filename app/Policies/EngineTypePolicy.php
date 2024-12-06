@@ -44,7 +44,7 @@ class EngineTypePolicy
      */
     public function delete(User $user, EngineType $engineType): bool
     {
-        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('delete-engine-type');
+        return $user->hasRole(['super-admin']) && $user->can('delete-engine-type');
     }
 
     /**
@@ -52,7 +52,7 @@ class EngineTypePolicy
      */
     public function restore(User $user, EngineType $engineType): bool
     {
-        return $user->hasAnyRole(['admin', 'super-admin', 'cam']) && $user->can('delete-engine-type');
+        return $user->hasRole('super-admin') && $user->can('delete-engine-type');
     }
 
     /**

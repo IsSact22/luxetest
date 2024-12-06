@@ -300,6 +300,7 @@ const closeModal = () => {
                                 </button>
 
                                 <button
+                                    v-if="$page.props.auth.user.is_super"
                                     class="btn-delete"
                                     @click="destroy(item.id)"
                                 >

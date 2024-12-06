@@ -12,7 +12,7 @@ class CamoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super-admin', 'admin', 'cam']) && $user->can('read-camo');
+        return $user->hasAnyRole(['super-admin', 'admin', 'cam', 'owner']) && $user->can('read-camo');
     }
 
     /**

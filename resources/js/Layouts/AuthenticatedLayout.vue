@@ -108,7 +108,6 @@ const showBackoffice = computed(() => {
                         <span>{{ $t("Airplane") }}</span>
                     </NavLink>
                     <NavLink
-                        v-show="showBackoffice && showCamos"
                         :active="route().current('camos.index')"
                         :href="route('camos.index')"
                         class="inline-flex items-center space-x-7 py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black"
