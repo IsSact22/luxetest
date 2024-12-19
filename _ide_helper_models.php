@@ -164,6 +164,7 @@ namespace App\Models{
  * @property int $id
  * @property int $camo_id
  * @property int $labor_rate_id
+ * @property int $labor_rate_value_id
  * @property bool $required
  * @property \Illuminate\Support\Carbon|null $date
  * @property string $name
@@ -182,12 +183,16 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property mixed $0
  * @property-read \App\Models\Camo $camo
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection $images
  * @property-read mixed $get_special_rate
- * @property-read \App\Models\LaborRate|null $laborRate
+ * @property-read \App\Models\LaborRate $laborRate
+ * @property-read \App\Models\LaborRateValue $laborRateValue
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
+ * @property-read mixed $missing_rate_name
+ * @property-read mixed $missing_rate_value
  * @property-read \App\Models\SpecialRate|null $specialRate
  * @method static \Database\Factories\CamoActivityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity newModelQuery()
@@ -207,6 +212,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity whereLaborMount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity whereLaborRateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity whereLaborRateValueId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity whereMaterialInformation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity whereMaterialMount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CamoActivity whereName($value)
