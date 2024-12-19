@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Override;
 
@@ -15,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         if ($this->app->isLocal()) {
-            $this->app->register(IdeHelperServiceProvider::class);
+            //$this->app->register(IdeHelperServiceProvider::class);
         }
     }
 
