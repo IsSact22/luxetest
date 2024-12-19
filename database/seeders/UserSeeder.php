@@ -26,21 +26,21 @@ class UserSeeder extends Seeder
         $superAdmin->syncRoles('super-admin');
 
         // Crear Admin
-        $admin = User::factory()
-            ->create([
-                'name' => 'Mara Beltran',
-                'email' => 'mbeltran@luxeservicesve.com',
-            ]);
+        $admin = User::create([
+            'name' => 'Mara Beltran',
+            'email' => 'mbeltran@luxeservicesve.com',
+            'password' => Hash::make('password'), // Asegúrate de usar una contraseña encriptada
+            'remember_token' => Str::random(10) // Opcional, dependiendo de tu implementación
+        ]);
         $admin->syncRoles('admin');
 
         // Crear Cams
-        $angel = User::factory()
-            ->create([
-                'name' => 'Angel Contreras',
-                'email' => 'angel@luxeservicesve.com',
-            ]);
+        $angel = User::create([
+            'name' => 'Angel Contreras',
+            'email' => 'acontreras@luxeservicesve.com',
+            'password' => Hash::make('password'), // Asegúrate de usar una contraseña encriptada
+            'remember_token' => Str::random(10) // Opcional
+        ]);
         $angel->syncRoles('cam');
-
-
     }
 }
