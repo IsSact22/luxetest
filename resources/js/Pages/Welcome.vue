@@ -54,7 +54,7 @@ const handleLogoClick = () => {
                         />
                     </div>
                     <p class="text-white">
-                        Continuing Airworthiness Management Organisation
+                        Continuing Airworthiness Management Organization
                     </p>
                 </main>
             </div>
