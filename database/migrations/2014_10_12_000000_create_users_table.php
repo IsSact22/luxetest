@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('password');
             $table->rememberToken();
             $table->unsignedBigInteger('owner_id')->nullable();
+            $table->enum('locale', \App\LocaleEnum::values())->default(\App\LocaleEnum::es->value);
             $table->boolean('disabled')->default(false);
             $table->timestamps();
             $table->softDeletes();

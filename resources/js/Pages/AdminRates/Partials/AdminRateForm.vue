@@ -43,7 +43,7 @@ const cancel = () => {
 <template>
     <form class="bg-white p-4" @submit.prevent="submit">
         <div class="my-2">
-            <InputLabel for="name">Nombre</InputLabel>
+            <InputLabel for="name">{{ $t("Name") }}</InputLabel>
             <input
                 id="name"
                 v-model="form.name"
@@ -57,7 +57,7 @@ const cancel = () => {
         </div>
 
         <div class="my-2">
-            <InputLabel for="description">Descripción</InputLabel>
+            <InputLabel for="description">{{ $t("Description") }}</InputLabel>
             <input
                 id="description"
                 v-model="form.description"
@@ -77,9 +77,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" type="submit"
-                >Guardar
+                >{{ $t("Save") }}
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
+            <SecondaryButton @click="cancel">{{ $t("Cancel") }}</SecondaryButton>
         </div>
     </form>
 </template>

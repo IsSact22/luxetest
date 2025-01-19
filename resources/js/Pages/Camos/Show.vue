@@ -253,10 +253,10 @@ const finishCamo = async () => {
                         v-if="!$page.props.auth.user.is_owner"
                         :href="route('camos.index')"
                         class="btn-primary"
-                        >Regresar
+                        >{{ $t("Go Back") }}
                     </Link>
                     <Link v-else :href="route('dashboard')" class="btn-primary"
-                        >Regresar
+                        >{{ $t("Go Back") }}
                     </Link>
                     <button
                         v-if="
@@ -267,7 +267,7 @@ const finishCamo = async () => {
                         class="btn-primary"
                         @click="addActivity = true"
                     >
-                        Agregar Actividad
+                        {{ $t("Add Activity") }}
                     </button>
                     <Link
                         v-if="showGallery"
@@ -276,7 +276,7 @@ const finishCamo = async () => {
                         title="Gallery of Camo"
                         @click.passive.prevent
                     >
-                        Ver Galeria
+                        {{ $t("See Gallery") }}
                     </Link>
                     <button
                         v-if="
@@ -286,7 +286,7 @@ const finishCamo = async () => {
                         class="btn-primary"
                         @click="finishCamo"
                     >
-                        Finalizar
+                        {{ $t("Finish") }}
                     </button>
                 </div>
 
@@ -294,7 +294,7 @@ const finishCamo = async () => {
                     v-if="props.resource.data.finish_date"
                     class="px-4 text-gray-400 text-lg font-bold uppercase"
                 >
-                    Finalizado
+                    {{ $t("Finalized") }}
                 </span>
 
                 <div
@@ -395,13 +395,13 @@ const finishCamo = async () => {
                         <div
                             class="px-4 py-2 my-2 shadow-lg border rounded-md border-gray-200"
                         >
-                            <h1 class="text-gray-700">Sumario</h1>
+                            <h1 class="text-gray-700">{{ $t("Summary") }}</h1>
                             <hr class="h-0.5 my-2 bg-neutral-400" />
 
                             <div
                                 class="flex flex-row justify-between text-xl my-2"
                             >
-                                <span>Mano de Obra</span>
+                                <span>{{ $t("Labour") }}</span>
                                 <span
                                     class="px-2 py-1 bg-yellow-500 rounded-md"
                                     >{{ formatCurrency(totalLaborMount) }}</span
@@ -411,7 +411,7 @@ const finishCamo = async () => {
                             <div
                                 class="flex flex-row justify-between text-xl my-2"
                             >
-                                <span>Materiales</span>
+                                <span>{{ $t("Materials") }}</span>
                                 <span
                                     class="px-2 py-1 bg-yellow-500 rounded-md"
                                     >{{
@@ -442,44 +442,44 @@ const finishCamo = async () => {
                     class="flex flex-row justify-between px-2 py-2 my-5 shadow border rounded-md border-gray-200"
                 >
                     <p v-if="waitingApproval" class="text-right">
-                        Esperando Aprobación
+                        {{ $t("Waiting for approval") }}
                         <span class="badge-alert">{{
                             waitingApproval.length
                         }}</span>
                     </p>
                     <p v-if="pendingExecution" class="text-right">
-                        Pendiente
+                        {{ $t("Earring") }}
                         <span class="badge-pending">{{
                             pendingExecution.length
                         }}</span>
                     </p>
                     <p v-if="completed" class="text-right">
-                        en Progreso
+                        {{ $t("en Progreso") }}
                         <span class="badge-progress">{{
                             inProgress.length
                         }}</span>
                     </p>
                     <p v-if="completed" class="text-right">
-                        Completado
+                        {{ $t("Completado") }}
                         <span class="badge-completed">{{
                             completed.length
                         }}</span>
                     </p>
                     <p v-if="activities && activities.total" class="text-right">
-                        Total de Actividades
+                        {{ $t("Total Activities") }}
                         <span class="badge-info">{{ activities.total }}</span>
                     </p>
                 </div>
 
                 <div>
                     <form v-show="!addActivity" class="my-2">
-                        <InputLabel for="search">Buscar</InputLabel>
+                        <InputLabel for="search">{{ $t("Search") }}</InputLabel>
                         <input
                             id="search"
                             v-model="search"
                             class="px-4 py-2 rounded-md border-gray-300 w-1/3"
                             name="search"
-                            placeholder="Escriba para buscar y borre para restablecer"
+                            :placeholder="`${$t('Type to search and delete to reset')}`"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -525,7 +525,7 @@ const finishCamo = async () => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'approval_status.approved'"
                                 >
-                                    Aprobadas
+                                    {{ $t("Approved") }}
                                 </button>
                                 <button
                                     :class="{
@@ -539,7 +539,7 @@ const finishCamo = async () => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'approval_status.pending'"
                                 >
-                                    Aprobación pendiente
+                                    {{ $t("Pending approval") }}
                                 </button>
                                 <button
                                     :class="{
@@ -552,7 +552,7 @@ const finishCamo = async () => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.pending'"
                                 >
-                                    Pendiente
+                                    {{ $t("Pending") }}
                                 </button>
                                 <button
                                     :class="{
@@ -565,7 +565,7 @@ const finishCamo = async () => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.in_progress'"
                                 >
-                                    en Progreso
+                                    {{ $t("In Progress") }}
                                 </button>
                                 <button
                                     :class="{
@@ -578,21 +578,21 @@ const finishCamo = async () => {
                                     rel="noopener noreferrer"
                                     @click="filter = 'status.completed'"
                                 >
-                                    Completado
+                                    {{ $t("Completed") }}
                                 </button>
                             </div>
                             <!-- pending approval -->
                             <table class="table-fixed w-full">
                                 <thead>
                                     <tr>
-                                        <th>Nombre</th>
-                                        <th>Inicia</th>
-                                        <th>Hrs</th>
-                                        <th>Estatus</th>
-                                        <th>H/H</th>
-                                        <th>Material</th>
-                                        <th>Aprobado</th>
-                                        <th>Acciones</th>
+                                        <th>{{ $t("Name") }}</th>
+                                        <th>{{ $t("Start") }}</th>
+                                        <th>{{ $t("Hrs") }}</th>
+                                        <th>{{ $t("Status") }}</th>
+                                        <th>{{ $t("H/H") }}</th>
+                                        <th>{{ $t("Material") }}</th>
+                                        <th>{{ $t("Approved") }}</th>
+                                        <th>{{ $t("Actions") }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -603,22 +603,10 @@ const finishCamo = async () => {
                                     >
                                         <td>
                                             {{ act.name }}
-                                            <!--                                            <span
-v-tooltip="act.name"
-:class="
-badgeClass(act.priority)
-"
->
-{{ act.priority }}
-</span>-->
                                         </td>
                                         <td class="text-xs">
                                             <span v-if="act.started_at"></span>
-                                            {{
-                                                formattedDateTime(
-                                                    act.started_at,
-                                                )
-                                            }}
+                                            {{ formattedDateTime(act.started_at) }}
                                         </td>
                                         <td class="text-center">
                                             {{ act.estimate_time }}

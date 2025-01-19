@@ -41,6 +41,9 @@ Route::get('/', static fn () => Inertia::render('Welcome', [
 Route::get('dashboard', static fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(static function ($route) {
+    // Language
+    $route->post('/change-locale', [\App\Http\Controllers\LanguageController::class, 'changeLocale'])->name('change.locale');
+
     // Invokes Controllers
     $route->get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
     $route->get('permissions/select', PermissionController::class)->name('permissions.select');

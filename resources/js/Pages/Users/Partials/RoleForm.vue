@@ -4,16 +4,16 @@
             v-if="props.user.role !== 'owner'"
             class="text-lg font-medium text-gray-900"
         >
-            Actualizar Rol
+            {{ $t("Update Role") }}
         </h2>
         <h2 v-else class="text-lg font-medium text-gray-900">
-            Permisos del Rol
+            {{ $t("Role Permissions") }}
         </h2>
         <p
             v-if="props.user.role !== 'owner'"
             class="mt-1 text-sm text-gray-600"
         >
-            Asegúrese de que el usuario tenga un rol asignado.
+            {{ $t("Make sure the user has a role assigned.") }}
         </p>
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="flex flex-row justify-items-center items-center">
@@ -46,7 +46,7 @@
 
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing"
-                    >Guardar
+                    >{{ $t("Save") }}
                 </PrimaryButton>
 
                 <Transition
@@ -59,7 +59,7 @@
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        Saved.
+                        {{ $t("Saved") }}
                     </p>
                 </Transition>
             </div>
