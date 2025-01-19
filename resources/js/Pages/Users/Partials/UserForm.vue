@@ -32,6 +32,25 @@
                 />
                 <InputError :message="form.errors.email" class="mt-2" />
             </div>
+            <div>
+                <InputLabel :value="$t('Language')" for="email"></InputLabel>
+                <select
+                    class="rounded-md border border-gray-300"
+                    name="locale"
+                    id="locale"
+                    v-model="form.locale"
+                    @change="form.validate('locale')"
+                >
+                    <option :value="null">{{ $t("Select") }}</option>
+                    <option
+                        v-for="(item, idx) in locale"
+                        :key="idx"
+                        :value="item.value"
+                        v-html="item.label"
+                    ></option>
+                </select>
+                <InputError :message="form.errors.locale" class="mt-2" />
+            </div>
             <div
                 class="flex flex-col my-2 space-y-2 rounded-md border border-gray-300 px-2 py-2 w-1/2"
             >
@@ -52,9 +71,9 @@
                 <InputError :message="form.errors.avatar" class="mt-2" />
             </div>
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing"
-                    >{{ $t("Save") }}</PrimaryButton
-                >
+                <PrimaryButton :disabled="form.processing">{{
+                    $t("Save")
+                }}</PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -86,10 +105,15 @@ const props = defineProps({
     user: Object,
 });
 const userId = ref(props.user.id);
+const locale = ref([
+    { value: "es", label: "Español" },
+    { value: "en", label: "English" },
+]);
 const form = useForm({
     name: props.user.name,
     email: props.user.email,
     avatar: null,
+    locale: props.user.locale,
     _method: "PATCH",
 });
 const submit = () => {

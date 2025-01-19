@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'is_super' => $this->is_super,
             'email' => $this->email,
             'email_verified_at' => CarbonParse($this->email_verified_at),
+            'locale' => $this->locale,
             'role' => $this->getRoleNames()->first(),
             'permissions' => PermissionResource::collection($this->getPermissionsViaRoles()),
             'avatar' => $this->getFirstMediaUrl('avatars', 'thumb'),
