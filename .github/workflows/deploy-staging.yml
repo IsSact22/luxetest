@@ -1,0 +1,40 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - staging  # Ejecutar en cada push a la rama staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Usaremos una imagen de Ubuntu para el servidor
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2  # Clona el código fuente
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'  # Ajusta la versión de PHP a la que uses
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader  # Instala dependencias de PHP
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'  # Ajusta la versión de Node.js si es necesario
+
+      - name: Install npm dependencies
+        run: npm install  # Instala dependencias de Node (Vue, Vite, etc.)
+
+      - name: Build assets with Vite
+        run: npm run build  # Ejecuta la compilación de Vue con Vite
+
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@$${{ secrets.SERVER_IP }} "cd /path/to/your/app && git pull origin develop && composer install && npm install && npm run build && php artisan migrate --force"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        # Aquí ejecutas un comando SSH para hacer el despliegue
