@@ -5,6 +5,7 @@ import { onMounted } from "vue";
 import { route } from "ziggy-js";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
+import { isLoaded, loadLanguageAsync } from "laravel-vue-i18n";
 
 defineProps({
     canResetPassword: {
@@ -23,6 +24,21 @@ const form = useForm({
 
 onMounted(() => {
     document.getElementById("login").classList.add("loaded");
+
+    // Detecta el idioma del navegador (por ejemplo 'en', 'es')
+    const userLang = navigator.language || navigator.userLanguage;
+    const lang = userLang.split("-")[0]; // Captura el idioma principal
+
+    // Si el idioma no está cargado, lo cargamos dinámicamente
+    if (!isLoaded(lang)) {
+        loadLanguageAsync(lang)
+            .then(() => {
+                console.log(`${lang} cargado correctamente`);
+            })
+            .catch((error) => {
+                console.error(`Error al cargar el idioma: ${lang}`, error);
+            });
+    }
 });
 
 const submit = () => {
@@ -55,24 +71,27 @@ const submit = () => {
                         <h2
                             class="text-yellow-400 text-3xl font-poppins font-medium leading-normal"
                         >
-                            Iniciar Sesión
+                            {{ $t("Login") }}
                         </h2>
                         <p
                             class="text-black-50 font-poppins not-italic leading-normal"
                         >
-                            Ingresa tu usuario y contraseña para entrar en tu
-                            cuenta
+                            {{
+                                $t(
+                                    "Enter your username and password to log into your account",
+                                )
+                            }}
                         </p>
                         <div>
                             <label class="block text-black-50" for="email">
-                                Usuario
+                                {{ $t("User") }}
                             </label>
                             <input
                                 id="email"
                                 v-model="form.email"
                                 class="w-96 py-3 bg-black-700 rounded-md text-white focus:ring-yellow-50"
                                 name="email"
-                                placeholder="Correo Electrónico"
+                                :placeholder="$t('Email')"
                                 type="text"
                             />
                             <InputError
@@ -83,14 +102,14 @@ const submit = () => {
 
                         <div>
                             <label class="block text-black-50" for="password">
-                                Contraseña
+                                {{ $t("Password") }}
                             </label>
                             <input
                                 id="password"
                                 v-model="form.password"
                                 class="w-96 py-3 bg-black-700 rounded-md text-white focus:ring-yellow-50"
                                 name="password"
-                                placeholder="Contraseña"
+                                :placeholder="$t('Password')"
                                 type="password"
                             />
                             <InputError
@@ -108,7 +127,7 @@ const submit = () => {
                                 />
                                 <span
                                     class="ms-2 text-sm text-yellow-600 font-poppins font-medium"
-                                    >Recordar Usuario</span
+                                    >{{ $t("Remember User") }}</span
                                 >
                             </label>
                         </div>
@@ -119,7 +138,7 @@ const submit = () => {
                                 :href="route('password.request')"
                                 class="text-yellow-500 font-poppins font-medium underline"
                             >
-                                Recuperar Contraseña
+                                {{ $t("Recover Password") }}
                             </Link>
                         </div>
 
@@ -130,7 +149,7 @@ const submit = () => {
                                 class="w-96 px-4 py-2 rounded-full bg-yellow-500 font-medium font-poppins"
                                 type="submit"
                             >
-                                Iniciar Sesión
+                                {{ $t("Login") }}
                             </button>
                         </div>
                     </form>
@@ -146,15 +165,18 @@ const submit = () => {
                         src="storage/img/Logo.png"
                     />
                     <h2 class="text-5xl font-bold mb-5 text-center text-white">
-                        Bienvenido a
+                        {{ $t("Welcome to") }}
                         <span class="text-yellow-500">LUXE PLUS</span>
                     </h2>
                     <p class="text-white text-center py-3 text-2xl">
-                        Airworthiness tracker
+                        {{ $t("Airworthiness tracker") }}
                     </p>
                     <p class="text-white text-center pt-2 px-10 text-2xl">
-                        Nuestra aplicación CAMO facilita la gestión eficiente de
-                        la aeronavegabilidad continua para flotas de aeronaves
+                        {{
+                            $t(
+                                "Our CAMO application facilitates efficient management of continued airworthiness for aircraft fleets",
+                            )
+                        }}
                     </p>
                 </div>
             </div>
