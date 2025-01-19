@@ -88,7 +88,7 @@ const cancel = () => {
 <template>
     <form class="flex flex-col space-y-3" @submit.prevent="submitForm">
         <div>
-            <InputLabel for="rateable_id">Tarifas</InputLabel>
+            <InputLabel for="rateable_id">{{ $t("Rates") }}</InputLabel>
             <select
                 id="rateable_id"
                 v-model="form.rateable_id"
@@ -148,7 +148,7 @@ const cancel = () => {
         </div>
 
         <div>
-            <InputLabel for="mount">Monto</InputLabel>
+            <InputLabel for="mount">{{ $t("Amount") }}</InputLabel>
             <input
                 id="mount"
                 v-model.number="form.amount"
@@ -160,9 +160,9 @@ const cancel = () => {
         </div>
 
         <div class="flex space-x-7 my-2">
-            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
+            <SecondaryButton @click="cancel">{{ $t('Cancel') }}</SecondaryButton>
             <PrimaryButton :disabled="isLoading" type="submit"
-                >Guardar
+                >{{$t('Save')}}
             </PrimaryButton>
         </div>
     </form>

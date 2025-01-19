@@ -1,11 +1,14 @@
 <template>
     <div>
         <h2 class="text-lg font-medium text-gray-900">
-            Actualizar la contraseña
+            {{ $t("Update Password") }}
         </h2>
         <p class="mt-1 text-sm text-gray-600">
-            Asegúrese de que su cuenta utilice una contraseña larga y aleatoria
-            para mantenerla segura.
+            {{
+                $t(
+                    "Make sure your account uses a long, random password to keep it secure.",
+                )
+            }}
         </p>
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div>
@@ -38,7 +41,7 @@
             </div>
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing"
-                    >Guardar</PrimaryButton
+                    >{{ $t("Save") }}</PrimaryButton
                 >
 
                 <Transition

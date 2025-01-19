@@ -14,15 +14,15 @@ const props = defineProps({
 });
 </script>
 <template>
-    <Head title="Usuarios" />
+    <Head :title="`${$t('Users')}`" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Usuarios</h2>
+            <h2>{{ $t("Users") }}</h2>
         </template>
         <div class="py-7">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <Link :href="route('users.index')" class="btn-goto"
-                    >Regresar
+                    >{{ $t("Go back") }}
                 </Link>
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <UserForm :user="props.resource.data" />

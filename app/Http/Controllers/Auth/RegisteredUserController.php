@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\User;
+use App\Notifications\WelcomeMail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
@@ -27,15 +28,18 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $payload = precognitive(static fn ($bail) => $request->validated());
+        $payload = precognitive(static fn($bail) => $request->validated());
 
-        $user = \App\Models\User::query()->create([
+        $user = User::query()->create([
             'name' => $payload['name'],
             'email' => $payload['email'],
             'password' => Hash::make($payload['password']),
         ]);
+        $user->language()->create(['locale' => $payload['locale']]);
+
 
         event(new Registered($user));
+        $user->notify(new WelcomeMail($user));
 
         Auth::login($user);
 

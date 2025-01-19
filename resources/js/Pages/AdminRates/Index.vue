@@ -80,10 +80,10 @@ const closeModal = () => {
 </script>
 
 <template>
-    <Head title="Tarifas de administración" />
+    <Head :title="`${$t('Admin Fees')}`" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Tarifas de administración</h2>
+            <h2>{{ $t("Administration Fees") }}</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-12">
             <div class="my-4 p-4">
@@ -96,7 +96,7 @@ const closeModal = () => {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="buscar"
+                            :placeholder="$t('Search')"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -106,7 +106,7 @@ const closeModal = () => {
                         type="button"
                         @click="openModal"
                     >
-                        Nueva Tarifa
+                        {{ $t("New rate") }}
                     </button>
                 </form>
 
@@ -141,8 +141,12 @@ const closeModal = () => {
                         </div>
                         <div class="p-4">
                             <h2 class="text-lg font-bold">
-                                <span v-if="selected">Editar Tarifa</span>
-                                <span v-else>Registrar nueva Tarifa</span>
+                                <span v-if="selected">{{
+                                    $t("Edit rate")
+                                }}</span>
+                                <span v-else>{{
+                                    $t("Register new rate")
+                                }}</span>
                             </h2>
                             <AdminRateForm
                                 :admin-rate="selected"
@@ -156,10 +160,10 @@ const closeModal = () => {
                 <table class="table-fixed">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Acciones</th>
+                            <th>{{ $t("Id") }}</th>
+                            <th>{{ $t("Name") }}</th>
+                            <th>{{ $t("Description") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>
