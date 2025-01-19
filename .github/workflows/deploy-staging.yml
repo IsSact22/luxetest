@@ -4,22 +4,20 @@ on:
   push:
     branches:
       - staging  # Ejecutar en cada push a la rama staging
-  workflow_dispatch:
+  workflow_dispatch:  # Permitir la ejecución manual
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Usaremos una imagen de Ubuntu para el servidor
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2 
+        uses: actions/checkout@v2  # Clona el código fuente
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, intl, pdo, pdo_mysql, tokenizer, xml, ctype, json, bcmath
-          coverage: none
+          php-version: '8.3'  # Ajusta la versión de PHP a la que uses
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader  # Instala dependencias de PHP
@@ -28,7 +26,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'  # Ajusta la versión de Node.js si es necesario
-          cache: npm
 
       - name: Install npm dependencies
         run: npm install  # Instala dependencias de Node (Vue, Vite, etc.)
