@@ -51,12 +51,12 @@ jobs:
           APP_DIR: ${{ secrets.APP_TEST_DIR }}  # Ruta del proyecto en el servidor
         run: |
           # Crear el directorio .ssh y configurar la clave SSH
-          # mkdir -p ~/.ssh
-          # echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          # chmod 600 ~/.ssh/id_rsa
+          mkdir -p ~/.ssh
+          echo "$SSH_TEST_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
           # Agregar la llave pública del servidor al archivo known_hosts
-          # ssh-keyscan -H $SERVER_IP >> ~/.ssh/known_hosts
+          ssh-keyscan -H $SERVER_TEST_IP >> ~/.ssh/known_hosts
 
           # Conectar al servidor y ejecutar comandos de despliegue
           ssh -o StrictHostKeyChecking=no $SSH_TEST_USER@$SERVER_TEST_IP << 'EOF'
