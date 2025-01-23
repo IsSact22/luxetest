@@ -39,7 +39,6 @@
                     name="locale"
                     id="locale"
                     v-model="form.locale"
-                    @change="form.validate('locale')"
                 >
                     <option :value="null">{{ $t("Select") }}</option>
                     <option
@@ -121,6 +120,7 @@ const submit = () => {
         _method: "patch",
         name: form.name,
         email: form.email,
+        locale: form.locale,
         avatar: form.avatar,
     });
 };
