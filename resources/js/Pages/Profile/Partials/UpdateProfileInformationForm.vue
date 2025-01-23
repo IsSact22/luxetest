@@ -4,6 +4,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Link, useForm, usePage } from "@inertiajs/vue3";
+import {ref} from "vue";
 
 defineProps({
     mustVerifyEmail: {
@@ -15,10 +16,14 @@ defineProps({
 });
 
 const user = usePage().props.auth.user;
-
+const locale = ref([
+    { value: "es", label: "Español" },
+    { value: "en", label: "English" },
+]);
 const form = useForm({
     name: user.name,
     email: user.email,
+    locale: user.locale,
 });
 </script>
 
@@ -71,6 +76,25 @@ const form = useForm({
                 />
 
                 <InputError :message="form.errors.email" class="mt-2" />
+            </div>
+
+            <div>
+                <InputLabel :value="$t('Language')" for="email"></InputLabel>
+                <select
+                    class="rounded-md border border-gray-300"
+                    name="locale"
+                    id="locale"
+                    v-model="form.locale"
+                >
+                    <option :value="null">{{ $t("Select") }}</option>
+                    <option
+                        v-for="(item, idx) in locale"
+                        :key="idx"
+                        :value="item.value"
+                        v-html="item.label"
+                    ></option>
+                </select>
+                <InputError :message="form.errors.locale" class="mt-2" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
