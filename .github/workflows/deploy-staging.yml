@@ -1,67 +1,58 @@
-name: Deploy to Staging
+name: Deploy to test server
 
 on:
   push:
     branches:
-      - staging  # Ejecutar en cada push a la rama staging
-  workflow_dispatch:  # Permitir la ejecución manual
+      - develop
+  workflow_dispatch:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Usaremos una imagen de Ubuntu para el servidor
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2  # Clona el código fuente
+        uses: actions/checkout@v3
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'  # Ajusta la versión de PHP a la que uses
+          php-version: '8.3'
+          extensions: mbstring, ctype, fileinfo, json, pdo_mysql, tokenizer, xml
+          coverage: none
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader  # Instala dependencias de PHP
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Ajusta la versión de Node.js si es necesario
-          cache: 'npm'  # Habilita la caché de npm
-
-      - name: Restore npm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install npm dependencies
-        run: npm install  # Instala dependencias de Node (Vue, Vite, etc.)
+        run: npm install
 
       - name: Build assets with Vite
-        run: npm run build  # Ejecuta la compilación de Vue con Vite
+        run: npm run build
 
-      - name: Deploy to Staging Server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Clave privada configurada en Secrets-
-        run: |
-          # Crear el directorio .ssh y configurar la clave SSH
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+      - name: Parse SSH Key
+        run: echo "${{ secrets.SSH_TEST_PRIVATE_KEY }}" > private_key && chmod 600 private_key
 
-          # Agregar la llave pública del servidor al archivo known_hosts
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-          # Conectar al servidor y ejecutar comandos de despliegue
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /path/to/your/app  # Ruta del proyecto en el servidor
-            git pull origin staging  # Asegúrate de tener los últimos cambios de la rama staging
+      - name: Deploy to test Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_TEST_IP }}
+          username: ${{ secrets.SSH_TEST_USER }}
+          key: ${{ secrets.SSH_TEST_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.APP_TEST_DIR }}
+            git fetch origin
+            git reset --hard origin/develop
             composer install --no-interaction --prefer-dist --optimize-autoloader
             npm install
             npm run build
-            php artisan migrate --force  # Ejecuta las migraciones
-            php artisan config:cache  # Cachea la configuración para mayor rendimiento
-            php artisan route:cache  # Cachea las rutas
-          EOF
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan optimize
