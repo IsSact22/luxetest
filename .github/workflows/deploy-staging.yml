@@ -26,6 +26,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'  # Ajusta la versión de Node.js si es necesario
+          cache: 'npm'  # Habilita la caché de npm
+
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install npm dependencies
         run: npm install  # Instala dependencias de Node (Vue, Vite, etc.)
