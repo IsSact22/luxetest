@@ -125,7 +125,7 @@ class UserController extends Controller
     public function edit(int $id): Response
     {
         try {
-            $this->authorize('update', User::class);
+            $this->authorize('view', User::class);
 
             $user = $this->userRepository->getById($id);
             $resource = new UserResource($user);
