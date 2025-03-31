@@ -2,39 +2,39 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Contracts\AircraftRepositoryInterface;
+use App\Contracts\BrandAircraftRepositoryInterface;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAircraftRequest;
-use App\Http\Requests\UpdateAircraftRequest;
-use App\Http\Resources\AircraftResource;
+use App\Http\Requests\StoreBrandAircraftRequest;
+use App\Http\Requests\UpdateBrandAircraftRequest;
+use App\Http\Resources\BrandAircraftResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
-use App\Models\Aircraft;
+use App\Models\BrandAircraft;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
 
-class AircraftController extends Controller
+class BrandAircraftController extends Controller
 {
-    public function __construct(protected AircraftRepositoryInterface $aircraftRepository)
+    public function __construct(protected BrandAircraftRepositoryInterface $brandAircraftRepository)
     {
         $this->middleware('auth:api');
     }
 
     /**
      * @OA\Get(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="List all aircrafts",
+     *     path="/api/v1/brand-aircrafts",
+     *     tags={"Brand Aircrafts"},
+     *     summary="List all brand aircrafts",
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/AircraftResource")),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/BrandAircraftResource")),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
@@ -43,26 +43,30 @@ class AircraftController extends Controller
     public function index(Request $request)
     {
         try {
-            $this->authorize('viewAny', Aircraft::class);
-            $aircrafts = $this->aircraftRepository->getAll($request);
+            $this->authorize('viewAny', BrandAircraft::class);
+            $brandAircrafts = $this->brandAircraftRepository->getAll($request);
 
             return new ApiSuccessResponse(
-                data: AircraftResource::collection($aircrafts),
-                metaData: ['total' => $aircrafts->count()],
+                data: BrandAircraftResource::collection($brandAircrafts),
+                metaData: [
+                    'total' => $brandAircrafts->total(),
+                    'per_page' => $brandAircrafts->perPage(),
+                    'current_page' => $brandAircrafts->currentPage()
+                ],
                 statusCode: HttpResponse::HTTP_OK
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized access',
+                message: 'Unauthorized to view brand aircrafts',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to retrieve aircrafts',
+                message: 'Failed to retrieve brand aircrafts',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -70,33 +74,33 @@ class AircraftController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="Create a new aircraft",
+     *     path="/api/v1/brand-aircrafts",
+     *     tags={"Brand Aircrafts"},
+     *     summary="Create a new brand aircraft",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/StoreAircraftRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/StoreBrandAircraftRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Aircraft created successfully",
+     *         description="Brand aircraft created successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/BrandAircraftResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
      * )
      */
-    public function store(StoreAircraftRequest $request)
+    public function store(StoreBrandAircraftRequest $request)
     {
         try {
-            $this->authorize('create', Aircraft::class);
-            $aircraft = $this->aircraftRepository->newModel($request->validated());
+            $this->authorize('create', BrandAircraft::class);
+            $brandAircraft = $this->brandAircraftRepository->newBrandAircraft($request->validated());
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
+                data: new BrandAircraftResource($brandAircraft),
                 metaData: ['action' => 'created'],
                 statusCode: HttpResponse::HTTP_CREATED
             );
@@ -104,14 +108,14 @@ class AircraftController extends Controller
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to create aircraft',
+                message: 'Unauthorized to create brand aircraft',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to create aircraft',
+                message: 'Failed to create brand aircraft',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -119,9 +123,9 @@ class AircraftController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Get aircraft details",
+     *     path="/api/v1/brand-aircrafts/{id}",
+     *     tags={"Brand Aircrafts"},
+     *     summary="Get brand aircraft details",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -134,7 +138,7 @@ class AircraftController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/BrandAircraftResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
@@ -143,11 +147,11 @@ class AircraftController extends Controller
     public function show(int $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('view', $aircraft);
+            $brandAircraft = $this->brandAircraftRepository->getById($id);
+            $this->authorize('view', $brandAircraft);
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
+                data: new BrandAircraftResource($brandAircraft),
                 metaData: ['fetched' => now()->toDateTimeString()],
                 statusCode: HttpResponse::HTTP_OK
             );
@@ -155,21 +159,21 @@ class AircraftController extends Controller
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found',
+                message: 'Brand aircraft not found',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to view this aircraft',
+                message: 'Unauthorized to view this brand aircraft',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to retrieve aircraft',
+                message: 'Failed to retrieve brand aircraft',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -177,9 +181,9 @@ class AircraftController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Update aircraft",
+     *     path="/api/v1/brand-aircrafts/{id}",
+     *     tags={"Brand Aircrafts"},
+     *     summary="Update brand aircraft",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -189,29 +193,29 @@ class AircraftController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateAircraftRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateBrandAircraftRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Aircraft updated successfully",
+     *         description="Brand aircraft updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/BrandAircraftResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
      * )
      */
-    public function update(UpdateAircraftRequest $request, int $id)
+    public function update(UpdateBrandAircraftRequest $request, int $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('update', $aircraft);
+            $brandAircraft = $this->brandAircraftRepository->getById($id);
+            $this->authorize('update', $brandAircraft);
 
-            $updatedAircraft = $this->aircraftRepository->updateModel($request->validated(), $id);
+            $updatedBrandAircraft = $this->brandAircraftRepository->updateBrandAircraft($request->validated(), $id);
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($updatedAircraft),
+                data: new BrandAircraftResource($updatedBrandAircraft),
                 metaData: ['action' => 'updated', 'at' => now()->toDateTimeString()],
                 statusCode: HttpResponse::HTTP_OK
             );
@@ -219,21 +223,21 @@ class AircraftController extends Controller
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found for update',
+                message: 'Brand aircraft not found for update',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to update this aircraft',
+                message: 'Unauthorized to update this brand aircraft',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to update aircraft',
+                message: 'Failed to update brand aircraft',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -241,9 +245,9 @@ class AircraftController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Delete aircraft",
+     *     path="/api/v1/brand-aircrafts/{id}",
+     *     tags={"Brand Aircrafts"},
+     *     summary="Delete brand aircraft",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -253,7 +257,7 @@ class AircraftController extends Controller
      *     ),
      *     @OA\Response(
      *         response=204,
-     *         description="Aircraft deleted successfully",
+     *         description="Brand aircraft deleted successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="data", type="null"),
@@ -265,10 +269,10 @@ class AircraftController extends Controller
     public function destroy(int $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('delete', $aircraft);
+            $brandAircraft = $this->brandAircraftRepository->getById($id);
+            $this->authorize('delete', $brandAircraft);
 
-            $this->aircraftRepository->deleteModel($id);
+            $this->brandAircraftRepository->deleteBrandAircraft($id);
 
             return new ApiSuccessResponse(
                 data: null,
@@ -279,21 +283,21 @@ class AircraftController extends Controller
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found for deletion',
+                message: 'Brand aircraft not found for deletion',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to delete this aircraft',
+                message: 'Unauthorized to delete this brand aircraft',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to delete aircraft',
+                message: 'Failed to delete brand aircraft',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }

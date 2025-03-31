@@ -2,39 +2,39 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Contracts\AircraftRepositoryInterface;
+use App\Contracts\AdminRateRepositoryInterface;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAircraftRequest;
-use App\Http\Requests\UpdateAircraftRequest;
-use App\Http\Resources\AircraftResource;
+use App\Http\Requests\StoreAdminRateRequest;
+use App\Http\Requests\UpdateAdminRateRequest;
+use App\Http\Resources\AdminRateResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
-use App\Models\Aircraft;
+use App\Models\AdminRate;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
 
-class AircraftController extends Controller
+class AdminRateController extends Controller
 {
-    public function __construct(protected AircraftRepositoryInterface $aircraftRepository)
+    public function __construct(protected AdminRateRepositoryInterface $adminRateRepository)
     {
         $this->middleware('auth:api');
     }
 
     /**
      * @OA\Get(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="List all aircrafts",
+     *     path="/api/v1/admin-rates",
+     *     tags={"Admin Rates"},
+     *     summary="List all admin rates",
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/AircraftResource")),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/AdminRateResource")),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
@@ -43,26 +43,30 @@ class AircraftController extends Controller
     public function index(Request $request)
     {
         try {
-            $this->authorize('viewAny', Aircraft::class);
-            $aircrafts = $this->aircraftRepository->getAll($request);
+            $this->authorize('viewAny', AdminRate::class);
+            $adminRates = $this->adminRateRepository->getAll($request);
 
             return new ApiSuccessResponse(
-                data: AircraftResource::collection($aircrafts),
-                metaData: ['total' => $aircrafts->count()],
+                data: AdminRateResource::collection($adminRates),
+                metaData: [
+                    'total' => $adminRates->total(),
+                    'per_page' => $adminRates->perPage(),
+                    'current_page' => $adminRates->currentPage()
+                ],
                 statusCode: HttpResponse::HTTP_OK
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized access',
+                message: 'Unauthorized to view admin rates',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to retrieve aircrafts',
+                message: 'Failed to retrieve admin rates',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -70,33 +74,33 @@ class AircraftController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="Create a new aircraft",
+     *     path="/api/v1/admin-rates",
+     *     tags={"Admin Rates"},
+     *     summary="Create a new admin rate",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/StoreAircraftRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/StoreAdminRateRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Aircraft created successfully",
+     *         description="Admin rate created successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/AdminRateResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
      * )
      */
-    public function store(StoreAircraftRequest $request)
+    public function store(StoreAdminRateRequest $request)
     {
         try {
-            $this->authorize('create', Aircraft::class);
-            $aircraft = $this->aircraftRepository->newModel($request->validated());
+            $this->authorize('create', AdminRate::class);
+            $adminRate = $this->adminRateRepository->newModel($request->validated());
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
+                data: new AdminRateResource($adminRate),
                 metaData: ['action' => 'created'],
                 statusCode: HttpResponse::HTTP_CREATED
             );
@@ -104,14 +108,14 @@ class AircraftController extends Controller
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to create aircraft',
+                message: 'Unauthorized to create admin rate',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to create aircraft',
+                message: 'Failed to create admin rate',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -119,9 +123,9 @@ class AircraftController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Get aircraft details",
+     *     path="/api/v1/admin-rates/{id}",
+     *     tags={"Admin Rates"},
+     *     summary="Get admin rate details",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -134,7 +138,7 @@ class AircraftController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/AdminRateResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
@@ -143,11 +147,11 @@ class AircraftController extends Controller
     public function show(int $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('view', $aircraft);
+            $adminRate = $this->adminRateRepository->getById($id);
+            $this->authorize('view', $adminRate);
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
+                data: new AdminRateResource($adminRate),
                 metaData: ['fetched' => now()->toDateTimeString()],
                 statusCode: HttpResponse::HTTP_OK
             );
@@ -155,21 +159,21 @@ class AircraftController extends Controller
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found',
+                message: 'Admin rate not found',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to view this aircraft',
+                message: 'Unauthorized to view this admin rate',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to retrieve aircraft',
+                message: 'Failed to retrieve admin rate',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -177,9 +181,9 @@ class AircraftController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Update aircraft",
+     *     path="/api/v1/admin-rates/{id}",
+     *     tags={"Admin Rates"},
+     *     summary="Update admin rate",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -189,29 +193,29 @@ class AircraftController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateAircraftRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateAdminRateRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Aircraft updated successfully",
+     *         description="Admin rate updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/AdminRateResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
      * )
      */
-    public function update(UpdateAircraftRequest $request, int $id)
+    public function update(UpdateAdminRateRequest $request, int $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('update', $aircraft);
+            $adminRate = $this->adminRateRepository->getById($id);
+            $this->authorize('update', $adminRate);
 
-            $updatedAircraft = $this->aircraftRepository->updateModel($request->validated(), $id);
+            $updatedAdminRate = $this->adminRateRepository->updateModel($request->validated(), $id);
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($updatedAircraft),
+                data: new AdminRateResource($updatedAdminRate),
                 metaData: ['action' => 'updated', 'at' => now()->toDateTimeString()],
                 statusCode: HttpResponse::HTTP_OK
             );
@@ -219,21 +223,21 @@ class AircraftController extends Controller
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found for update',
+                message: 'Admin rate not found for update',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to update this aircraft',
+                message: 'Unauthorized to update this admin rate',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to update aircraft',
+                message: 'Failed to update admin rate',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -241,9 +245,9 @@ class AircraftController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Delete aircraft",
+     *     path="/api/v1/admin-rates/{id}",
+     *     tags={"Admin Rates"},
+     *     summary="Delete admin rate",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
@@ -253,7 +257,7 @@ class AircraftController extends Controller
      *     ),
      *     @OA\Response(
      *         response=204,
-     *         description="Aircraft deleted successfully",
+     *         description="Admin rate deleted successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="data", type="null"),
@@ -265,10 +269,10 @@ class AircraftController extends Controller
     public function destroy(int $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('delete', $aircraft);
+            $adminRate = $this->adminRateRepository->getById($id);
+            $this->authorize('delete', $adminRate);
 
-            $this->aircraftRepository->deleteModel($id);
+            $this->adminRateRepository->deleteModel($id);
 
             return new ApiSuccessResponse(
                 data: null,
@@ -279,21 +283,21 @@ class AircraftController extends Controller
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found for deletion',
+                message: 'Admin rate not found for deletion',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to delete this aircraft',
+                message: 'Unauthorized to delete this admin rate',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to delete aircraft',
+                message: 'Failed to delete admin rate',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }

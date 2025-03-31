@@ -2,39 +2,43 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Contracts\AircraftRepositoryInterface;
+use App\Exceptions\RepositoryException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAircraftRequest;
-use App\Http\Requests\UpdateAircraftRequest;
-use App\Http\Resources\AircraftResource;
+use App\Http\Requests\StoreCamoActivityRequest;
+use App\Http\Requests\UpdateCamoActivityRequest;
+use App\Http\Resources\CamoActivityResource;
+use App\Http\Resources\CamoResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
-use App\Models\Aircraft;
+use App\Models\Camo;
+use App\Models\CamoActivity;
+use App\Repositories\CamoActivityRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
 
-class AircraftController extends Controller
+class CamoActivityController extends Controller
 {
-    public function __construct(protected AircraftRepositoryInterface $aircraftRepository)
+    public function __construct(protected CamoActivityRepository $activity)
     {
         $this->middleware('auth:api');
     }
 
     /**
      * @OA\Get(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="List all aircrafts",
+     *     path="/api/v1/camo-activities",
+     *     tags={"CAMO Activities"},
+     *     summary="List all CAMO activities",
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/AircraftResource")),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/CamoActivityResource")),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
@@ -43,26 +47,30 @@ class AircraftController extends Controller
     public function index(Request $request)
     {
         try {
-            $this->authorize('viewAny', Aircraft::class);
-            $aircrafts = $this->aircraftRepository->getAll($request);
+            $this->authorize('viewAny', CamoActivity::class);
+            $activities = $this->activity->getAll($request);
 
             return new ApiSuccessResponse(
-                data: AircraftResource::collection($aircrafts),
-                metaData: ['total' => $aircrafts->count()],
+                data: CamoActivityResource::collection($activities),
+                metaData: [
+                    'total' => $activities->total(),
+                    'per_page' => $activities->perPage(),
+                    'current_page' => $activities->currentPage()
+                ],
                 statusCode: HttpResponse::HTTP_OK
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized access',
+                message: 'Unauthorized to view CAMO activities',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to retrieve aircrafts',
+                message: 'Failed to retrieve CAMO activities',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -70,48 +78,48 @@ class AircraftController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="Create a new aircraft",
+     *     path="/api/v1/camo-activities",
+     *     tags={"CAMO Activities"},
+     *     summary="Create a new CAMO activity",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/StoreAircraftRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/StoreCamoActivityRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Aircraft created successfully",
+     *         description="CAMO activity created successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/CamoActivityResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
      * )
      */
-    public function store(StoreAircraftRequest $request)
+    public function store(StoreCamoActivityRequest $request)
     {
         try {
-            $this->authorize('create', Aircraft::class);
-            $aircraft = $this->aircraftRepository->newModel($request->validated());
+            $this->authorize('create', CamoActivity::class);
+            $activity = $this->activity->newModel($request->validated());
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
-                metaData: ['action' => 'created'],
+                data: new CamoActivityResource($activity),
+                metaData: ['action' => 'created', 'camo_id' => $activity->camo_id],
                 statusCode: HttpResponse::HTTP_CREATED
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to create aircraft',
+                message: 'Unauthorized to create CAMO activity',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to create aircraft',
+                message: 'Failed to create CAMO activity',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -119,57 +127,57 @@ class AircraftController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Get aircraft details",
+     *     path="/api/v1/camo-activities/{id}",
+     *     tags={"CAMO Activities"},
+     *     summary="Get CAMO activity details",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/CamoActivityResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
      * )
      */
-    public function show(int $id)
+    public function show(string $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('view', $aircraft);
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('view', $camoActivity);
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
-                metaData: ['fetched' => now()->toDateTimeString()],
+                data: new CamoActivityResource($camoActivity),
+                metaData: ['camo_id' => $camoActivity->camo_id],
                 statusCode: HttpResponse::HTTP_OK
             );
 
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found',
+                message: 'CAMO activity not found',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to view this aircraft',
+                message: 'Unauthorized to view this CAMO activity',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to retrieve aircraft',
+                message: 'Failed to retrieve CAMO activity',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -177,63 +185,74 @@ class AircraftController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Update aircraft",
+     *     path="/api/v1/camo-activities/{id}",
+     *     tags={"CAMO Activities"},
+     *     summary="Update CAMO activity",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateAircraftRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateCamoActivityRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Aircraft updated successfully",
+     *         description="CAMO activity updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
+     *             @OA\Property(property="data", ref="#/components/schemas/CamoActivityResource"),
      *             @OA\Property(property="metaData", type="object")
      *         )
      *     )
      * )
      */
-    public function update(UpdateAircraftRequest $request, int $id)
+    public function update(UpdateCamoActivityRequest $request, string $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('update', $aircraft);
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('update', $camoActivity);
 
-            $updatedAircraft = $this->aircraftRepository->updateModel($request->validated(), $id);
+            $updatedActivity = $this->activity->updateModel($request->validated(), $id);
 
             return new ApiSuccessResponse(
-                data: new AircraftResource($updatedAircraft),
-                metaData: ['action' => 'updated', 'at' => now()->toDateTimeString()],
+                data: new CamoActivityResource($updatedActivity),
+                metaData: [
+                    'action' => 'updated',
+                    'camo_id' => $updatedActivity->camo_id,
+                    'updated_at' => now()->toDateTimeString()
+                ],
                 statusCode: HttpResponse::HTTP_OK
             );
 
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found for update',
+                message: 'CAMO activity not found for update',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to update this aircraft',
+                message: 'Unauthorized to update this CAMO activity',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
+            );
+
+        } catch (RepositoryException $e) {
+            return new ApiErrorResponse(
+                exception: $e,
+                message: $e->getMessage(),
+                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to update aircraft',
+                message: 'Failed to update CAMO activity',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
@@ -241,19 +260,19 @@ class AircraftController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Delete aircraft",
+     *     path="/api/v1/camo-activities/{id}",
+     *     tags={"CAMO Activities"},
+     *     summary="Delete CAMO activity",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=204,
-     *         description="Aircraft deleted successfully",
+     *         description="CAMO activity deleted successfully",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="data", type="null"),
@@ -262,38 +281,42 @@ class AircraftController extends Controller
      *     )
      * )
      */
-    public function destroy(int $id)
+    public function destroy(string $id)
     {
         try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('delete', $aircraft);
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('delete', $camoActivity);
 
-            $this->aircraftRepository->deleteModel($id);
+            $this->activity->deleteModel($id);
 
             return new ApiSuccessResponse(
                 data: null,
-                metaData: ['action' => 'deleted', 'at' => now()->toDateTimeString()],
+                metaData: [
+                    'action' => 'deleted',
+                    'camo_id' => $camoActivity->camo_id,
+                    'deleted_at' => now()->toDateTimeString()
+                ],
                 statusCode: HttpResponse::HTTP_NO_CONTENT
             );
 
         } catch (ModelNotFoundException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Aircraft not found for deletion',
+                message: 'CAMO activity not found for deletion',
                 statusCode: HttpResponse::HTTP_NOT_FOUND
             );
 
         } catch (AuthorizationException $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Unauthorized to delete this aircraft',
+                message: 'Unauthorized to delete this CAMO activity',
                 statusCode: HttpResponse::HTTP_FORBIDDEN
             );
 
         } catch (Throwable $e) {
             return new ApiErrorResponse(
                 exception: $e,
-                message: 'Failed to delete aircraft',
+                message: 'Failed to delete CAMO activity',
                 statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
             );
         }
