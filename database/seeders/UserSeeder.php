@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
         $admin = User::create([
             'name' => 'Mara Beltran',
             'email' => 'mbeltran@luxeservicesve.com',
-            'password' => Hash::make('password'), // Asegúrate de usar una contraseña encriptada
+            'password' => Hash::make('12345678'), // Asegúrate de usar una contraseña encriptada
             'remember_token' => Str::random(10) // Opcional, dependiendo de tu implementación
         ]);
         $admin->syncRoles('admin');
@@ -44,4 +44,3 @@ class UserSeeder extends Seeder
         $angel->syncRoles('cam');
     }
 }
-    

@@ -2,26 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Api\v1\PermissionController;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Responses\ApiSuccessResponse;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
+
 use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    public function __construct(PermissionController $permissionController)
+    {
+
+    }
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
-        ]);
+
+        return new ApiSuccessResponse(
+            'Profile edit page',
+            [
+                'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+                'status' => session('status'),
+            ]
+        );
     }
 
     /**
