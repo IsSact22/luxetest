@@ -2,64 +2,197 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\LogHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Responses\ApiErrorResponse;
+use App\Http\Responses\ApiSuccessResponse;
+use App\Models\User;
+use App\Traits\HasModelName;
+use App\Traits\QueryExceptionDataTrait;
+use Exception;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Nette\Schema\ValidationException;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Throwable;
+
+use function App\Helpers\AfterCatchUnknown;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use HasModelName;
+    use QueryExceptionDataTrait;
+
+    public function index(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
-        //
+        try {
+            $users = User::query()
+                ->when($request->get('search'), static function ($query, string $search) {
+                    $query->where('id', $search)
+                        ->orWhere('name', 'LIKE', $search.'%')
+                        ->orWhereHas('roles', static function (Builder $query) use ($search) {
+                            $query->where('name', 'LIKE', $search.'%');
+                        });
+                })
+                ->paginate()
+                ->withQueryString();
+            $resource = UserResource::collection($users);
+
+            return new ApiSuccessResponse(
+                $resource,
+                ['message' => 'return resource '.$this->modelName],
+                ResponseAlias::HTTP_ACCEPTED
+            );
+        } catch (Throwable $throwable) {
+            LogHelper::logError($throwable);
+
+            return new ApiErrorResponse(
+                $throwable,
+                'Error occurred while fetching users.',
+                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    public function store(StoreUserRequest $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $user = User::query()->create($request->all());
+            $credentials = $user->only('email', 'password');
+
+            if (! $token = auth('api')->attempt($credentials)) {
+                return new ApiErrorResponse(
+                    new AuthenticationException,
+                    'Unauthorized',
+                    ResponseAlias::HTTP_UNAUTHORIZED
+                );
+            }
+
+            return new ApiSuccessResponse(
+                [
+                    'status' => 'success',
+                    'message' => 'User created successfully',
+                    'user' => $user,
+                    'authorization' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ],
+                ['message' => 'User register successfully.'],
+                ResponseAlias::HTTP_CREATED
+            );
+        } catch (ValidationException $e) {
+            return new ApiErrorResponse(
+                $e,
+                $e->getMessage(),
+                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
+            );
+        } catch (QueryException $e) {
+            $connectionName = $e->getConnectionName();
+            $sql = $e->getSql();
+            $bindings = $e->getBindings();
+            $previous = $e->getPrevious();
+
+            return new ApiErrorResponse(
+                new QueryException($connectionName, $sql, $bindings, $previous),
+                'Duplicate entry',
+                ResponseAlias::HTTP_CONFLICT
+            );
+        } catch (Exception $e) {
+            return new ApiErrorResponse(
+                $e,
+                'Server Error',
+                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    public function update(Request $request, $id): ApiSuccessResponse|ApiErrorResponse
+    {
+        $validatedData = Validator::make($request->all(), [
+            'name' => ['nullable', 'string', 'max:255'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        if ($validatedData->fails()) {
+            return new ApiErrorResponse(
+                new ValidationException($validatedData->getException()),
+                $validatedData->messages(),
+                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
+            );
+        }
+
+        try {
+            $user = User::query()->findOrFail($id);
+
+            $validated = $validatedData->validated();
+
+            if ($request->has('name') && ! empty($validated['name'])) {
+                $user->name = $validated['name'];
+            }
+
+            if ($request->has('password') && ! empty($validated['password'])) {
+                $user->password = Hash::make($validated['password']);
+            }
+
+            $user->save();
+
+            return new ApiSuccessResponse(
+                $user,
+                ['message' => 'User register successfully.'],
+                ResponseAlias::HTTP_ACCEPTED
+            );
+        } catch (ModelNotFoundException) {
+            return new ApiErrorResponse(
+                new ModelNotFoundException,
+                'Server Error',
+                ResponseAlias::HTTP_NOT_FOUND
+            );
+        } catch (Exception $e) {
+            LogHelper::logError($e);
+
+            return new ApiErrorResponse(
+                new Exception,
+                'Server Error',
+                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     /**
-     * Show the form for creating a new resource.
+     * @throws Throwable
      */
-    public function create()
+    public function delete(int $id): ApiSuccessResponse|ApiErrorResponse
     {
-        //
-    }
+        try {
+            $user = User::query()->findOrFail($id);
+            $user->deleteOrFail();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+            return new ApiSuccessResponse(
+                [],
+                ['message' => 'User deleted successfully.'],
+                ResponseAlias::HTTP_ACCEPTED
+            );
+        } catch (ModelNotFoundException) {
+            return new ApiErrorResponse(
+                new ModelNotFoundException,
+                'Server Error',
+                ResponseAlias::HTTP_NOT_FOUND
+            );
+        } catch (QueryException $e) {
+            return $this->getQueryExceptionData($e);
+        } catch (Exception $e) {
+            LogHelper::logError($e);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            // Error Desconocido
+            return AfterCatchUnknown();
+        }
     }
 }
