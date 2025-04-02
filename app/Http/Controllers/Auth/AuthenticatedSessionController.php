@@ -10,8 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Auth\AuthenticationException;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+
 
 
 class AuthenticatedSessionController extends Controller
@@ -43,42 +45,14 @@ class AuthenticatedSessionController extends Controller
      *     )
      * )
      */
-    public function store(LoginRequest $request)
+    public function store(LoginRequest $request): RedirectResponse
     {
-        try {
-            $credentials = $request->validated();
-            
-            if (!$token = JWTAuth::attempt($credentials)) {
-                throw new AuthenticationException;
-            }
-    
-            $user = Auth::user();
-            
-            return new ApiSuccessResponse(
-                data: [
-                    'token' => $token, // Token JWT
-                    'user' => $user
-                ],
-                metaData: ['message' => 'Authenticated successfully'],
-                statusCode: HttpResponse::HTTP_OK
-            );
+        $request->authenticate();
 
-        } catch (\Illuminate\Auth\AuthenticationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Invalid credentials',
-                statusCode: HttpResponse::HTTP_UNAUTHORIZED
-            );
-            
-        } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Authentication failed',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('dashboard', absolute: false));
     }
-
     /**
      * @OA\Post(
      *     path="/api/v1/logout",
@@ -114,4 +88,9 @@ class AuthenticatedSessionController extends Controller
             );
         }
     }
+  public function create()
+    {
+        return inertia('Auth/Login');
+    }
+
 }

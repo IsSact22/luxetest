@@ -15,7 +15,9 @@ Route::middleware('guest')->group(static function () {
         ->name('register');
     Route::post('register', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new RegisteredUserController)
         ->store($request))->middleware(Precognitive::class);
-    Route::post('login', static fn (\App\Http\Requests\Auth\LoginRequest $request): RedirectResponse => (new AuthenticatedSessionController)->store($request));
+    Route::post('login', static fn (\App\Http\Requests\Auth\LoginRequest $request): RedirectResponse => (new AuthenticatedSessionController)->store($request))
+        ->name('login');
+    Route::get('login', static fn (): \Inertia\Response => (new AuthenticatedSessionController)->create());
     Route::get('forgot-password', static fn (): \Inertia\Response => (new PasswordResetLinkController)->create())
         ->name('password.request');
     Route::post('forgot-password', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new PasswordResetLinkController)->store($request))

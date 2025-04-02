@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
             EngineTypeSeeder::class,
             AdminRateSeeder::class,
             LaborRateSeeder::class,
-            //ModelAircraftSeeder::class,
-            //AircraftSeeder::class,
-            //CamoSeeder::class,
+            ModelAircraftSeeder::class,
+            AircraftSeeder::class,
+            // CamoSeeder::class
         ]);
     }
 }
