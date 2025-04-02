@@ -20,7 +20,7 @@ class AuthController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('auth:sanctum', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
@@ -65,49 +65,24 @@ class AuthController extends Controller
         }
     }
 
-    public function refresh(): ApiSuccessResponse|ApiErrorResponse
+    /**
+     * Logout the user (Invalidate the token).
+     */
+    public function logout(): ApiSuccessResponse|ApiErrorResponse
     {
         try {
+            auth('api')->logout();
+
             return new ApiSuccessResponse(
-                [
-                    'status' => 'success',
-                    'user' => Auth::user(),
-                    'authorisation' => [
-                        'token' => Auth::refresh(),
-                        'type' => 'bearer',
-                    ],
-                ],
-                ['message' => 'login successfully'],
-                ResponseAlias::HTTP_ACCEPTED
+                null,
+                ['message' => 'Successfully logged out'],
+                ResponseAlias::HTTP_OK
             );
         } catch (Exception $exception) {
             LogHelper::logError($exception);
 
             return AfterCatchUnknown();
         }
-    }
+    }   
 
-    public function logout(Request $request): ApiSuccessResponse|ApiErrorResponse
-    {
-        try {
-            Auth::logout();
-
-            return new ApiSuccessResponse(
-                [],
-                ['message' => 'User logged out successfully.'],
-                ResponseAlias::HTTP_ACCEPTED
-            );
-        } catch (AuthorizationException $e) {
-            // failure to logout
-            return new ApiErrorResponse(
-                $e,
-                'User not authorized',
-                ResponseAlias::HTTP_FORBIDDEN
-            );
-        } catch (Exception $e) {
-            LogHelper::logError($e);
-
-            return AfterCatchUnknown();
-        }
-    }
 }

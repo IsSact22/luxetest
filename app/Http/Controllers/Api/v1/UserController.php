@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Validator;
 use Nette\Schema\ValidationException;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;
-
 use function App\Helpers\AfterCatchUnknown;
 
 class UserController extends Controller

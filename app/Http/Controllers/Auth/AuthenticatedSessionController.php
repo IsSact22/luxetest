@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
+use Illuminate\Auth\AuthenticationException;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -43,14 +46,17 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         try {
-            $request->authenticate();
-
+            $credentials = $request->validated();
+            
+            if (!$token = JWTAuth::attempt($credentials)) {
+                throw new AuthenticationException;
+            }
+    
             $user = Auth::user();
-            $token = $user->createToken('api-token')->plainTextToken;
-
+            
             return new ApiSuccessResponse(
                 data: [
-                    'token' => $token,
+                    'token' => $token, // Token JWT
                     'user' => $user
                 ],
                 metaData: ['message' => 'Authenticated successfully'],
