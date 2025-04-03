@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Contracts\AircraftRepositoryInterface;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAircraftRequest;
 use App\Http\Requests\UpdateAircraftRequest;
 use App\Http\Resources\AircraftResource;
@@ -13,289 +12,142 @@ use App\Models\Aircraft;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
+use App\Http\Controllers\Controller;
 use Throwable;
+use Inertia\Inertia;
 
 class AircraftController extends Controller
 {
     public function __construct(protected AircraftRepositoryInterface $aircraftRepository)
     {
-        $this->middleware('auth:api');
+        parent::__construct();
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="List all aircrafts",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/AircraftResource")),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
-     */
     public function index(Request $request)
     {
         try {
             $this->authorize('viewAny', Aircraft::class);
             $aircrafts = $this->aircraftRepository->getAll($request);
-
-            return new ApiSuccessResponse(
-                data: AircraftResource::collection($aircrafts),
-                metaData: ['total' => $aircrafts->count()],
-                statusCode: HttpResponse::HTTP_OK
-            );
-
-        } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized access',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            $resource = AircraftResource::collection($aircrafts);
+    
+            // Verifica si la petición es de Inertia
+            if ($request->hasHeader('X-Inertia')) {
+                return Inertia::render('Aircrafts/Index', [
+                    'resource' => $resource
+                ]);
+            }
+    
+            // Si la petición es una API (por ejemplo, desde Postman o fetch en frontend)
+            if ($request->expectsJson()) {
+                return new ApiSuccessResponse($resource, []);
+            }
+    
+            // En caso de acceso directo desde el navegador, redirigir a Inertia
+            return redirect()->route('aircrafts.index');
+        } catch (AuthorizationException) {
+            return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to retrieve aircrafts',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
-    /**
-     * @OA\Post(
-     *     path="/api/v1/aircrafts",
-     *     tags={"Aircrafts"},
-     *     summary="Create a new aircraft",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/StoreAircraftRequest")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Aircraft created successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
-     */
+    
     public function store(StoreAircraftRequest $request)
     {
         try {
             $this->authorize('create', Aircraft::class);
+            
+            // Crear un nuevo Aircraft con los datos validados
             $aircraft = $this->aircraftRepository->newModel($request->validated());
-
-            return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
-                metaData: ['action' => 'created'],
-                statusCode: HttpResponse::HTTP_CREATED
-            );
-
-        } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to create aircraft',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            $resource = new AircraftResource($aircraft);
+    
+           // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft create successfully');
+        }
+    
+            return new ApiSuccessResponse($resource, [], Response::HTTP_CREATED);
+        } catch (AuthorizationException) {
+            return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to create aircraft',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Get aircraft details",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
-     */
-    public function show(int $id)
+    public function show(Request $request, int $id)
     {
         try {
             $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('view', $aircraft);
-
-            return new ApiSuccessResponse(
-                data: new AircraftResource($aircraft),
-                metaData: ['fetched' => now()->toDateTimeString()],
-                statusCode: HttpResponse::HTTP_OK
-            );
-
-        } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Aircraft not found',
-                statusCode: HttpResponse::HTTP_NOT_FOUND
-            );
-
-        } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to view this aircraft',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            $resource = new AircraftResource($aircraft);
+    
+          // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft ac successfully');
+        }
+    
+            return new ApiSuccessResponse($resource, []);
+        } catch (ModelNotFoundException) {
+            return new ApiErrorResponse(null, 'Aircraft Not Found', Response::HTTP_NOT_FOUND);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to retrieve aircraft',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
-    /**
-     * @OA\Put(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Update aircraft",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateAircraftRequest")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Aircraft updated successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/AircraftResource"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
-     */
+    
     public function update(UpdateAircraftRequest $request, int $id)
     {
         try {
             $aircraft = $this->aircraftRepository->getById($id);
             $this->authorize('update', $aircraft);
-
-            $updatedAircraft = $this->aircraftRepository->updateModel($request->validated(), $id);
-
-            return new ApiSuccessResponse(
-                data: new AircraftResource($updatedAircraft),
-                metaData: ['action' => 'updated', 'at' => now()->toDateTimeString()],
-                statusCode: HttpResponse::HTTP_OK
-            );
-
-        } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Aircraft not found for update',
-                statusCode: HttpResponse::HTTP_NOT_FOUND
-            );
-
-        } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to update this aircraft',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+    
+            // Actualizar el modelo con los datos validados
+            $this->aircraftRepository->updateModel($request->validated(), $id);
+            $updatedAircraft = $this->aircraftRepository->getById($id);
+            $resource = new AircraftResource($updatedAircraft);
+    
+           // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft update successfully');
+        }
+    
+            return new ApiSuccessResponse($resource, [], Response::HTTP_OK);
+        } catch (AuthorizationException) {
+            return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
+        } catch (ModelNotFoundException) {
+            return new ApiErrorResponse(null, 'Aircraft Not Found', Response::HTTP_NOT_FOUND);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to update aircraft',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/aircrafts/{id}",
-     *     tags={"Aircrafts"},
-     *     summary="Delete aircraft",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="Aircraft deleted successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", type="null"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
-     */
+    
     public function destroy(int $id)
-    {
-        try {
-            $aircraft = $this->aircraftRepository->getById($id);
-            $this->authorize('delete', $aircraft);
+{
+    try {
+        $aircraft = $this->aircraftRepository->getById($id);
+        $this->authorize('delete', $aircraft);
 
-            $this->aircraftRepository->deleteModel($id);
+        $this->aircraftRepository->deleteModel($id);
 
-            return new ApiSuccessResponse(
-                data: null,
-                metaData: ['action' => 'deleted', 'at' => now()->toDateTimeString()],
-                statusCode: HttpResponse::HTTP_NO_CONTENT
-            );
-
-        } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Aircraft not found for deletion',
-                statusCode: HttpResponse::HTTP_NOT_FOUND
-            );
-
-        } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to delete this aircraft',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
-        } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to delete aircraft',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+        // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft deleted successfully');
         }
+
+        return new ApiSuccessResponse(['message' => 'Aircraft deleted successfully'], []);
+    } catch (AuthorizationException) {
+        return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
+    } catch (ModelNotFoundException) {
+        return new ApiErrorResponse(null, 'Aircraft Not Found', Response::HTTP_NOT_FOUND);
+    } catch (Throwable $e) {
+        Log::error($e->getMessage());
+        return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
+
+}
+

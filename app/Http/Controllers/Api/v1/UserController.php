@@ -25,7 +25,7 @@ use Throwable;
 use function App\Helpers\AfterCatchUnknown;
 
 class UserController extends Controller
-{
+{   
     use HasModelName;
     use QueryExceptionDataTrait;
 
