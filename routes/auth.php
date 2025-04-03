@@ -42,5 +42,5 @@ Route::middleware('auth')->group(static function () {
     Route::post('confirm-password', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new \App\Http\Controllers\Auth\ConfirmablePasswordController)->store($request));
     Route::put('password', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new \App\Http\Controllers\Auth\PasswordController)->update($request))->name('password.update');
     Route::post('logout', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new AuthenticatedSessionController)->destroy($request))
-        ->name('logout');
+    ->name('logout');
 });

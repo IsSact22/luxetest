@@ -69,24 +69,13 @@ class AuthenticatedSessionController extends Controller
      *     )
      * )
      */
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
-        try {
-            $request->user()->currentAccessToken()->delete();
-
-            return new ApiSuccessResponse(
-                data: null,
-                metaData: ['message' => 'Successfully logged out'],
-                statusCode: HttpResponse::HTTP_NO_CONTENT
-            );
-
-        } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Logout failed',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
+        Auth::guard('web')->logout(); // Cierra la sesión
+        $request->session()->invalidate(); // Invalida la sesión
+        $request->session()->regenerateToken(); // Regenera el token CSRF
+    
+        return redirect('/'); // Redirige a la página principal (o a login)
     }
   public function create()
     {

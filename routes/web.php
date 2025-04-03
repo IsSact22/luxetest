@@ -38,8 +38,10 @@ Route::get('/', static fn () => Inertia::render('Welcome', [
     'phpVersion' => PHP_VERSION,
 ]));
 
-Route::get('dashboard', static fn () => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
-
+// routes/web.php
+Route::get('dashboard', static fn () => Inertia::render('Dashboard'))
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 Route::middleware('auth')->group(static function ($route) {
     // Invokes Controllers
     $route->get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
