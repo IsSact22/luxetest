@@ -83,6 +83,7 @@ class AircraftController extends Controller
         try {
             $aircraft = $this->aircraftRepository->getById($id);
             $resource = new AircraftResource($aircraft);
+            $this->authorize('s', $aircraft);
     
           // Verifica si la petición es de Inertia
         if (request()->hasHeader('X-Inertia')) {

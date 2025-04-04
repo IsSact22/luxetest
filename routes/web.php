@@ -21,10 +21,10 @@
     use App\Http\Controllers\Invokes\SetOwnerAircraftController;
     use App\Http\Controllers\LaborRateController;
     use App\Http\Controllers\MediaController;
-    use App\Http\Controllers\ModelAircraftController;
+    use App\Http\Controllers\Api\v1\ModelAircraftController;
     use App\Http\Controllers\Api\v1\ProfileController;
     use App\Http\Controllers\RoleController;
-    use App\Http\Controllers\UserController;
+    use App\Http\Controllers\Api\v1\UserController;
     use App\Http\Requests\ProfileUpdateRequest;
     use Illuminate\Foundation\Application;
     use Illuminate\Http\RedirectResponse;
@@ -41,7 +41,7 @@
     // routes/web.php
     Route::get('dashboard', static fn () => Inertia::render('Dashboard'))
         ->middleware(['auth', 'verified'])
-        ->name('dashboard');
+        ->name('dashboard');                                      
     Route::middleware('auth')->group(static function ($route) {
         // Invokes Controllers
         $route->get('roles/select', \App\Http\Controllers\Invokes\RoleController::class)->name('roles.select');
