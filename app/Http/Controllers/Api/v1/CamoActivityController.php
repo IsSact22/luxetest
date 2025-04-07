@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Api\v1;
+use App\Http\Controllers\Controller;
 
 use App\Exceptions\RepositoryException;
-use App\Http\Controllers\Controller;
+use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoActivityRequest;
 use App\Http\Requests\UpdateCamoActivityRequest;
 use App\Http\Resources\CamoActivityResource;
@@ -16,7 +17,13 @@ use App\Repositories\CamoActivityRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use Inertia\Inertia;
+use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
 
@@ -24,25 +31,21 @@ class CamoActivityController extends Controller
 {
     public function __construct(protected CamoActivityRepository $activity)
     {
-        $this->middleware('auth:api');
+        parent::__construct();
+        $this->middleware(HandlePrecognitiveRequests::class)->only(['store', 'update']);
+        $this->middleware('auth:api')->only(['apiIndex', 'apiStore', 'apiShow', 'apiUpdate', 'apiDestroy']);
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/v1/camo-activities",
-     *     tags={"CAMO Activities"},
-     *     summary="List all CAMO activities",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/CamoActivityResource")),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
+     * Determina si la solicitud es una API request
+     */
+    protected function isApiRequest(Request $request): bool
+    {
+        return $request->is('api/*') || $request->wantsJson();
+    }
+
+    /**
+     * Display a listing of the resource.
      */
     public function index(Request $request)
     {
@@ -50,275 +53,239 @@ class CamoActivityController extends Controller
             $this->authorize('viewAny', CamoActivity::class);
             $activities = $this->activity->getAll($request);
 
-            return new ApiSuccessResponse(
-                data: CamoActivityResource::collection($activities),
-                metaData: [
-                    'total' => $activities->total(),
-                    'per_page' => $activities->perPage(),
-                    'current_page' => $activities->currentPage()
-                ],
-                statusCode: HttpResponse::HTTP_OK
-            );
+            if ($this->isApiRequest($request)) {
+                return new ApiSuccessResponse(
+                    data: CamoActivityResource::collection($activities),
+                    metaData: [
+                        'total' => $activities->total(),
+                        'per_page' => $activities->perPage(),
+                        'current_page' => $activities->currentPage()
+                    ],
+                    statusCode: HttpResponse::HTTP_OK
+                );
+            }
+
+            return InertiaResponse::content('CamoActivities/Index', [
+                'resource' => CamoActivityResource::collection($activities)
+            ]);
 
         } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to view CAMO activities',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            return $this->handleErrorResponse('Unauthorized', HttpResponse::HTTP_UNAUTHORIZED, $request);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to retrieve CAMO activities',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error($e->getMessage());
+            return $this->handleErrorResponse($e->getMessage(), HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
         }
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/v1/camo-activities",
-     *     tags={"CAMO Activities"},
-     *     summary="Create a new CAMO activity",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/StoreCamoActivityRequest")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="CAMO activity created successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/CamoActivityResource"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
+     * Show the form for creating a new resource.
+     */
+    public function create(Request $request)
+    {
+        try {
+            $this->authorize('create', CamoActivity::class);
+
+            if ($this->isApiRequest($request)) {
+                return new ApiSuccessResponse(
+                    data: null,
+                    message: 'Create form data would be here',
+                    statusCode: HttpResponse::HTTP_OK
+                );
+            }
+
+            return InertiaResponse::content('CamoActivities/Create');
+        } catch (AuthorizationException $e) {
+            return $this->handleErrorResponse('Unauthorized', HttpResponse::HTTP_UNAUTHORIZED, $request);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+            return $this->handleErrorResponse($e->getMessage(), HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
      */
     public function store(StoreCamoActivityRequest $request)
     {
         try {
             $this->authorize('create', CamoActivity::class);
-            $activity = $this->activity->newModel($request->validated());
+            $payload = precognitive(static fn($bail) => $request->validated());
+            $activity = $this->activity->newModel($payload);
 
-            return new ApiSuccessResponse(
-                data: new CamoActivityResource($activity),
-                metaData: ['action' => 'created', 'camo_id' => $activity->camo_id],
-                statusCode: HttpResponse::HTTP_CREATED
-            );
+            if ($this->isApiRequest($request)) {
+                return new ApiSuccessResponse(
+                    data: new CamoActivityResource($activity),
+                    metaData: [
+                        'action' => 'created',
+                        'camo_id' => $activity->camo_id
+                    ],
+                    statusCode: HttpResponse::HTTP_CREATED
+                );
+            }
 
+            return to_route('camos.show', $payload['camo_id'])->with('success', 'CAMO Activity created successfully');
         } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to create CAMO activity',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            Log::error('Authorization error: '.$e->getMessage());
+            return $this->handleErrorResponse('Unauthorized', HttpResponse::HTTP_FORBIDDEN, $request);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to create CAMO activity',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error('Error creating CAMO Activity: '.$e->getMessage());
+            return $this->handleErrorResponse('Server Error', HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
         }
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/v1/camo-activities/{id}",
-     *     tags={"CAMO Activities"},
-     *     summary="Get CAMO activity details",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/CamoActivityResource"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
+     * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         try {
             $camoActivity = $this->activity->getById($id);
             $this->authorize('view', $camoActivity);
 
-            return new ApiSuccessResponse(
-                data: new CamoActivityResource($camoActivity),
-                metaData: ['camo_id' => $camoActivity->camo_id],
-                statusCode: HttpResponse::HTTP_OK
-            );
+            if ($this->isApiRequest($request)) {
+                return new ApiSuccessResponse(
+                    data: new CamoActivityResource($camoActivity),
+                    metaData: ['camo_id' => $camoActivity->camo_id],
+                    statusCode: HttpResponse::HTTP_OK
+                );
+            }
 
+            return InertiaResponse::content('CamoActivities/Show', [
+                'resource' => new CamoActivityResource($camoActivity)
+            ]);
         } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'CAMO activity not found',
-                statusCode: HttpResponse::HTTP_NOT_FOUND
-            );
-
+            return $this->handleErrorResponse('Not Found', HttpResponse::HTTP_NOT_FOUND, $request);
         } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to view this CAMO activity',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            return $this->handleErrorResponse('Unauthorized', HttpResponse::HTTP_FORBIDDEN, $request);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to retrieve CAMO activity',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error($e->getMessage());
+            return $this->handleErrorResponse('Server Error', HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
         }
     }
 
     /**
-     * @OA\Put(
-     *     path="/api/v1/camo-activities/{id}",
-     *     tags={"CAMO Activities"},
-     *     summary="Update CAMO activity",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateCamoActivityRequest")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="CAMO activity updated successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", ref="#/components/schemas/CamoActivityResource"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Request $request, string $id)
+    {
+        try {
+            $camoActivity = $this->activity->getById($id);
+            $this->authorize('update', $camoActivity);
+
+            if ($this->isApiRequest($request)) {
+                return new ApiSuccessResponse(
+                    data: new CamoActivityResource($camoActivity),
+                    message: 'Edit form data would be here',
+                    statusCode: HttpResponse::HTTP_OK
+                );
+            }
+
+            $camo = Camo::query()->findOrFail($camoActivity->camo_id);
+            $camoResource = new CamoResource($camo);
+
+            return InertiaResponse::content('CamoActivities/Edit', [
+                'resource' => new CamoActivityResource($camoActivity),
+                'camo' => $camoResource,
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return $this->handleErrorResponse('Not Found', HttpResponse::HTTP_NOT_FOUND, $request);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+            return $this->handleErrorResponse('Server Error', HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
      */
     public function update(UpdateCamoActivityRequest $request, string $id)
     {
         try {
             $camoActivity = $this->activity->getById($id);
             $this->authorize('update', $camoActivity);
+            $payload = precognitive(static fn($bail) => $request->validated());
+            $updatedActivity = $this->activity->updateModel($payload, $id);
 
-            $updatedActivity = $this->activity->updateModel($request->validated(), $id);
+            if ($this->isApiRequest($request)) {
+                return new ApiSuccessResponse(
+                    data: new CamoActivityResource($updatedActivity),
+                    metaData: [
+                        'action' => 'updated',
+                        'camo_id' => $updatedActivity->camo_id,
+                        'updated_at' => now()->toDateTimeString()
+                    ],
+                    statusCode: HttpResponse::HTTP_OK
+                );
+            }
 
-            return new ApiSuccessResponse(
-                data: new CamoActivityResource($updatedActivity),
-                metaData: [
-                    'action' => 'updated',
-                    'camo_id' => $updatedActivity->camo_id,
-                    'updated_at' => now()->toDateTimeString()
-                ],
-                statusCode: HttpResponse::HTTP_OK
-            );
-
+            Session::flash('success', 'Actividad actualizada correctamente');
+            return to_route('camos.show', $camoActivity->camo->id);
         } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'CAMO activity not found for update',
-                statusCode: HttpResponse::HTTP_NOT_FOUND
-            );
-
-        } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to update this CAMO activity',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            Log::error('Modelo no encontrado: ' . $e->getMessage());
+            return $this->handleErrorResponse('Not Found', HttpResponse::HTTP_NOT_FOUND, $request);
+        } catch (QueryException $e) {
+            Log::error('Error de base de datos: ' . $e->getMessage());
+            return $this->handleErrorResponse('Database Error', HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
         } catch (RepositoryException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: $e->getMessage(),
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
-
+            Log::error('Repository error: ' . $e->getMessage());
+            return $this->handleErrorResponse($e->getMessage(), HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
         } catch (Throwable $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to update CAMO activity',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error('Error general: ' . $e->getMessage());
+            return $this->handleErrorResponse('Server Error', HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
         }
     }
 
     /**
-     * @OA\Delete(
-     *     path="/api/v1/camo-activities/{id}",
-     *     tags={"CAMO Activities"},
-     *     summary="Delete CAMO activity",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="CAMO activity deleted successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="data", type="null"),
-     *             @OA\Property(property="metaData", type="object")
-     *         )
-     *     )
-     * )
+     * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             $camoActivity = $this->activity->getById($id);
             $this->authorize('delete', $camoActivity);
-
             $this->activity->deleteModel($id);
 
-            return new ApiSuccessResponse(
-                data: null,
-                metaData: [
-                    'action' => 'deleted',
-                    'camo_id' => $camoActivity->camo_id,
-                    'deleted_at' => now()->toDateTimeString()
-                ],
-                statusCode: HttpResponse::HTTP_NO_CONTENT
-            );
+            if ($this->isApiRequest($request)) {
+                return new ApiSuccessResponse(
+                    data: null,
+                    metaData: [
+                        'action' => 'deleted',
+                        'camo_id' => $camoActivity->camo_id,
+                        'deleted_at' => now()->toDateTimeString()
+                    ],
+                    statusCode: HttpResponse::HTTP_NO_CONTENT
+                );
+            }
 
+            return to_route('camo_activities.index')->with('success', 'Activity deleted successfully');
         } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'CAMO activity not found for deletion',
-                statusCode: HttpResponse::HTTP_NOT_FOUND
-            );
-
-        } catch (AuthorizationException $e) {
-            return new ApiErrorResponse(
-                exception: $e,
-                message: 'Unauthorized to delete this CAMO activity',
-                statusCode: HttpResponse::HTTP_FORBIDDEN
-            );
-
+            return $this->handleErrorResponse('Not Found', HttpResponse::HTTP_NOT_FOUND, $request);
         } catch (Throwable $e) {
+            Log::error($e->getMessage());
+            return $this->handleErrorResponse('Server Error', HttpResponse::HTTP_INTERNAL_SERVER_ERROR, $request);
+        }
+    }
+
+    /**
+     * Maneja las respuestas de error de forma unificada
+     */
+    protected function handleErrorResponse(
+        string $message, 
+        int $statusCode, 
+        Request $request,
+        ?Throwable $exception = null
+    ) {
+        if ($this->isApiRequest($request)) {
             return new ApiErrorResponse(
-                exception: $e,
-                message: 'Failed to delete CAMO activity',
-                statusCode: HttpResponse::HTTP_INTERNAL_SERVER_ERROR
+                message: $message,
+                statusCode: $statusCode,
+                exception: $exception
             );
         }
+
+        return Inertia::render('Errors/Error', [
+            'status' => $statusCode,
+            'message' => $message
+        ]);
     }
 }

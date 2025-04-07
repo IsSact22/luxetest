@@ -1,11 +1,17 @@
     <?php
 
-    use App\Http\Controllers\AdminRateController;
+    use App\Http\Controllers\Api\v1\AdminRateController;
     use App\Http\Controllers\Api\v1\AircraftController;
-    use App\Http\Controllers\CamoActivityController;
-    use App\Http\Controllers\CamoController;
+    use App\Http\Controllers\Api\v1\CamoActivityController;
+    use App\Http\Controllers\Api\v1\CamoController;
     use App\Http\Controllers\DashboardInfoController;
-    use App\Http\Controllers\EngineTypeController;
+    use App\Http\Controllers\Api\v1\EngineTypeController;
+    use App\Http\Controllers\Api\v1\LaborRateController;
+    use App\Http\Controllers\MediaController;
+    use App\Http\Controllers\Api\v1\ModelAircraftController;
+    use App\Http\Controllers\Api\v1\ProfileController;
+    use App\Http\Controllers\RoleController;
+    use App\Http\Controllers\Api\v1\UserController;
     use App\Http\Controllers\Invokes\ActivityController;
     use App\Http\Controllers\Invokes\AddActivityController;
     use App\Http\Controllers\Invokes\ApprovalStatusController;
@@ -19,12 +25,6 @@
     use App\Http\Controllers\Invokes\PendingRateController;
     use App\Http\Controllers\Invokes\PermissionController;
     use App\Http\Controllers\Invokes\SetOwnerAircraftController;
-    use App\Http\Controllers\LaborRateController;
-    use App\Http\Controllers\MediaController;
-    use App\Http\Controllers\Api\v1\ModelAircraftController;
-    use App\Http\Controllers\Api\v1\ProfileController;
-    use App\Http\Controllers\RoleController;
-    use App\Http\Controllers\Api\v1\UserController;
     use App\Http\Requests\ProfileUpdateRequest;
     use Illuminate\Foundation\Application;
     use Illuminate\Http\RedirectResponse;
@@ -91,7 +91,7 @@
         // Model Aircraft
         $route->resource('model-aircrafts', ModelAircraftController::class);
         // Brand Aircraft
-        $route->resource('brand-aircrafts', \App\Http\Controllers\BrandAircraftController::class);
+        $route->resource('brand-aircrafts', \App\Http\Controllers\Api\v1\BrandAircraftController::class);
         // Aircrafts
         $route->resource('aircrafts', AircraftController::class);
         // Camos
