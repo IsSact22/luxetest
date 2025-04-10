@@ -9,11 +9,12 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests as Precognitive;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
+use App\Http\Requests\Auth\RegisterRequest;
 
 Route::middleware('guest')->group(static function () {
     Route::get('register', static fn (): \Inertia\Response => (new RegisteredUserController)->create())
         ->name('register');
-    Route::post('register', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new RegisteredUserController)
+    Route::post('register', static fn (\App\Http\Requests\Auth\RegisterRequest $request): RedirectResponse => (new RegisteredUserController)
         ->store($request))->middleware(Precognitive::class);
     Route::post('login', static fn (\App\Http\Requests\Auth\LoginRequest $request): RedirectResponse => (new AuthenticatedSessionController)->store($request))
         ->name('login');

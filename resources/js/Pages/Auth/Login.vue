@@ -133,6 +133,14 @@ const submit = () => {
                                 Iniciar Sesión
                             </button>
                         </div>
+                        <div>
+                            <Link
+                                :href="route('register')"
+                                class="text-yellow-500 font-poppins font-medium underline"
+                            >
+                                Crear Cuenta
+                            </Link>
+                        </div>
                     </form>
                 </div>
             </div>

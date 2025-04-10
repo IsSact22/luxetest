@@ -1,65 +1,40 @@
 <?php
 
 namespace App\Http\Controllers\Api\v1;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\CamoResource;
+use App\Models\Camo;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class DashboardInfoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(protected Camo $camo)
     {
-        //
+        parent::__construct();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function dashboardCamo(): AnonymousResourceCollection
     {
-        //
-    }
+        $user = auth()->user();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $camos = \App\Models\Camo::query()->orderByDesc('id')
+            ->when($user && $user->isCam, static function ($query) use ($user) {
+                $query->where(static function ($query) use ($user) {
+                    $query->where('cam_id', $user->id);
+                });
+            })
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+            ->when($user && ($user->isOwner || $user->isCrew), static function ($query) use ($user) {
+                $query->where(static function ($query) use ($user) {
+                    $query->where('owner_id', $user->id)
+                        ->orWhereHas('owner', static function ($query) use ($user) {
+                            $query->where('owner_id', $user->id);
+                        });
+                });
+            })
+            ->take(10)
+            ->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return CamoResource::collection($camos);
     }
 }

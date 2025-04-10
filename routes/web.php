@@ -4,13 +4,13 @@
     use App\Http\Controllers\Api\v1\AircraftController;
     use App\Http\Controllers\Api\v1\CamoActivityController;
     use App\Http\Controllers\Api\v1\CamoController;
-    use App\Http\Controllers\DashboardInfoController;
+    use App\Http\Controllers\Api\v1\DashboardInfoController;
     use App\Http\Controllers\Api\v1\EngineTypeController;
     use App\Http\Controllers\Api\v1\LaborRateController;
     use App\Http\Controllers\MediaController;
     use App\Http\Controllers\Api\v1\ModelAircraftController;
     use App\Http\Controllers\Api\v1\ProfileController;
-    use App\Http\Controllers\RoleController;
+    use App\Http\Controllers\Api\v1\RoleController;
     use App\Http\Controllers\Api\v1\UserController;
     use App\Http\Controllers\Invokes\ActivityController;
     use App\Http\Controllers\Invokes\AddActivityController;
