@@ -1,0 +1,39 @@
+
+services:
+  g_lexus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend  # Cambiar a backend
+    image: g_lexus
+    container_name: g_lexus
+    ports:
+      - "8004:80"
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend  # Cambiar a frontend
+    image: vite_vue
+    container_name: vite_app
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - g_lexus
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
