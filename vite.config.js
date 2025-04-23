@@ -22,26 +22,32 @@ export default defineConfig({
         visualizer({ open: true }),
     ],
     resolve: {
-        "@": "/public/storage",
+        "@": "/resources/js",
+    },
+    server: {
+        host: "0.0.0.0", // Escucha en todas las interfaces dentro del contenedor
+        port: 5173,
+        strictPort: true,
+        hmr: {
+            host: "localhost", // O la IP de tu host si accedes desde fuera del contenedor
+            port: 5173,
+        },
     },
     build: {
         rollupOptions: {
             output: {
                 manualChunks(id) {
                     if (id.includes("node_modules")) {
-                        // Crea un chunk para dependencias específicas
                         const parts = id.split("node_modules/");
                         if (parts.length > 1) {
                             const packageName = parts[1].split("/")[0];
-                            // Agrupar dependencias por nombre de paquete
                             return `vendor-${packageName}`;
                         }
-                        return "vendor"; // Agrupa el resto en un único chunk
+                        return "vendor";
                     }
                     if (id.includes("resources/js/components")) {
                         return "components";
                     }
-                    // Puedes agregar más condiciones según sea necesario
                 },
             },
         },

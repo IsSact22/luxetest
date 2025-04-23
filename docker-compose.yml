@@ -1,39 +1,21 @@
 
 services:
-  g_lexus:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-      target: backend  # Cambiar a backend
-    image: g_lexus
-    container_name: g_lexus
+    container_name: monolithic-app
     ports:
-      - "8004:80"
+      - "9000:80"      # Apache (Laravel)
+      - "5173:5173"    # Vite (Vue + frontend)
     volumes:
       - .:/var/www/html
+      - /var/www/html/node_modules
     env_file:
       - .env
     networks:
-      - app-network
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: frontend  # Cambiar a frontend
-    image: vite_vue
-    container_name: vite_app
-    command: npm run dev -- --host
-    ports:
-      - "5173:5173"
-    volumes:
-      - .:/app
-      - /app/node_modules
-    depends_on:
-      - g_lexus
-    networks:
-      - app-network
+      - dev-network
 
 networks:
-  app-network:
+  dev-network:
     driver: bridge
