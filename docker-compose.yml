@@ -11,6 +11,10 @@ services:
     volumes:
       - .:/var/www/html
       - /var/www/html/node_modules
+    environment:
+      - VITE_APP_URL=http://localhost:9000
+      - APP_URL=http://localhost:9000
+      - ASSET_URL=http://localhost:9000
     env_file:
       - .env
     networks:

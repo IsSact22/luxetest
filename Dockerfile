@@ -13,10 +13,9 @@ RUN apt-get update && apt-get install -y \
 # Habilita mod_rewrite para Apache
 RUN a2enmod rewrite
 
-# Configura el directorio raíz de Apache a public/
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# Copia y habilita la configuración personalizada de Apache
+COPY apache.conf /etc/apache2/sites-available/000-default.conf
+RUN a2ensite 000-default.conf
 
 # Establece el directorio de trabajo
 WORKDIR /var/www/html
