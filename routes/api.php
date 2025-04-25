@@ -66,15 +66,15 @@ Route::middleware('auth:api')->prefix('v1')->group(function () {
     // Ruta especial para filtro
     Route::get('users/{role}/by-role', [RoleFilterController::class, 'filterByRole']);
     
-    // // Rutas de Aircraft
-    // Route::apiResource('aircrafts', AircraftController::class)
-    //     ->names([
-    //         'index' => 'api.aircrafts.index',
-    //         'show' => 'api.aircrafts.show',
-    //         'store' => 'api.aircrafts.store',
-    //         'update' => 'api.aircrafts.update',
-    //         'destroy' => 'api.aircrafts.destroy'
-    //     ]);
+    //  Rutas de Aircraft
+     Route::apiResource('aircrafts', AircraftController::class)
+         ->names([
+             'index' => 'api.aircrafts.index',
+             'show' => 'api.aircrafts.show',
+             'store' => 'api.aircrafts.store',
+             'update' => 'api.aircrafts.update',
+             'destroy' => 'api.aircrafts.destroy'
+    ]);
 
 
 });
