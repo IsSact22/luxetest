@@ -15,8 +15,12 @@ services:
       - VITE_APP_URL=http://localhost:9000
       - APP_URL=http://localhost:9000
       - ASSET_URL=http://localhost:9000
+      - SESSION_DRIVER=file
+      - SESSION_DOMAIN=localhost
+      - SANCTUM_STATEFUL_DOMAINS=localhost:9000
+      - INERTIA_SSR_ENABLED=true
     env_file:
-      - .env
+      - .env.docker
     networks:
       - dev-network
 

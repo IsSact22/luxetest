@@ -27,7 +27,10 @@ RUN git config --global --add safe.directory /var/www/html
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-scripts --no-progress --prefer-dist \
     && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache \
+    && mkdir -p storage/framework/sessions \
+    && chmod -R 775 storage/framework/sessions \
+    && chown -R www-data:www-data storage/framework/sessions
 
 # Instala dependencias de Vite
 RUN npm install --legacy-peer-deps
@@ -35,5 +38,14 @@ RUN npm install --legacy-peer-deps
 # Expone los puertos para Apache y Vite
 EXPOSE 80 5173
 
+# Crear un archivo .env básico si no existe
+RUN if [ ! -f .env ]; then touch .env; fi
+
+# Genera la clave de la aplicación
+RUN php artisan key:generate --force
+
+# Limpia la caché de la aplicación
+RUN php artisan config:clear && php artisan cache:clear && php artisan route:clear
+
 # Inicia ambos servidores: Apache y Vite
-CMD ["sh", "-c", "npm run dev --host & apache2-foreground"]
+CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && npm run dev --host & apache2-foreground"]
