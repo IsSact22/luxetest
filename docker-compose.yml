@@ -10,15 +10,6 @@ services:
       - "5173:5173"    # Vite (Vue + frontend)
     volumes:
       - .:/var/www/html
-      - /var/www/html/node_modules
-    environment:
-      - VITE_APP_URL=http://localhost:9000
-      - APP_URL=http://localhost:9000
-      - ASSET_URL=http://localhost:9000
-      - SESSION_DRIVER=file
-      - SESSION_DOMAIN=localhost
-      - SANCTUM_STATEFUL_DOMAINS=localhost:9000
-      - INERTIA_SSR_ENABLED=true
     env_file:
       - .env.docker
     networks:

@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\v1\AircraftController;
 // Auth (no protegidas)
 Route::prefix('v1')->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('api.v1.login');
+    Route::post('register', [AuthController::class, 'register'])->name('api.v1.register');
     
 });
 
@@ -65,15 +66,15 @@ Route::middleware('auth:api')->prefix('v1')->group(function () {
     // Ruta especial para filtro
     Route::get('users/{role}/by-role', [RoleFilterController::class, 'filterByRole']);
     
-    // Rutas de Aircraft
-    Route::apiResource('aircrafts', AircraftController::class)
-        ->names([
-            'index' => 'api.aircrafts.index',
-            'show' => 'api.aircrafts.show',
-            'store' => 'api.aircrafts.store',
-            'update' => 'api.aircrafts.update',
-            'destroy' => 'api.aircrafts.destroy'
-        ]);
+    // // Rutas de Aircraft
+    // Route::apiResource('aircrafts', AircraftController::class)
+    //     ->names([
+    //         'index' => 'api.aircrafts.index',
+    //         'show' => 'api.aircrafts.show',
+    //         'store' => 'api.aircrafts.store',
+    //         'update' => 'api.aircrafts.update',
+    //         'destroy' => 'api.aircrafts.destroy'
+    //     ]);
 
 
 });

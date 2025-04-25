@@ -32,15 +32,6 @@ export default defineConfig({
     resolve: {
         "@": "/resources/js",
     },
-    server: {
-        host: "0.0.0.0", // Escucha en todas las interfaces dentro del contenedor
-        port: 5173,
-        strictPort: true,
-        hmr: {
-            host: "localhost", // O la IP de tu host si accedes desde fuera del contenedor
-            port: 5173,
-        },
-    },
     build: {
         rollupOptions: {
             output: {

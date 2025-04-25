@@ -5,6 +5,7 @@ import { onMounted } from "vue";
 import { route } from "ziggy-js";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
 defineProps({
     canResetPassword: {
@@ -148,10 +149,10 @@ const submit = () => {
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto"
                 >
-                    <img
+                    <ApplicationLogo
                         alt="Logo Luxe Plus"
                         class="mb-6 w-30 h-30"
-                        src="storage/img/Logo.png"
+                       
                     />
                     <h2 class="text-5xl font-bold mb-5 text-center text-white">
                         Bienvenido a
