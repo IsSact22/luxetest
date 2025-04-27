@@ -4,8 +4,40 @@ import vue from '@vitejs/plugin-vue';
 import i18n from "laravel-vue-i18n/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 
-export default defineConfig(({ command }) => ({
-    // Optimizaciones de producción
+export default defineConfig({
+    build: {
+        // Configuración de salida y optimización
+        sourcemap: false,
+        manifest: true,
+        outDir: "public/build",
+        chunkSizeWarningLimit: 1000,
+        rollupOptions: {
+            input: "resources/js/app.js",
+            output: {
+                manualChunks(id) {
+                    if (id.includes("node_modules")) {
+                        const parts = id.split("node_modules/");
+                        if (parts.length > 1) {
+                            const packageName = parts[1].split("/")[0];
+                            return `vendor-${packageName}`;
+                        }
+                        return "vendor";
+                    }
+                    if (id.includes("resources/js/components")) {
+                        return "components";
+                    }
+                }
+            }
+        },
+        // Optimizaciones de producción
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true
+            }
+        }
+    },
     resolve: {
         alias: {
             '@': '/resources/js'
@@ -34,26 +66,5 @@ export default defineConfig(({ command }) => ({
         }),
         i18n(),
         visualizer({ open: true }),
-    ],
-    
-    build: {
-        rollupOptions: {
-            output: {
-                manualChunks(id) {
-                    if (id.includes("node_modules")) {
-                        const parts = id.split("node_modules/");
-                        if (parts.length > 1) {
-                            const packageName = parts[1].split("/")[0];
-                            return `vendor-${packageName}`;
-                        }
-                        return "vendor";
-                    }
-                    if (id.includes("resources/js/components")) {
-                        return "components";
-                    }
-                },
-            },
-        },
-        chunkSizeWarningLimit: 1000,
-    },
+    ]
 });
