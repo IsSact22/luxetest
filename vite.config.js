@@ -1,16 +1,22 @@
-import { defineConfig } from "vite";
-import laravel from "laravel-vite-plugin";
-import vue from "@vitejs/plugin-vue";
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
 import i18n from "laravel-vue-i18n/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+    // Optimizaciones de producción
+    resolve: {
+        alias: {
+            '@': '/resources/js'
+        }
+    },
     server: {
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         port: 5173,
         strictPort: true,
         hmr: {
-            host: 'localhost'
+            host: '127.0.0.1'
         }
     },
     plugins: [
@@ -29,9 +35,7 @@ export default defineConfig({
         i18n(),
         visualizer({ open: true }),
     ],
-    resolve: {
-        "@": "/resources/js",
-    },
+    
     build: {
         rollupOptions: {
             output: {

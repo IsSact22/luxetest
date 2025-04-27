@@ -20,7 +20,7 @@ class AuthController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -83,6 +83,54 @@ class AuthController extends Controller
 
             return AfterCatchUnknown();
         }
-    }   
+    }
 
+    /**
+     * Register a new user.
+     */
+    public function register(Request $request): ApiSuccessResponse|ApiErrorResponse
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            \DB::beginTransaction();
+
+            $user = \App\Models\User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => \Hash::make($request->password),
+            ]);
+
+            // Asignar el rol por defecto
+            $user->assignRole('owner');
+
+            \DB::commit();
+
+            // Generar token JWT
+            $token = auth('api')->login($user);
+
+            return new ApiSuccessResponse(
+                [
+                    'status' => 'success',
+                    'user' => $user,
+                    'authorization' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ],
+                ['message' => 'User registered successfully'],
+                ResponseAlias::HTTP_CREATED
+            );
+
+        } catch (Exception $exception) {
+            \DB::rollBack();
+            LogHelper::logError($exception);
+
+            return AfterCatchUnknown();
+        }
+    }
 }

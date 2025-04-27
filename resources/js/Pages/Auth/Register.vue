@@ -5,19 +5,19 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import {useForm as usePrecognitiveForm} from "laravel-precognition-vue-inertia";
-import {route} from "ziggy-js";
+import { route } from "ziggy-js";
 
-const form = usePrecognitiveForm('post', route('register'), useForm({
+const form = useForm({
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
-}));
+});
 
 const submit = () => {
-    form.submit({
+    form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
+        preserveScroll: true
     });
 };
 </script>
@@ -53,7 +53,6 @@ const submit = () => {
                     v-model="form.email"
                     required
                     autocomplete="username"
-                    @change="form.validate('email')"
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />

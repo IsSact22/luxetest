@@ -28,18 +28,33 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $payload = precognitive(static fn ($bail) => $request->validated());
+        try {
+            \DB::beginTransaction();
+            
+            $user = \App\Models\User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        $user = \App\Models\User::query()->create([
-            'name' => $payload['name'],
-            'email' => $payload['email'],
-            'password' => Hash::make($payload['password']),
-        ]);
+            // Asignar el rol por defecto (si es necesario)
+            $user->assignRole('owner');
+            
+            event(new Registered($user));
 
-        event(new Registered($user));
+            Auth::login($user);
+            
+            \DB::commit();
 
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
+            return redirect()->intended(route('dashboard'))->with('success', '¡Registro exitoso! Bienvenido.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            
+            \Log::error('Error durante el registro: ' . $e->getMessage());
+            
+            return back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->with('error', 'Error al registrar el usuario. Por favor, intenta nuevamente.');
+        }
     }
 }
