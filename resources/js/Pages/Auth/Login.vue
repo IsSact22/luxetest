@@ -42,9 +42,11 @@ const submit = () => {
         </div>
 
         <div
-            class="flex flex-row justify-between items-center mx-auto bg-[url('../../storage/app/public/img/background.png')] bg-center bg-cover bg-no-repeat"
-        >
-            <div class="w-1/2 h-screen">
+            class="flex flex-row justify-between items-center mx-auto bg-[url('../../storage/app/public/img/background.png')] bg-center bg-cover bg-no-repeat relative">
+            <!-- Overlay oscuro para reducir la opacidad del fondo -->
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            
+            <div class="w-1/2 h-screen  relative z-10">
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto mt-16"
                 >

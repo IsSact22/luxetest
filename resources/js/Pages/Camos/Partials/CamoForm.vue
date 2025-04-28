@@ -68,15 +68,29 @@ const form = useForm(method, url, {
     cam_id: props.camId ?? null,
     aircraft_id: props.camo?.aircraft ?? null,
     description: props.camo?.description ?? "",
-    start_date: props.camo?.start_date ?? null,
-    estimate_finish_date: props.camo?.estimate_finish_date ?? null,
+    start_date: props.camo?.start_date ?? new Date().toISOString().split('T')[0],
+    estimate_finish_date: props.camo?.estimate_finish_date ?? new Date().toISOString().split('T')[0],
     finish_date: props.camo?.finish_date ?? null,
     location: props.camo?.location ?? "OMZ",
 });
 
 const submit = async () => {
-    console.log("click");
-    form.submit();
+    try {
+        await form.submit({
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('CAMO creado exitosamente');
+                router.get(route("camos.index"));
+            },
+            onError: (errors) => {
+                console.error('Errores:', errors);
+                toast.error('Error al crear el CAMO');
+            }
+        });
+    } catch (error) {
+        console.error('Error en submit:', error);
+        toast.error('Error al procesar la solicitud');
+    }
 };
 const cancel = () => {
     form.clearErrors();
