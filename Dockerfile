@@ -1,9 +1,9 @@
 
-# version 2 de produccion 
+# version 2 de produccion
 
-FROM php:8.2-apache
+FROM php:8.3-apache
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl zip unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev \
     gnupg ca-certificates \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
