@@ -8,8 +8,6 @@ services:
     ports:
       - "9000:80"      # Apache (Laravel)
       - "5173:5173"    # Vite (Vue + frontend)
-    volumes:
-      - .:/var/www/html
     env_file:
       - .env.docker
     networks:
@@ -18,27 +16,3 @@ services:
 networks:
   dev-network:
     driver: bridge
-
-
-
-# version 2 de produccion
-
-
-# services:
-#   app:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#     container_name: monolithic-app
-#     ports:
-#       - "9000:80"      # Apache (Laravel)
-#     volumes:
-#       - .:/var/www/html
-#     env_file:
-#       - .env.docker
-#     networks:
-#       - dev-network
-
-# networks:
-#   dev-network:
-#     driver: bridge
