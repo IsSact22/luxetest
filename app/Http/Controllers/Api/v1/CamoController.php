@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Contracts\CamoRepositoryInterface;
+use App\Helpers\InertiaResponse;
 use App\Http\Requests\StoreCamoRequest;
 use App\Http\Requests\UpdateCamoRequest;
 use App\Http\Resources\CamoResource;
@@ -12,13 +13,11 @@ use App\Models\Camo;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
+use Inertia\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Throwable;
 use App\Http\Controllers\Controller;
@@ -50,14 +49,15 @@ class CamoController extends Controller
             $camos = $this->camoRepository->getAll($request);
 
             if ($this->isApiRequest($request)) {
-                return response()->json([
-                    'data' => CamoResource::collection($camos),
-                    'metaData' => [
+                return new ApiSuccessResponse(
+                    data: CamoResource::collection($camos),
+                    metaData: [
                         'total' => $camos->total(),
                         'per_page' => $camos->perPage(),
                         'current_page' => $camos->currentPage()
-                    ]
-                ], HttpResponse::HTTP_OK);
+                    ],
+                    statusCode: HttpResponse::HTTP_OK
+                );
             }
 
             return InertiaResponse::content('Camos/Index', [
@@ -75,19 +75,22 @@ class CamoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request): Response|JsonResponse
+    public function create(Request $request): Inertia\Response|ApiSuccessResponse
     {
         try {
             $this->authorize('create', Camo::class);
 
             if ($this->isApiRequest($request)) {
-                return response()->json([
-                    'data' => null,
-                    'message' => 'Create form data would be here'
-                ], HttpResponse::HTTP_OK);
+                return new ApiSuccessResponse(
+                    data: null,
+                      metaData: [
+                        'message' => 'Create form data would be here'
+                    ],
+                    statusCode: HttpResponse::HTTP_OK
+                );
             }
 
-            return Inertia::render('Camos/Create');
+            return InertiaResponse::content('Camos/Create');
         } catch (AuthorizationException) {
             return $this->handleErrorResponse('Unauthorized', HttpResponse::HTTP_UNAUTHORIZED, $request);
         } catch (Throwable $e) {
@@ -107,10 +110,11 @@ class CamoController extends Controller
             $camo = $this->camoRepository->newModel($payload);
 
             if ($this->isApiRequest($request)) {
-                return response()->json([
-                    'data' => new CamoResource($camo),
-                    'metaData' => ['action' => 'created']
-                ], HttpResponse::HTTP_CREATED);
+                return new ApiSuccessResponse(
+                    data: new CamoResource($camo),
+                    metaData: ['action' => 'created'],
+                    statusCode: HttpResponse::HTTP_CREATED
+                );
             }
 
             return redirect()->route('camos.index')->with('success', 'CAMO creado exitosamente');
@@ -134,10 +138,11 @@ class CamoController extends Controller
             $this->authorize('view', $camo);
 
             if ($this->isApiRequest($request)) {
-                return response()->json([
-                    'data' => new CamoResource($camo),
-                    'metaData' => ['activities_count' => $camo->camoActivity->count()]
-                ], HttpResponse::HTTP_OK);
+                return new ApiSuccessResponse(
+                    data: new CamoResource($camo),
+                    metaData: ['activities_count' => $camo->camoActivity->count()],
+                    statusCode: HttpResponse::HTTP_OK
+                );
             }
 
             return InertiaResponse::content('Camos/Show', [
@@ -163,10 +168,11 @@ class CamoController extends Controller
             $this->authorize('update', $camo);
 
             if ($this->isApiRequest($request)) {
-                return response()->json([
-                    'data' => new CamoResource($camo),
-                    'message' => 'Edit form data would be here'
-                ], HttpResponse::HTTP_OK);
+                return new ApiSuccessResponse(
+                    data: new CamoResource($camo),
+                    message: 'Edit form data would be here',
+                    statusCode: HttpResponse::HTTP_OK
+                );
             }
 
             return InertiaResponse::content('Camos/Edit', [
@@ -192,13 +198,14 @@ class CamoController extends Controller
             $updatedCamo = $this->camoRepository->updateModel($payload, $id);
 
             if ($this->isApiRequest($request)) {
-                return response()->json([
-                    'data' => new CamoResource($updatedCamo),
-                    'metaData' => [
+                return new ApiSuccessResponse(
+                    data: new CamoResource($updatedCamo),
+                    metaData: [
                         'action' => 'updated',
                         'updated_at' => now()->toDateTimeString()
-                    ]
-                ], HttpResponse::HTTP_OK);
+                    ],
+                    statusCode: HttpResponse::HTTP_OK
+                );
             }
 
             return to_route('camos.index')->with('success', 'CAMO updated successfully');
@@ -221,12 +228,14 @@ class CamoController extends Controller
             $this->camoRepository->deleteModel($id);
 
             if ($this->isApiRequest($request)) {
-                return response()->json([
-                    'metaData' => [
+                return new ApiSuccessResponse(
+                    data: null,
+                    metaData: [
                         'action' => 'deleted',
                         'deleted_at' => now()->toDateTimeString()
-                    ]
-                ], HttpResponse::HTTP_NO_CONTENT);
+                    ],
+                    statusCode: HttpResponse::HTTP_NO_CONTENT
+                );
             }
 
             return to_route('camos.index')->with('success', 'CAMO deleted successfully');
@@ -241,16 +250,19 @@ class CamoController extends Controller
     /**
      * Maneja las respuestas de error de forma unificada
      */
-    protected function handleErrorResponse(string $message, int $statusCode, Request $request, array $errors = []): Response|JsonResponse
-    {
+    protected function handleErrorResponse(
+        string $message, 
+        int $statusCode, 
+        Request $request
+    ) {
         if ($this->isApiRequest($request)) {
-            return response()->json([
-                'message' => $message,
-                'errors' => $errors
-            ], $statusCode);
+            return new ApiErrorResponse(
+                message: $message,
+                statusCode: $statusCode
+            );
         }
 
-        return Inertia::render('Error', [
+        return Inertia::render('Errors/Error', [
             'status' => $statusCode,
             'message' => $message
         ]);

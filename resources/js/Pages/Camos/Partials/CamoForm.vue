@@ -68,8 +68,8 @@ const form = useForm(method, url, {
     cam_id: props.camId ?? null,
     aircraft_id: props.camo?.aircraft ?? null,
     description: props.camo?.description ?? "",
-    start_date: props.camo?.start_date ?? new Date().toISOString().split('T')[0],
-    estimate_finish_date: props.camo?.estimate_finish_date ?? new Date().toISOString().split('T')[0],
+    start_date: props.camo?.start_date ?? null,
+    estimate_finish_date: props.camo?.estimate_finish_date ?? null,
     finish_date: props.camo?.finish_date ?? null,
     location: props.camo?.location ?? "OMZ",
 });
