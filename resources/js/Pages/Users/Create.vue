@@ -7,6 +7,7 @@ import { route } from "ziggy-js";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
+import { useToast } from "vue-toastification";
 
 const form = useForm("post", route("users.store"), {
     role: null,
@@ -18,9 +19,22 @@ const form = useForm("post", route("users.store"), {
     avatar: null,
 });
 
+const toast = useToast();
+
 const submit = async () => {
     form.submit({
-        onFinish: () => form.reset(),
+        onSuccess: () => {
+            toast.success('Usuario creado exitosamente');
+            form.reset();
+            router.get(route('users.index'), {}, {
+                preserveState: true,
+                preserveScroll: true
+            });
+        },
+        onError: () => {
+            toast.error('Error al crear el usuario');
+            // Los errores específicos ya son manejados automáticamente por el componente InputError
+        }
     });
 };
 
