@@ -75,7 +75,7 @@ class CamoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request): Inertia\Response|ApiSuccessResponse
+    public function create(Request $request)
     {
         try {
             $this->authorize('create', Camo::class);
@@ -117,7 +117,7 @@ class CamoController extends Controller
                 );
             }
 
-            return redirect()->route('camos.index')->with('success', 'CAMO creado exitosamente');
+            return InertiaResponse::content('Camos/Create');
         } catch (AuthorizationException $e) {
             Log::error('Authorization error: '.$e->getMessage());
             return $this->handleErrorResponse('Unauthorized', HttpResponse::HTTP_FORBIDDEN, $request);
@@ -170,7 +170,7 @@ class CamoController extends Controller
             if ($this->isApiRequest($request)) {
                 return new ApiSuccessResponse(
                     data: new CamoResource($camo),
-                    message: 'Edit form data would be here',
+                    metaData: ['message' => 'Edit form data would be here'],
                     statusCode: HttpResponse::HTTP_OK
                 );
             }
@@ -257,6 +257,7 @@ class CamoController extends Controller
     ) {
         if ($this->isApiRequest($request)) {
             return new ApiErrorResponse(
+                exception: null,
                 message: $message,
                 statusCode: $statusCode
             );
