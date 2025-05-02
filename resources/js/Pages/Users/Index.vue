@@ -5,6 +5,11 @@ import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
 import { useToast } from "vue-toastification";
+import { ref } from "vue";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+
+const confirmDialog = ref(null);
+const selectedId = ref(null);
 
 const props = defineProps({
     resource: {
@@ -20,10 +25,26 @@ const fireSearch = _.throttle(function () {
     form.get(route("users.index"), { preserveState: true });
 }, 200);
 
-const destroy = (id) => {
-    if (confirm("Seguro desea eliminar el Usuario")) {
-        form.delete(route("users.destroy", id), { preserveState: true });
+const handleAction = () => {
+    if (selectedId.value) {
+        form.delete(route("users.destroy", selectedId.value), {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                selectedId.value = null;
+                toast.success("Usuario eliminado!");
+            },
+        });
     }
+};
+
+const showConfirmation = (id) => {
+    selectedId.value = id;
+    confirmDialog.value.show();
+};
+
+const destroy = (id) => {
+    showConfirmation(id);
 };
 const restore = (id) => {
     router.post(
@@ -192,5 +213,15 @@ const restore = (id) => {
                 </table>
             </div>
         </div>
+        <!-- Componente de Confirmación -->
+        <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-red-800 font-semibold bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este usuario?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>
