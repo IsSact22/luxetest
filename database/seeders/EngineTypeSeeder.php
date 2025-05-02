@@ -16,6 +16,7 @@ class EngineTypeSeeder extends Seeder
             'piston',
             'turbo-prop',
             'turbo-fan/turbo-jet',
+            'turbo-helice',
         ];
         foreach ($motorTypes as $type) {
             EngineType::query()->create(['name' => $type]);

@@ -37,10 +37,14 @@ const submit = () => {
     form.submit({
         preserveScroll: true,
         onSuccess: () => {
+            const message = props.aircraft ? "Avión actualizado" : "Avión creado";
+            toast.success(message);
             form.reset();
-            emit("close", true);
-            toast.success("Avión creado");
+            router.visit(route('aircrafts.index'));
         },
+        onError: (errors) => {
+            toast.error('Por favor verifica los datos ingresados');
+        }
     });
 };
 const cancel = () => {

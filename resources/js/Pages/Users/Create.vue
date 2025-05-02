@@ -83,11 +83,11 @@ const cancelForm = () => {
     <Head title="Users" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Users</h2>
+            <h2>Usuarios</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 border rounded-md px-4 py-1 bg-white">
-                <h1 class="text-xl text-neutral-600">Create User</h1>
+                <h1 class="text-xl text-neutral-600">Crear Usuario</h1>
                 <form @submit.prevent="submit">
                     <div
                         class="flex flex-col my-2 space-y-2 px-2 py-2 border rounded-md bg-white"

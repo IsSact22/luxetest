@@ -27,10 +27,14 @@ const submit = () => {
     form.submit({
         preserveScroll: true,
         onSuccess: () => {
+            const message = props.adminRate ? "Tarifa actualizada" : "Tarifa creada";
+            toast.success(message);
             form.reset();
-            emit("showForm", false);
-            toast.success("Admin Rate created");
+           router.visit(route("admin-rates.index"));
         },
+        onError: (errors) =>{
+            toast.error('Por favor verifica los datos ingresados');
+        }
     });
 };
 const cancel = () => {

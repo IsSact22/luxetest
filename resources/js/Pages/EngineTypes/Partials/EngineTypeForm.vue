@@ -26,9 +26,14 @@ const submit = () => {
     form.submit({
         preserveScroll: true,
         onSuccess: () => {
+            const message = props.engineType ? "Tipo de motor actualizado" : "Tipo de motor creado";
+            toast.success(message);
             form.reset();
-            router.get(route("engine-types.index"));
+            router.visit(route("engine-types.index"));
         },
+        onError: (errors) => {
+            toast.error('Por favor verifica los datos ingresados');
+        }
     });
 };
 const cancel = () => {

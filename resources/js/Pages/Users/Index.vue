@@ -76,7 +76,7 @@ const restore = (id) => {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300"
                             name="search"
-                            placeholder="search"
+                            placeholder="BUSCAR"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -217,7 +217,7 @@ const restore = (id) => {
         <ConfirmDialog
             ref="confirmDialog"
             :onConfirm="handleAction"
-            button-confirm-style="text-red-800 font-semibold bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
             cancelText="No, cancelar"
             confirmText="Sí, eliminar"
             message="¿Estás seguro de que deseas eliminar este usuario?"

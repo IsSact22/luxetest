@@ -273,10 +273,9 @@ const finishCamo = async () => {
                         v-if="showGallery"
                         :href="route('camos.images', props.resource.data.id)"
                         class="btn-primary"
-                        title="Gallery of Camo"
-                        @click.passive.prevent
+                        title="Galería de imágenes"
                     >
-                        Ver Galeria
+                        Ver Galería
                     </Link>
                     <button
                         v-if="
