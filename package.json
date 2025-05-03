@@ -29,7 +29,7 @@
         "eslint": "^9.16.0",
         "floating-vue": "^5.2.2",
         "laravel-precognition-vue": "^0.5.4",
-        "laravel-precognition-vue-inertia": "^0.5.4",
+        "laravel-precognition-vue-inertia": "^0.7.2",
         "laravel-vue-i18n": "^2.7.6",
         "lodash": "^4.17.21",
         "lodash.clonedeep": "^4.5.0",
