@@ -11,6 +11,8 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 use function App\Helpers\AfterCatchUnknown;
@@ -105,8 +107,10 @@ class AuthController extends Controller
                 'password' => \Hash::make($request->password),
             ]);
 
-            // Asignar el rol por defecto
-            $user->assignRole('owner');
+            // Asignar el rol por defecto si no lo tiene
+            if (!$user->hasRole('cam')) {
+                $user->assignRole('cam');
+            }
 
             \DB::commit();
 

@@ -32,16 +32,16 @@ const submit = () => {
             <!-- Contenido del formulario -->
             <div class="w-1/2 h-screen relative z-10">
                 <div class="flex flex-col justify-items-center items-center mx-auto mt-16">
-                    <form @submit.prevent="submit" class="flex flex-col justify-items-center items-center mx-auto space-y-8 bg-black bg-opacity-60 p-10 rounded-lg my-2">
+                    <form @submit.prevent="submit" class="flex flex-col justify-items-center items-center mx-auto space-y-6 bg-black bg-opacity-60 p-10 rounded-lg my-2">
                         <h2 class="text-yellow-400 text-3xl font-poppins font-medium leading-normal">
                             Crear Cuenta
                         </h2>
-                        <p class="text-black-50 font-poppins not-italic leading-normal">
+                        <p class="text-black-50 font-poppins not-italic leading-normal mb-4">
                             Ingresa tus datos para registrarte en la plataforma
                         </p>
 
-                        <div>
-                            <label class="block text-black-50" for="name">
+                        <div class="relative mb-6 h-24">
+                            <label class="block text-black-50 mb-1" for="name">
                                 Nombre
                             </label>
                             <input
@@ -54,11 +54,11 @@ const submit = () => {
                                 autocomplete="name"
                                 placeholder="Tu nombre completo"
                             />
-                            <InputError class="mt-2" :message="form.errors.name" />
+                            <InputError class="mt-1" :message="form.errors.name" />
                         </div>
 
-                        <div>
-                            <label class="block text-black-50" for="email">
+                        <div class="relative mb-6 h-24">
+                            <label class="block text-black-50 mb-1" for="email">
                                 Correo Electrónico
                             </label>
                             <input
@@ -70,11 +70,11 @@ const submit = () => {
                                 autocomplete="username"
                                 placeholder="ejemplo@correo.com"
                             />
-                            <InputError class="mt-2" :message="form.errors.email" />
+                            <InputError class="mt-1" :message="form.errors.email" />
                         </div>
 
-                        <div>
-                            <label class="block text-black-50" for="password">
+                        <div class="relative mb-6 h-24">
+                            <label class="block text-black-50 mb-1" for="password">
                                 Contraseña
                             </label>
                             <input
@@ -86,11 +86,11 @@ const submit = () => {
                                 autocomplete="new-password"
                                 placeholder="Contraseña"
                             />
-                            <InputError class="mt-2" :message="form.errors.password" />
+                            <InputError class="mt-1" :message="form.errors.password" />
                         </div>
 
-                        <div>
-                            <label class="block text-black-50" for="password_confirmation">
+                        <div class="relative mb-6 h-24">
+                            <label class="block text-black-50 mb-1" for="password_confirmation">
                                 Confirmar Contraseña
                             </label>
                             <input
@@ -102,7 +102,7 @@ const submit = () => {
                                 autocomplete="new-password"
                                 placeholder="Confirmar contraseña"
                             />
-                            <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                            <InputError class="mt-1" :message="form.errors.password_confirmation" />
                         </div>
 
                         <div class="flex flex-col items-center space-y-4 w-full">

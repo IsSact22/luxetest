@@ -29,3 +29,5 @@ RUN chmod -R 775 storage bootstrap/cache public/build
 EXPOSE 80
 
 CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && npm run dev & apache2-foreground"]
+
+

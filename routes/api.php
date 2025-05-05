@@ -165,6 +165,10 @@ Route::middleware('auth:api')->prefix('v1')->group(function () {
     Route::get('dashboard-info', [DashboardInfoController::class, 'index'])->name('api.dashboard-info.index');
 
     // Rutas de Media
-    Route::post('media/upload', [MediaController::class, 'upload'])->name('api.media.upload');
-    Route::delete('media/{media}', [MediaController::class, 'destroy'])->name('api.media.destroy');
+    Route::prefix('media')->group(function () {
+        Route::post('upload', [MediaController::class, 'upload'])->name('api.media.upload');
+        Route::post('upload/{modelName}', [MediaController::class, 'addImageToModel'])->name('api.media.upload.model');
+        Route::delete('{media}', [MediaController::class, 'destroy'])->name('api.media.destroy');
+        Route::get('camo/{camo}/has-images', [MediaController::class, 'hasImagesInActivities'])->name('api.media.has-images');
+    });
 });
