@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\BrandAircraftController;
 use App\Http\Controllers\Api\v1\CamoActivityController;
 use App\Http\Controllers\Api\v1\CamoController;
+use App\Http\Controllers\Invokes\MediaActivityController;
 use App\Http\Controllers\Api\v1\DashboardInfoController;
 use App\Http\Controllers\Api\v1\EngineTypeController;
 use App\Http\Controllers\Api\v1\LaborRateController;
@@ -171,4 +172,6 @@ Route::middleware('auth:api')->prefix('v1')->group(function () {
         Route::delete('{media}', [MediaController::class, 'destroy'])->name('api.media.destroy');
         Route::get('camo/{camo}/has-images', [MediaController::class, 'hasImagesInActivities'])->name('api.media.has-images');
     });
+
+    
 });

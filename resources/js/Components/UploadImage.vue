@@ -16,13 +16,21 @@ const form = useForm({
     id: props.id,
     images: null,
 });
+
 const submit = async () => {
+    
     form.post(route("camo_activities.add_images"), {
-        onSuccess: () => {
-            emit("uploaded", true);
-            form.reset();
-        },
-    });
+    forceFormData: true,
+    preserveScroll: true,
+    onSuccess: () => {
+        toast.success('Images uploaded successfully');
+        emit("uploaded", true);
+        form.reset();
+        images.value = [];
+        preview.value = [];
+    },
+});
+
 };
 
 const isDragging = ref(false);

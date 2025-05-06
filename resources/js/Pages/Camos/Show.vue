@@ -197,11 +197,12 @@ const showGallery = ref(false);
 const checkIfActivitiesHaveImages = async () => {
     try {
         const response = await axios.get(
-            `/camo/${props.resource.data.id}/has-images-in-activities`,
+            route('camos.has-images', { camo: props.resource.data.id })
         );
-        showGallery.value = response.data.hasImages; // Se establece el valor del botón
+        showGallery.value = response.data.has_images; // Se establece el valor del botón
     } catch (error) {
         console.error("Error fetching images", error);
+        toast.error('Error checking for images');
     }
 };
 const canFinish = ref(false);
@@ -271,7 +272,7 @@ const finishCamo = async () => {
                     </button>
                     <Link
                         v-if="showGallery"
-                        :href="route('camos.images', props.resource.data.id)"
+                        :href="route('camos.media', { camo: props.resource.data.id })"
                         class="btn-primary"
                         title="Galería de imágenes"
                     >

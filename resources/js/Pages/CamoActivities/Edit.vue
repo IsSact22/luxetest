@@ -17,9 +17,13 @@ const props = defineProps({
     },
 });
 
-const handleImages = (images) => {
-    form.add_images.push(...images);
+const handleImages = (success) => {
+    if (success) {
+        // Recargar la página actual
+        router.reload({ only: ['resource'] });
+    }
 };
+
 const goBack = () => {
     const camoId = props.resource.data.camo_id;
     router.get(route("camos.show", camoId), {}, { replace: false });

@@ -7,7 +7,7 @@
     use App\Http\Controllers\Api\v1\DashboardInfoController;
     use App\Http\Controllers\Api\v1\EngineTypeController;
     use App\Http\Controllers\Api\v1\LaborRateController;
-    use App\Http\Controllers\MediaController;
+    use App\Http\Controllers\Api\v1\MediaController;
     use App\Http\Controllers\Api\v1\ModelAircraftController;
     use App\Http\Controllers\Api\v1\ProfileController;
     use App\Http\Controllers\Api\v1\RoleController;
@@ -100,14 +100,16 @@
             ->name('camos.close');
         $route->get('camos/dashboard', [DashboardInfoController::class, 'dashboardCamo'])->name('camos.dashboard');
 
-        $route->get('camos/{camo}/get-images', [App\Http\Controllers\MediaController::class, 'getMedia'])->name('camos.images');
+        // Media routes
+        $route->get('camos/{camo}/media', [MediaController::class, 'getMedia'])->name('camos.media');
+        $route->get('camos/{camo}/has-images', [MediaController::class, 'hasImagesInActivities'])->name('camos.has-images');
         $route->resource('camos', CamoController::class);
-        // Media Camo Activities
-        $route->get('camo/{camo}/has-images-in-activities', [MediaController::class, 'hasImagesInActivities'])->name('camo.has-images-in-activities');
-        $route->post('camo_activities/add-images', MediaActivityController::class)
-            ->name('camo_activities.add_images');
         // Camo Activities
         $route->resource('camo_activities', CamoActivityController::class);
+
+        // Ruta para subir imágenes
+        $route->post('camo_activities/add_images', MediaActivityController::class)
+            ->name('camo_activities.add_images');
 
         $route->get('approval-status', ApprovalStatusController::class)->name('approval-status');
     });

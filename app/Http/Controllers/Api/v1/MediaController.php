@@ -116,7 +116,7 @@ class MediaController extends Controller
     public function hasImagesInActivities(Camo $camo): JsonResponse
     {
         try {
-            $hasImages = $camo->activities()
+            $hasImages = $camo->camoActivity()
                 ->whereHas('media')
                 ->exists();
 
@@ -129,6 +129,78 @@ class MediaController extends Controller
                 'message' => 'Error checking images',
                 'error' => $e->getMessage()
             ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Obtiene todas las imágenes de las actividades de un CAMO.
+     *
+     * @param Camo $camo
+     * @return Response|JsonResponse
+     */
+    public function getMedia(Camo $camo): Response|JsonResponse
+    {
+        try {
+            // Obtener todas las actividades que tienen imágenes
+            $activities = $camo->camoActivity()
+                ->with('media')
+                ->whereHas('media')
+                ->get();
+
+            if ($activities->isEmpty()) {
+                return $this->errorResponse('No images found', ResponseAlias::HTTP_NOT_FOUND, request());
+            }
+
+            // Formatear los datos para la vista
+            $mediaByActivity = $activities->map(function ($activity) {
+                return [
+                    'activity_id' => $activity->id,
+                    'activity_name' => $activity->name ?? 'Sin nombre',
+                    'media' => $activity->getMedia($activity->mediaCollectionName)->map(function ($media) {
+                        try {
+                            $url = $media->getUrl();
+                            $previewUrl = $media->hasGeneratedConversion('preview') ? $media->getUrl('preview') : $url;
+                            $thumbnailUrl = $media->hasGeneratedConversion('thumbnail') ? $media->getUrl('thumbnail') : $previewUrl;
+
+                            return [
+                                'id' => $media->id,
+                                'name' => $media->name,
+                                'file_name' => $media->file_name,
+                                'mime_type' => $media->mime_type,
+                                'size' => $media->size,
+                                'url' => str_replace('https:', 'http:', $url),
+                                'thumbnail' => str_replace('https:', 'http:', $thumbnailUrl),
+                                'preview' => str_replace('https:', 'http:', $previewUrl),
+                                'created_at' => $media->created_at->format('Y-m-d H:i:s')
+                            ];
+                        } catch (Throwable $e) {
+                            Log::warning('Error processing media item: ' . $e->getMessage());
+                            return null;
+                        }
+                    })->filter()->values()
+                ];
+            })->filter(function ($activity) {
+                return $activity['media']->isNotEmpty();
+            })->values();
+
+            if ($mediaByActivity->isEmpty()) {
+                return $this->errorResponse('No valid images found', ResponseAlias::HTTP_NOT_FOUND, request());
+            }
+
+            // Si es una petición AJAX o API, retornar JSON
+            if (request()->expectsJson()) {
+                return response()->json(['media' => $mediaByActivity]);
+            }
+
+            // Si no, retornar vista Inertia
+            return InertiaResponse::content('Media/Show', [
+                'media' => $mediaByActivity,
+                'camo' => $camo
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error('Error getting media: ' . $e->getMessage());
+            return $this->errorResponse($e->getMessage(), ResponseAlias::HTTP_INTERNAL_SERVER_ERROR, request());
         }
     }
 
@@ -183,4 +255,10 @@ class MediaController extends Controller
 
         return Inertia::render('Errors/Error', ['status' => $status]);
     }
+
+
+
 }
+
+
+
