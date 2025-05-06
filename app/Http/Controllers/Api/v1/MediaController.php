@@ -138,6 +138,56 @@ class MediaController extends Controller
      * @param Camo $camo
      * @return Response|JsonResponse
      */
+    /**
+     * Elimina una imagen específica.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function deleteImage(Request $request): JsonResponse
+    {
+        try {
+            $modelName = $request->get('model_name');
+            $modelId = $request->get('model_id');
+            $mediaId = $request->get('media_id');
+
+            if (!$modelName || !$modelId || !$mediaId) {
+                return response()->json([
+                    'message' => 'Missing required parameters'
+                ], ResponseAlias::HTTP_BAD_REQUEST);
+            }
+
+            $record = $this->getModelRecord($modelName, $modelId);
+            
+            if (!$record) {
+                return response()->json([
+                    'message' => 'Record not found'
+                ], ResponseAlias::HTTP_NOT_FOUND);
+            }
+
+            $media = $record->media()->find($mediaId);
+            
+            if (!$media) {
+                return response()->json([
+                    'message' => 'Media not found'
+                ], ResponseAlias::HTTP_NOT_FOUND);
+            }
+
+            $media->delete();
+
+            return response()->json([
+                'message' => 'Image deleted successfully'
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                'message' => 'Error deleting image',
+                'error' => $e->getMessage()
+            ], ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function getMedia(Camo $camo): Response|JsonResponse
     {
         try {

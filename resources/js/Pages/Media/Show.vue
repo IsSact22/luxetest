@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 import { Head } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { useDateFormatter } from '@/Composables/formatDate.js'
@@ -32,6 +33,36 @@ const openModal = (image) => {
 const closeModal = () => {
     showModal.value = false;
     selectedImage.value = null;
+};
+
+const deleteImage = async (activity, image) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
+        return;
+    }
+
+    try {
+        await axios.delete('/api/v1/media/delete', {
+            data: {
+                model_name: 'CamoActivity',
+                model_id: activity.activity_id,
+                media_id: image.id
+            }
+        });
+
+        // Eliminar la imagen del array local
+        const index = activity.media.findIndex(img => img.id === image.id);
+        if (index !== -1) {
+            activity.media.splice(index, 1);
+        }
+
+        // Si no quedan imágenes, colapsar la actividad
+        if (activity.media.length === 0) {
+            collapsedActivities.value.add(activity.activity_id);
+        }
+    } catch (error) {
+        console.error('Error al eliminar la imagen:', error);
+        alert('Error al eliminar la imagen. Por favor, inténtalo de nuevo.');
+    }
 };
 
 const toggleActivity = (activityId) => {
@@ -99,14 +130,30 @@ const toggleActivity = (activityId) => {
                             <div v-show="!collapsedActivities.has(activity.activity_id)"
                                  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center transition-all duration-300">
 
-                                <div v-for="image in activity.media" :key="image.id" class="relative group cursor-pointer w-full max-w-[252px]" @click="openModal(image)">
+                                <div v-for="image in activity.media" :key="image.id" class="relative group w-full max-w-[252px]">
                                     <div class="aspect-[3/2] rounded-md overflow-hidden bg-gray-100 shadow-sm transition-all duration-300 group-hover:shadow-md border border-gray-200 hover:border-blue-400 flex items-center justify-center relative">
-                                        <img 
-                                            :src="image.thumbnail" 
-                                            :alt="image.name"
-                                            class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                                        >
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                                        <!-- Contenedor de acciones -->
+                                        <div class="absolute top-0 right-0 p-2 z-20 flex gap-2">
+                                            <!-- Botón de eliminar -->
+                                            <button @click.stop="deleteImage(activity, image)"
+                                                    class="p-1.5 rounded-md bg-red-500 hover:bg-red-600 text-white shadow-sm hover:shadow-md transition-all duration-200">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <!-- Imagen con cursor pointer -->
+                                        <div class="w-full h-full cursor-pointer" @click="openModal(image)">
+                                            <img 
+                                                :src="image.thumbnail" 
+                                                :alt="image.name"
+                                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            >
+                                        </div>
+
+                                        <!-- Overlay con nombre -->
+                                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
                                             <p class="text-white text-sm font-medium truncate">{{ image.name }}</p>
                                         </div>
                                     </div>

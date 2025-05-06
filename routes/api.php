@@ -168,6 +168,7 @@ Route::middleware('auth:api')->prefix('v1')->group(function () {
     // Rutas de Media
     Route::prefix('media')->group(function () {
         Route::post('upload', [MediaController::class, 'upload'])->name('api.media.upload');
+        Route::delete('delete', [MediaController::class, 'deleteImage'])->name('api.media.delete');
         Route::post('upload/{modelName}', [MediaController::class, 'addImageToModel'])->name('api.media.upload.model');
         Route::delete('{media}', [MediaController::class, 'destroy'])->name('api.media.destroy');
         Route::get('camo/{camo}/has-images', [MediaController::class, 'hasImagesInActivities'])->name('api.media.has-images');
