@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import { useToast } from "vue-toastification";
 import { useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import { useToast } from "vue-toastification";
 
 const toast = useToast();
 const props = defineProps({
@@ -17,19 +17,36 @@ const form = useForm({
     images: null,
 });
 
-const submit = async () => {
-    
-    form.post(route("camo_activities.add_images"), {
-    forceFormData: true,
-    preserveScroll: true,
-    onSuccess: () => {
-        toast.success('Images uploaded successfully');
-        emit("uploaded", true);
-        form.reset();
-        images.value = [];
-        preview.value = [];
-    },
+form.transform((data) => {
+    const formData = new FormData();
+    formData.append('id', props.id);
+    images.value.forEach((img, index) => {
+        formData.append(`images[]`, img.file);
+    });
+    return formData;
 });
+
+const submit = async () => {
+    if (!images.value.length) {
+        toast.error('Por favor selecciona al menos una imagen');
+        return;
+    }
+
+    form.post(route("camo_activities.add_images"), {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => {
+            toast.success('Imágenes subidas exitosamente');
+            emit("uploaded", true);
+            form.reset();
+            images.value = [];
+            preview.value = [];
+        },
+        // onError: (errors) => {
+        //     toast.error('Error al subir las imágenes');
+        //     console.error(errors);
+        // }
+    });
 
 };
 
