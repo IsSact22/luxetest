@@ -8,6 +8,8 @@ services:
     ports:
       - "9000:80"      # Apache (Laravel)
       - "5173:5173"    # Vite (Vue + frontend)
+    volumes:
+      - ./storage/app/public:/var/www/html/storage/app/public
     env_file:
       - .env.docker
     networks:

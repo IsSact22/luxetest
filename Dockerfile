@@ -25,9 +25,9 @@ RUN npm run build
 
 RUN chown -R www-data:www-data storage bootstrap/cache public/build
 RUN chmod -R 775 storage bootstrap/cache public/build
+RUN chmod -R 775 storage
+RUN chown -R www-data:www-data storage
 
 EXPOSE 80
 
-CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && npm run dev & apache2-foreground"]
-
-
+CMD ["sh", "-c", "php artisan storage:link && php artisan config:cache && php artisan route:cache && npm run dev & apache2-foreground"]

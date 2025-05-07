@@ -7,7 +7,7 @@ import ImageModal from '@/Components/ImageModal.vue'
 
 const { formattedDateTime } = useDateFormatter()
 
-defineProps({
+const props = defineProps({
     media: {
         type: Array,
         required: true
@@ -33,30 +33,30 @@ const closeModal = () => {
     selectedImage.value = null
 }
 
-const deleteImage = (activity, image) => {
-    if (!confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return
+// const deleteImage = (activity, image) => {
+//     if (!confirm('¿Estás seguro de que deseas eliminar esta imagen?')) return
 
-    router.delete('/api/v1/media/delete', {
-        data: {
-            model_name: 'CamoActivity',
-            model_id: activity.activity_id,
-            media_id: image.id
-        },
-        preserveScroll: true,
-        onSuccess: () => {
-            const index = activity.media.findIndex((img) => img.id === image.id)
-            if (index !== -1) {
-                activity.media.splice(index, 1)
-            }
-            if (activity.media.length === 0) {
-                collapsedActivities.value.add(activity.activity_id)
-            }
-        },
-        onError: () => {
-            alert('Hubo un problema eliminando la imagen.')
-        }
-    })
-}
+//     router.delete('/api/v1/media/delete', {
+//         data: {
+//             model_name: 'CamoActivity',
+//             model_id: activity.activity_id,
+//             media_id: image.id
+//         },
+//         preserveScroll: true,
+//         onSuccess: () => {
+//             const index = activity.media.findIndex((img) => img.id === image.id)
+//             if (index !== -1) {
+//                 activity.media.splice(index, 1)
+//             }
+//             if (activity.media.length === 0) {
+//                 collapsedActivities.value.add(activity.activity_id)
+//             }
+//         },
+//         onError: () => {
+//             alert('Hubo un problema eliminando la imagen.')
+//         }
+//     })
+// }
 
 const toggleActivity = (activityId) => {
     collapsedActivities.value.has(activityId)
@@ -67,7 +67,7 @@ const toggleActivity = (activityId) => {
 const toggleAll = () => {
     allExpanded.value = !allExpanded.value
 
-    media.forEach((activity) => {
+    props.media.forEach((activity) => {
         allExpanded.value
             ? collapsedActivities.value.delete(activity.activity_id)
             : collapsedActivities.value.add(activity.activity_id)
@@ -149,7 +149,7 @@ const toggleAll = () => {
                                     <div v-for="image in activity.media" :key="image.id"
                                         class="relative group rounded-md overflow-hidden shadow hover:shadow-lg transition-shadow">
                                         <!-- Acciones -->
-                                        <div class="absolute top-2 right-2 z-10 flex gap-2">
+                                        <!-- <div class="absolute top-2 right-2 z-10 flex gap-2">
                                             <button @click.stop="deleteImage(activity, image)"
                                                 class="p-1.5 rounded bg-red-500 hover:bg-red-600 text-white shadow-sm">
                                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24"
@@ -158,7 +158,7 @@ const toggleAll = () => {
                                                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                             </button>
-                                        </div>
+                                        </div> -->
 
                                         <!-- Imagen -->
                                         <div @click="openModal(image)" class="cursor-pointer">
