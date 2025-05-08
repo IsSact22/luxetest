@@ -167,7 +167,7 @@ const handleSelected = (object) => {
                                         </svg>
                                     </span>
                                 </button>
-                                <Link
+                                <button
                                     v-if="$page.props.auth.user.is_super"
                                     class="btn-delete"
                                     @click="destroy(item.id)"
@@ -188,7 +188,7 @@ const handleSelected = (object) => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>

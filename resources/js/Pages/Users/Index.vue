@@ -151,10 +151,11 @@ const restore = (id) => {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link
+                                <button
                                     v-if="user.id !== 1 && !user.deleted_at"
                                     class="btn-delete"
-                                    @click="destroy(user.id)"
+                                    type="button"
+                                    @click.prevent="destroy(user.id)"
                                 >
                                     <span>
                                         <svg
@@ -172,8 +173,8 @@ const restore = (id) => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
-                                <Link
+                                </button>
+                                <button
                                     v-if="user.id !== 1 && user.deleted_at"
                                     class="btn-edit"
                                     @click="restore(user.id)"
@@ -194,7 +195,7 @@ const restore = (id) => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                                 <span
                                     v-if="user.id === 1"
                                     class="font-bold text-red-800"

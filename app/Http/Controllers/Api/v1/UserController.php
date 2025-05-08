@@ -97,7 +97,12 @@ class UserController extends Controller
 
             // Para peticiones Inertia
             if ($request->hasHeader('X-Inertia')) {
-                return to_route('users.index')->with('success', 'User created successfully');
+                return to_route('users.index')->with([
+                    'message' => [
+                        'type' => 'success',
+                        'message' => 'User created successfully'
+                    ]
+                ]);
             }
 
             // Para peticiones API
@@ -106,6 +111,14 @@ class UserController extends Controller
             return $this->handleErrorResponse($request, 'Unauthorized', ResponseAlias::HTTP_UNAUTHORIZED);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
+            if ($request->hasHeader('X-Inertia')) {
+                return back()->with([
+                    'message' => [
+                        'type' => 'error',
+                        'message' => 'Error creating user: ' . $e->getMessage()
+                    ]
+                ]);
+            }
             return $this->handleErrorResponse($request, $e->getMessage(), ResponseAlias::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
