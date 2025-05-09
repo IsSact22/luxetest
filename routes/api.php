@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\BrandAircraftController;
 use App\Http\Controllers\Api\v1\CamoActivityController;
 use App\Http\Controllers\Api\v1\CamoController;
-use App\Http\Controllers\Invokes\MediaActivityController;
 use App\Http\Controllers\Api\v1\DashboardInfoController;
 use App\Http\Controllers\Api\v1\EngineTypeController;
 use App\Http\Controllers\Api\v1\LaborRateController;
@@ -18,6 +17,7 @@ use App\Http\Controllers\Api\v1\RoleController;
 use App\Http\Controllers\Api\v1\RoleFilterController;
 use App\Http\Controllers\Api\v1\RolePermissionController;
 use App\Http\Controllers\Api\v1\UserController;
+use App\Http\Controllers\Invokes\MediaActivityController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,26 +53,21 @@ Route::middleware('auth:api')->prefix('v1')->group(function () {
         ->name('api.users.update'); // Más RESTful
     // Roles & Permissions (modularizado)
     Route::prefix('permissions')->group(function () {
-        Route::apiResource('roles', RolePermissionController::class)
-            ->only(['index', 'store', 'update', 'destroy'])
-            ->names([
-                'index' => 'api.roles.index',
-                'store' => 'api.roles.store',
-                'update' => 'api.roles.update',
-                'destroy' => 'api.roles.destroy'
-            ]);
+        // Rutas de roles
+        Route::get('roles', [RolePermissionController::class, 'getRoles'])->name('api.roles.index');
+        Route::post('roles', [RolePermissionController::class, 'storeRole'])->name('api.roles.store');
+        Route::put('roles/{id}', [RolePermissionController::class, 'updateRole'])->name('api.roles.update');
+        Route::delete('roles/{id}', [RolePermissionController::class, 'deleteRole'])->name('api.roles.destroy');
         
-        Route::post('roles/{role}/{guard}/assign', [RolePermissionController::class, 'assignPermissions']);
-        Route::post('roles/{role}/revoke', [RolePermissionController::class, 'revokePermissions']);
+        // Asignación de permisos a roles
+        Route::post('roles/{role}/{guard}/assign', [RolePermissionController::class, 'assignPermissions'])->name('api.roles.assign-permissions');
+        Route::post('roles/{role}/revoke', [RolePermissionController::class, 'revokePermissions'])->name('api.roles.revoke-permissions');
         
-        Route::apiResource('permissions', PermissionController::class)
-            ->except(['show'])
-            ->names([
-                'index' => 'api.permissions.index',
-                'store' => 'api.permissions.store',
-                'update' => 'api.permissions.update',
-                'destroy' => 'api.permissions.destroy'
-            ]);
+        // Rutas de permisos
+        Route::get('permissions', [RolePermissionController::class, 'getPermissions'])->name('api.permissions.index');
+        Route::post('permissions', [RolePermissionController::class, 'storePermission'])->name('api.permissions.store');
+        Route::put('permissions/{id}', [RolePermissionController::class, 'updatePermission'])->name('api.permissions.update');
+        Route::delete('permissions/{id}', [RolePermissionController::class, 'deletePermission'])->name('api.permissions.destroy');
     });
     
     // Ruta especial para filtro

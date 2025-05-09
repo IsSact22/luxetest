@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Contracts\UserRepositoryInterface;
 use App\Helpers\InertiaResponse;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
@@ -13,12 +14,11 @@ use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use Throwable;
 
@@ -180,9 +180,10 @@ class UserController extends Controller
             $user = $this->userRepository->getById($id);
             $this->authorize('update', $user);
 
-            $this->userRepository->updateModel($request->all(), $id);
+            $this->userRepository->updateModel($request->validated(), $id);
 
             if ($request->hasFile('avatar')) {
+                $user->clearMediaCollection('avatars');
                 $user->addMediaFromRequest('avatar')
                     ->toMediaCollection('avatars');
             }
@@ -190,18 +191,11 @@ class UserController extends Controller
             $updatedUser = $this->userRepository->getById($id);
             $resource = new UserResource($updatedUser);
 
-            // Para peticiones Inertia
-            if ($request->hasHeader('X-Inertia')) {
-                return to_route('users.index')->with([
-                    'message' => [
-                        'type' => 'success',
-                        'message' => 'User updated successfully',
-                    ],
-                ]);
+            if ($request->wantsJson()) {
+                return new ApiSuccessResponse($resource, ['message' => 'Usuario actualizado correctamente'], ResponseAlias::HTTP_OK);
             }
 
-            // Para peticiones API
-            return new ApiSuccessResponse($resource, [], ResponseAlias::HTTP_OK);
+            return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente');
         } catch (ModelNotFoundException) {
             return $this->handleErrorResponse($request, 'User Not Found', ResponseAlias::HTTP_NOT_FOUND);
         } catch (Throwable $e) {

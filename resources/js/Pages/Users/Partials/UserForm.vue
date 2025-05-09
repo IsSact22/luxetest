@@ -39,7 +39,8 @@
                     id="avatar"
                     name="avatar"
                     type="file"
-                    @input="form.avatar = $event.target.files[0]"
+                    accept="image/*"
+                    @change="handleFileChange"
                 />
                 <progress
                     v-if="form.progress"
@@ -80,6 +81,9 @@ import { router, useForm } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { route } from "ziggy-js";
 import { ref } from "vue";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const props = defineProps({
     user: Object,
@@ -89,14 +93,46 @@ const form = useForm({
     name: props.user.name,
     email: props.user.email,
     avatar: null,
-    _method: "PATCH",
+    _method: "PATCH"
 });
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        // Validar tamaño (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            form.errors.avatar = 'El archivo es demasiado grande. El tamaño máximo es 2MB.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
+
+        // Validar tipo de archivo
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            form.errors.avatar = 'Formato de archivo no válido. Use JPG, PNG, GIF o WEBP.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
+
+        form.errors.avatar = ''; // Limpiar error si todo está bien
+        form.avatar = file;
+    }
+};
+
 const submit = () => {
-    router.post(route("users.update", userId.value), {
-        _method: "patch",
-        name: form.name,
-        email: form.email,
-        avatar: form.avatar,
+    form.post(route("users.update", userId.value), {
+        onSuccess: () => {
+            toast.success('Usuario actualizado exitosamente');
+            form.reset('password', 'password_confirmation');
+            form.avatar = null;
+            router.visit(route('users.index'));
+        },
+        onError: (errors) => {
+            toast.error('Error al actualizar el usuario');
+            console.error('Error updating user:', errors);
+        },
+        preserveScroll: true,
+        preserveState: false,
+        forceFormData: true
     });
 };
 </script>

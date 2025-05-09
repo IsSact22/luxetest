@@ -16,7 +16,7 @@ const form = useForm("post", route("users.store"), {
     email: "",
     password: "",
     password_confirmation: "",
-    //avatar: null,
+    avatar: null,
 });
 
 const toast = useToast();

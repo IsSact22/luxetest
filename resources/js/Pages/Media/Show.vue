@@ -88,7 +88,7 @@ const toggleAll = () => {
                     <span>Galería de Imágenes - CAMO {{ camo.id }}</span>
                 </h2>
                 <Link :href="route('camos.show', camo.id)"
-                    class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-md shadow-sm transition-all duration-200 space-x-2">
+                    class="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black text-sm font-medium rounded-md shadow-sm transition-all duration-200 space-x-2">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />

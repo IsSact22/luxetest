@@ -25,7 +25,6 @@ RUN npm run build
 
 RUN chown -R www-data:www-data storage bootstrap/cache public/build
 RUN chmod -R 775 storage bootstrap/cache public/build
-RUN chmod -R 775 storage
 RUN chown -R www-data:www-data storage
 
 EXPOSE 80
