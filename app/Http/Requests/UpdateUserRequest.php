@@ -29,8 +29,8 @@ class UpdateUserRequest extends FormRequest
             'name' => ['sometimes'],
             'email' => [
                 ...$this->isPrecognitive() ?
-                    [Rule::unique('users', 'email')->ignore($this->user)] :
-                    ['sometimes', 'email', Rule::unique('users', 'email')->ignore($this->user)],
+                    [Rule::unique('users', 'email')->ignore($this->id)] :
+                    ['sometimes', 'email', Rule::unique('users', 'email')->ignore($this->id)],
             ],
             'password' => ['sometimes'],
             'password_confirmation' => [

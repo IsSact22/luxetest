@@ -38,20 +38,17 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
-                'locale' => $request->user() ? $request->user()->locale : null,
                 'avatarUrl' => Auth::user() ? Auth::user()->getFirstMediaUrl('avatars', 'thumb') : null,
                 'userRoles' => $request->user() ? $request->user()->roles->pluck('name') : [],
                 'userPermissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name') : [],
             ],
             'ziggy' => static fn () => array_merge((new Ziggy)->toArray(), [
                 'location' => $request->url(),
-                'routeName' => $request->route()->getName(),
             ]),
             'flash' => [
                 'message' => static fn () => $request->session()->get('message'),
                 'type' => static fn () => $request->session()->get('type', 'success'),
             ],
-            'app_locale' => $request->getLocale(),
         ];
     }
 }

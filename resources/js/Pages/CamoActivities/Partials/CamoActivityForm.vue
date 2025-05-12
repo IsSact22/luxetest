@@ -296,6 +296,7 @@ const submit = async () => {
     console.log("click");
     form.submit({
         onSuccess: () => {
+            toast.success("Actividad creada exitosamente");
             form.reset();
             emit("addActivity", false);
         },

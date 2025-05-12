@@ -49,7 +49,7 @@ onMounted(() => {
 <template>
     <form @submit.prevent="submit">
         <div>
-            <label class="block" for="name">{{ $t("Name") }}</label>
+            <label class="block" for="name">Nombre</label>
             <input
                 id="name"
                 v-model="form.name"
@@ -65,9 +65,9 @@ onMounted(() => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >{{ $t("Save") }}
+                >Guardar
             </PrimaryButton>
-            <SecondaryButton @click="cancel">{{ $t("Cancel") }}</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>

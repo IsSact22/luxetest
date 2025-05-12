@@ -4,6 +4,9 @@ import InputError from '@/Components/InputError.vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { route } from "ziggy-js";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const form = useForm({
     name: '',
@@ -14,7 +17,15 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+        onSuccess: () => {
+            // La redirección será manejada automáticamente por Inertia
+            form.reset('password', 'password_confirmation');
+        },
+        onError: (errors) => {
+            Object.keys(errors).forEach(key => {
+                toast.error(errors[key]);
+            });
+        },
         preserveScroll: true
     });
 };

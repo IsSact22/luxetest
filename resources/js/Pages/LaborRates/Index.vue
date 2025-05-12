@@ -49,10 +49,10 @@ const fireSearch = _.throttle(function () {
 }, 200);
 </script>
 <template>
-    <Head :title="`${$t('Labour rates')}`" />
+    <Head title="Tarifas laborales" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>{{ $t("Labour rates") }}</h2>
+            <h2>Tarifas laborales</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 p-4">
@@ -65,7 +65,7 @@ const fireSearch = _.throttle(function () {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            :placeholder="$t('Search')"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -73,18 +73,18 @@ const fireSearch = _.throttle(function () {
                     <Link
                         :href="route('labor-rates.create')"
                         class="btn-primary"
-                        >{{ $t('New Labour Rate') }}
+                        >Nueva Tarifa
                     </Link>
                 </form>
                 <table class="table-fixed">
                     <thead>
                         <tr>
-                            <th>{{ $t("Id") }}</th>
-                            <th>{{ $t("Code") }}</th>
-                            <th>{{$t('Subject to rate')}}</th>
-                            <th>{{ $t("Name") }}</th>
-                            <th>{{ $t("Amount") }}</th>
-                            <th>{{ $t("Actions") }}</th>
+                            <th>Id</th>
+                            <th>Código</th>
+                            <th>Sujetos a tasa</th>
+                            <th>Nombre</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -155,10 +155,10 @@ const fireSearch = _.throttle(function () {
             ref="confirmDialog"
             :onConfirm="handleAction"
             button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
-            cancelText="$t('No, cancel')"
-            confirmText="$t('Yes, delete')"
-            :message="$t('¿Estás seguro de que deseas eliminar este elemento?')"
-            :title="$t('Confirma tu acción')"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este elemento?"
+            title="Confirma tu acción"
         />
     </AuthenticatedLayout>
 </template>

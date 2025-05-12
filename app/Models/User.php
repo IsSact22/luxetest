@@ -36,12 +36,8 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     protected $fillable = [
         'name',
         'email',
-        'email_verified_at',
         'password',
-        'remember_token',
         'owner_id',
-        'locale',
-        'disabled',
     ];
 
     protected $guarded = ['disabled'];
@@ -62,13 +58,9 @@ class User extends Authenticatable implements HasMedia, JWTSubject
      * @var array<string, string>
      */
     protected $casts = [
-        'name' => 'string',
-        'email' => 'string',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'remember_token' => 'string',
         'owner_id' => 'integer',
-        'locale' => 'string',
         'disabled' => 'boolean',
     ];
 

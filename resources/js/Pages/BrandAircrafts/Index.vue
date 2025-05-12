@@ -67,10 +67,10 @@ const closeModal = () => {
 };
 </script>
 <template>
-    <Head :title="`${$t('Aircraft brands')}`" />
+    <Head title="Marcas de Aviones" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>{{ $t("Aircraft brands") }}</h2>
+            <h2>Marcas de Aviones</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
             <div class="my-4 p-4">
@@ -83,7 +83,7 @@ const closeModal = () => {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            :placeholder="$t('Search')"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -93,7 +93,7 @@ const closeModal = () => {
                         type="button"
                         @click="openModal"
                     >
-                        {{ $t("New Brand") }}
+                        Nueva Marca
                     </button>
                 </form>
 
@@ -128,10 +128,8 @@ const closeModal = () => {
                         </div>
                         <div class="p-4">
                             <h2 class="text-lg font-bold">
-                                <span v-if="selected">{{
-                                    $t("Brand Edit")
-                                }}</span>
-                                <span v-else>{{ $t("Register new Brand") }}</span>
+                                <span v-if="selected">Editar Marca</span>
+                                <span v-else>Registrar nueva Marca</span>
                             </h2>
                             <BrandAircraftForm :brand-aircraft="selected" />
                         </div>
@@ -142,9 +140,9 @@ const closeModal = () => {
                 <table class="table-fixed">
                     <thead>
                         <tr>
-                            <th>{{ $t("Id") }}</th>
-                            <th>{{ $t("Name") }}</th>
-                            <th>{{ $t("Actions") }}</th>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
