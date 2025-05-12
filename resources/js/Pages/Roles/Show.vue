@@ -15,8 +15,8 @@ const props = defineProps({
         </template>
         <div class="max-w-7xl mx-auto justify-items-center items-center">
             <div class="my-4 border rounded-md px-4 py-4">
-                <div class="my-2">
-                    <Link :href="route('roles.index')" class="b-goto"
+                <div class="my-2 b-7 flex flex-row justify-items-center items-center space-x-7">
+                    <Link :href="route('roles.index')" class="b-goto btn-primary"
                         >Regresa
                     </Link>
                 </div>

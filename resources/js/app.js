@@ -5,7 +5,7 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "ziggy-js";
-import Toast from "vue-toastification";
+import Toast, { useToast } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import { createPinia } from "pinia";
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
@@ -34,15 +34,28 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(pinia)
-            .directive("tooltip", vTooltip)
-            .use(Toast)
+            .use(Toast, {
+                position: 'top-right',
+                timeout: 3000,
+                closeOnClick: true,
+                pauseOnFocusLoss: true,
+                pauseOnHover: true,
+                draggable: true,
+                draggablePercent: 0.6,
+                showCloseButtonOnHover: false,
+                hideProgressBar: true,
+                closeButton: 'button',
+                icon: true,
+                rtl: false
+            })
             .use(i18nVue, {
                 resolve: async (lang) => {
                     const langs = import.meta.glob("../../lang/*.json");
                     return await langs[`../../lang/${lang}.json`]();
                 },
             })
-            .component("v-select", VueSelect)
+            .directive('tooltip', vTooltip)
+            .component('v-select', VueSelect)
             .mount(el);
     },
     progress: {

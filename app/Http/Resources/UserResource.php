@@ -25,7 +25,7 @@ class UserResource extends JsonResource
             'email_verified_at' => CarbonParse($this->email_verified_at),
             'role' => $this->getRoleNames()->first(),
             'permissions' => PermissionResource::collection($this->getPermissionsViaRoles()),
-            'avatar' => $this->getFirstMediaUrl('avatars', 'thumb'),
+            'avatar' => $this->getAvatarUrl(),
             'created_at' => CarbonParse($this->created_at),
             'updated_at' => CarbonParse($this->updated_at),
             'deleted_at' => $this->deleted_at ? CarbonParse($this->deleted_at) : null,

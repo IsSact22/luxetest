@@ -14,7 +14,7 @@ const selectedId = ref(null);
 const handleAction = () => {
     // Aquí va la lógica de la acción que deseas confirmar
     if (selectedId.value) {
-        form.delete(route("aircrafts.destroy", selectedId.value), {
+        form.delete(route("labor-rates.destroy", selectedId.value), {
             preserveState: true,
             preserveScroll: true, // Opcional: Mantiene la posición del scroll
             onSuccess: () => {

@@ -7,7 +7,9 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { route } from "ziggy-js";
 import { router } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 const props = defineProps({
     laborRate: {
         type: Object,
@@ -53,7 +55,7 @@ watch(
             (rate) => rate.rateable_id === newValue,
         );
         form.rateable_type = selectedRate ? selectedRate.rateable_type : null; // Asigna el tipo correspondiente
-        console.log(form.rateable_type);
+        // console.log(form.rateable_type);
     },
 );
 
@@ -63,12 +65,22 @@ onMounted(async () => {
     // await fetchAdminRates();
 });
 const submitForm = () => {
+    if (!form.rateable_id || !form.rateable_type) {
+        toast.error('Por favor seleccione una tarifa');
+        return;
+    }
     form.submit({
         preserveScroll: true,
         onSuccess: () => {
-            resetForm();
-            // router.get(route("labor-rates.index"));
+            const message = props.laborRate ? "Tarifa laboral actualizada" : "Tarifa laboral creada";
+            toast.success(message);
+            form.reset();
+            router.visit(route("labor-rates.index"));
         },
+        onError: (errors) => { 
+            console.log(errors);
+            toast.error('Por favor verificar los datos ingresados');
+        }
     });
 };
 
@@ -148,15 +160,18 @@ const cancel = () => {
         </div>
 
         <div>
-            <InputLabel for="mount">Monto</InputLabel>
+            <InputLabel for="amount">Monto</InputLabel>
             <input
-                id="mount"
+                id="amount"
                 v-model.number="form.amount"
                 class="w-full text-right border-gray-300 focus:border-indigo-500 rounded-md shadow-sm"
                 required
                 type="number"
+                step="0.01"
+                min="0"
+                @change="form.validate('amount')"
             />
-            <InputError v-if="form.errors.mount" :message="form.errors.mount" />
+            <InputError v-if="form.errors.amount" :message="form.errors.amount" />
         </div>
 
         <div class="flex space-x-7 my-2">

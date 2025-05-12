@@ -9,9 +9,12 @@ import { useToast } from "vue-toastification";
 import { route } from "ziggy-js";
 
 const toast = useToast();
-const flash = usePage().props.flash.message;
-if (flash) {
-    toast(flash.message, flash.type);
+const flash = usePage().props.flash;
+if (flash.success) {
+    toast.success(flash.success);
+}
+if (flash.error) {
+    toast.error(flash.error);
 }
 const showingNavigationDropdown = ref(false);
 const showCamos = computed(() => {

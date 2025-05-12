@@ -8,6 +8,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface PermissionRepositoryInterface
 {
+    public function getRoles(Request $request): LengthAwarePaginator;
+
     public function getAll(Request $request): LengthAwarePaginator;
 
     public function getById(int $id): ?Model;

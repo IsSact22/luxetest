@@ -59,7 +59,7 @@
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        Saved.
+                        Guardado.
                     </p>
                 </Transition>
             </div>
@@ -72,6 +72,8 @@ import { onMounted, ref } from "vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import axios from "axios";
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
     user: Object,
@@ -79,9 +81,26 @@ const props = defineProps({
 const form = useForm({
     role: props.user.role,
 });
-const submit = async () => {
-    alert(route("users.update", props.user.id));
-    form.patch(route("users.update", props.user.id));
+const toast = useToast();
+
+const submit = () => {
+    form.patch(route("users.update", props.user.id), {
+        onSuccess: async () => {
+            toast.success("Rol actualizado exitosamente");
+            // Actualizar el rol del usuario localmente
+            props.user.role = form.role;
+            // Recargar los permisos del usuario
+            try {
+                const response = await axios.get(route("users.show", props.user.id));
+                props.user.permissions = response.data.permissions;
+            } catch (error) {
+                console.error("Error al recargar permisos:", error);
+            }
+        },
+        onError: () => {
+            toast.error("Error al actualizar el rol");
+        }
+    });
 };
 const roles = ref(null);
 const getRoles = async () => {
