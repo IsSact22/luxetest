@@ -23,7 +23,7 @@ class UpdatePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable|string|unique:roles,name,'.$this->id,
+            'name' => 'nullable|string|unique:roles,name,'.$this->permission,
             'guard_name' => ['nullable', 'string'],
         ];
     }

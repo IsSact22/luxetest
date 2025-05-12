@@ -71,10 +71,10 @@ const closeModal = (refresh = false) => {
 };
 </script>
 <template>
-    <Head title="Modelo de Aviones" />
+    <Head :title="`${$t('Model Aircraft')}`" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Modelo de Aviones</h2>
+            <h2>{{ $t("Model Aircraft") }}</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
             <div class="my-4 p-4">
@@ -87,7 +87,7 @@ const closeModal = (refresh = false) => {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="buscar"
+                            :placeholder="$t('Search')"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -97,7 +97,7 @@ const closeModal = (refresh = false) => {
                         type="button"
                         @click="openModal"
                     >
-                        Nuevo Modelo
+                        {{ $t("New Model Aircraft") }}
                     </button>
                 </form>
 
@@ -132,8 +132,12 @@ const closeModal = (refresh = false) => {
                         </div>
                         <div class="p-4">
                             <h2 class="text-lg font-bold">
-                                <span v-if="selected">Editar Modelo</span>
-                                <span v-else>Registrar nuevo Modelo</span>
+                                <span v-if="selected">{{
+                                    $t("Edit Model Aircraft")
+                                }}</span>
+                                <span v-else>{{
+                                    $t("Register new Model Aircraft")
+                                }}</span>
                             </h2>
                             <ModelAircraftForm
                                 :model-aircraft="selected"
@@ -148,10 +152,10 @@ const closeModal = (refresh = false) => {
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Marca</th>
-                            <th>Motor/Tipo</th>
-                            <th>Modelo</th>
-                            <th>Acciones</th>
+                            <th>{{ $t("Brand") }}</th>
+                            <th>{{ $t("Engine Type") }}</th>
+                            <th>{{ $t("Model") }}</th>
+                            <th>{{ $t("Actions") }}</th>
                         </tr>
                     </thead>
                     <tbody>

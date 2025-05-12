@@ -71,16 +71,16 @@ const toggleEditRole = () => {
                         type="button"
                         @click="toggleNewRole"
                     >
-                        Nuevo Rol
+                        {{ $t("New Role") }}
                     </button>
                     <Link :href="route('users.index')" class="btn-primary">
-                        Usuarios
+                        {{ $t("Users") }}
                     </Link>
                     <Link
                         :href="route('permissions.index')"
                         class="btn-primary"
                     >
-                        Permisos
+                        {{ $t("Permissions") }}
                     </Link>
                 </form>
 

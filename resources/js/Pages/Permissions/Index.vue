@@ -100,10 +100,10 @@ const handleDelete = (id) => {
 };
 </script>
 <template>
-    <Head title="Permisos" />
+    <Head :title="`${$t('Permissions')}`" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Permisos</h2>
+            <h2>{{ $t("Permissions") }}</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
             <!-- Modal -->
@@ -191,10 +191,10 @@ const handleDelete = (id) => {
                 </div>
                 <!--                <button class="btn-primary" type="button">Nuevo Permiso</button>-->
                 <Link :href="route('users.index')" class="btn-primary">
-                    Usuarios
+                    {{ $t("Users") }}
                 </Link>
                 <Link :href="route('roles.index')" class="btn-primary">
-                    Roles
+                    {{ $t("Roles") }}
                 </Link>
             </form>
 
@@ -202,10 +202,10 @@ const handleDelete = (id) => {
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Nombre</th>
-                        <th>Nombre de Guardia</th>
-                        <th>Creado el</th>
-                        <th>Acciones</th>
+                        <th>{{ $t("Name") }}</th>
+                        <th>{{ $t("Guard name") }}</th>
+                        <th>{{ $t("Created on") }}</th>
+                        <th>{{ $t("Actions") }}</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -17,6 +17,7 @@ const form = useForm("post", route("users.store"), {
     password: "",
     password_confirmation: "",
     avatar: null,
+    locale: null,
 });
 
 const toast = useToast();
@@ -80,7 +81,7 @@ const cancelForm = () => {
 };
 </script>
 <template>
-    <Head title="Users" />
+    <Head :title="`${$t('Users')}`" />
     <AuthenticatedLayout>
         <template #header>
             <h2>Usuarios</h2>
@@ -93,8 +94,11 @@ const cancelForm = () => {
                         class="flex flex-col my-2 space-y-2 px-2 py-2 border rounded-md bg-white"
                     >
                         <label for="isOwner">
-                            Si se trata de una tripulante, por favor verificar
-                            el propietario.
+                            {{
+                                $t(
+                                    "If it is a crew member, please verify the owner.",
+                                )
+                            }}
                         </label>
                         <div
                             class="flex flex-row justify-items-center items-center space-x-2"
@@ -108,7 +112,7 @@ const cancelForm = () => {
                                     type="radio"
                                     value="cam"
                                 />
-                                <label for="cam">Cam</label>
+                                <label class="text-sm" for="cam">Cam</label>
                             </div>
                             <div
                                 class="flex-1 justify-items-center items-center space-x-2"
@@ -119,9 +123,9 @@ const cancelForm = () => {
                                     type="radio"
                                     value="owner"
                                 />
-                                <label class="text-xs" for="owner"
-                                    >Owner (Propietario)</label
-                                >
+                                <label class="text-sm" for="owner">{{
+                                    $t("Owner")
+                                }}</label>
                             </div>
                                                        <div
                                                             class="flex-1 justify-items-center items-center space-x-2"
@@ -152,7 +156,7 @@ const cancelForm = () => {
                             class="rounded-md border border-md border-gray-300"
                             name="owner_id"
                         >
-                            <option :value="null">Select</option>
+                            <option :value="null">{{ $t("Select") }}</option>
                             <option
                                 v-for="(owner, idx) in owners"
                                 :key="idx"
@@ -163,6 +167,25 @@ const cancelForm = () => {
                         </select>
                         <InputError
                             :message="form.errors.owner_id"
+                            class="mt-2"
+                        />
+                    </div>
+                    <div class="flex flex-col my-2 space-y-2">
+                        <InputLabel
+                            :value="$t('Language')"
+                            for="locale"
+                        ></InputLabel>
+                        <select
+                            class="rounded-md border border-gray-300"
+                            name="locale"
+                            id="locale"
+                            v-model="form.locale"
+                            @change="form.validate('locale')">
+                            <option :value="null">{{ $t("Select") }}</option>
+                            <option v-for="(item, idx) in locale" :key="idx" :value="item.value" v-html="item.label"></option>
+                        </select>
+                        <InputError
+                            :message="form.errors.locale"
                             class="mt-2"
                         />
                     </div>
@@ -258,14 +281,14 @@ const cancelForm = () => {
                             type="submit"
                             @click="submit"
                         >
-                            Registrar
+                            {{ $t("Register") }}
                         </button>
                         <button
                             class="btn-cancel"
                             type="button"
                             @click="cancelForm"
                         >
-                            Cancelar
+                            {{ $t("Cancel") }}
                         </button>
                     </div>
                     <progress

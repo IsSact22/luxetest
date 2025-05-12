@@ -68,7 +68,9 @@ const cancel = () => {
 <template>
     <form class="px-4 py-2" @submit.prevent="submit">
         <div>
-            <label class="block" for="brand_aircraft_id">Marca</label>
+            <label class="block" for="brand_aircraft_id">{{
+                $t("Brand")
+            }}</label>
             <select
                 id="brand_aircraft_id"
                 v-model="form.brand_aircraft_id"
@@ -91,7 +93,9 @@ const cancel = () => {
             />
         </div>
         <div>
-            <label class="block" for="engine_type_id">Tipo de Motor(es)</label>
+            <label class="block" for="engine_type_id">{{
+                $t("Engine Type")
+            }}</label>
             <select
                 id="engine_type_id"
                 v-model="form.engine_type_id"
@@ -114,7 +118,7 @@ const cancel = () => {
             />
         </div>
         <div>
-            <label class="block" for="name">Nombre del Modelo</label>
+            <label class="block" for="name">{{ $t("Model Name") }}</label>
             <input
                 id="name"
                 v-model="form.name"
@@ -130,9 +134,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" :disable="form.processing"
-                >Guardar
+                >{{ $t("Save") }}
             </PrimaryButton>
-            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
+            <SecondaryButton @click="cancel">{{ $t("Cancel") }}</SecondaryButton>
         </div>
     </form>
 </template>

@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'name' => 'Super Admin',
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
+            'locale' => 'es',
         ]);
 
         $superAdmin->syncRoles('super-admin');
@@ -29,18 +30,22 @@ class UserSeeder extends Seeder
         $admin = User::create([
             'name' => 'Mara Beltran',
             'email' => 'mbeltran@luxeservicesve.com',
-            'password' => Hash::make('password'), // Asegúrate de usar una contraseña encriptada
-            'remember_token' => Str::random(10) // Opcional, dependiendo de tu implementación
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+            'locale' => 'es',
         ]);
+
         $admin->syncRoles('admin');
 
         // Crear Cams
         $angel = User::create([
             'name' => 'Angel Contreras',
             'email' => 'acontreras@luxeservicesve.com',
-            'password' => Hash::make('password'), // Asegúrate de usar una contraseña encriptada
-            'remember_token' => Str::random(10) // Opcional
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+            'locale' => 'es',
         ]);
+
         $angel->syncRoles('cam');
     }
 }

@@ -64,10 +64,10 @@ const handleSelected = (object) => {
 };
 </script>
 <template>
-    <Head title="Tipo de Motores" />
+    <Head :title="`${$t('Engine types')}`" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Tipo de Motores</h2>
+            <h2>{{ $t("Engine types") }}</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 p-4">
@@ -81,13 +81,13 @@ const handleSelected = (object) => {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            placeholder="buscar"
+                            :placeholder="$t('Search')"
                             type="text"
                             @keyup="fireSearch"
                         />
                     </div>
                     <button class="btn-primary" @click="openModal">
-                        Nuevo Tipo
+                        {{ $t("New Engine Type") }}
                     </button>
                 </form>
                 <!-- Modal -->
@@ -121,12 +121,10 @@ const handleSelected = (object) => {
                         </div>
                         <div class="p-4">
                             <h2 class="text-lg font-bold">
-                                <span v-if="selected"
-                                    >Editar tipo de Motor</span
-                                >
-                                <span v-else
-                                    >Registrar nuevo Tipo de Motor</span
-                                >
+                                <span v-if="selected">{{
+                                    $t("Edit Engine Type")
+                                }}</span>
+                                <span v-else>{{ $t("New Engine Type") }}</span>
                             </h2>
                             <EngineTypeForm :engine-type="selected" />
                         </div>

@@ -59,7 +59,9 @@ const cancel = () => {
         @submit.prevent="submit"
     >
         <div class="my-2">
-            <label class="block" for="model_aircraft_id">Modelo</label>
+            <label class="block" for="model_aircraft_id">{{
+                $t("Model")
+            }}</label>
             <select
                 id="model_aircraft_id"
                 v-model="form.model_aircraft_id"
@@ -76,7 +78,9 @@ const cancel = () => {
             </select>
         </div>
         <div class="my-2">
-            <label class="block" for="register">Registro/Matricula</label>
+            <label class="block" for="register"
+                >{{ $t("Registration") }}/{{ $t("Enrollment") }}</label
+            >
             <input
                 id="register"
                 v-model="form.register"
@@ -88,7 +92,7 @@ const cancel = () => {
             <InputError :message="form.errors.register" class="mt-2" />
         </div>
         <div class="my-2">
-            <label class="block" for="serial">Serial</label>
+            <label class="block" for="serial">{{ $t("Serial") }}</label>
             <input
                 id="serial"
                 v-model="form.serial"
@@ -100,8 +104,10 @@ const cancel = () => {
             <InputError :message="form.errors.serial" class="mt-2" />
         </div>
         <div class="flex flex-row justify-around items-center space-x-7 my-2">
-            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
-            <PrimaryButton :disable="form.processing">Guardar</PrimaryButton>
+            <SecondaryButton @click="cancel">{{
+                $t("Cancel")
+            }}</SecondaryButton>
+            <PrimaryButton :disable="form.processing">{{ $t("Save") }}</PrimaryButton>
         </div>
     </form>
 </template>
