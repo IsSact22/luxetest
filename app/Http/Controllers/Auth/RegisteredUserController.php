@@ -10,6 +10,9 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 use Inertia\Inertia;
 
 use Inertia\Response;
@@ -31,7 +34,7 @@ class RegisteredUserController extends Controller
     {
 
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
             
             $user = \App\Models\User::create([
                 'name' => $request->name,
@@ -46,13 +49,13 @@ class RegisteredUserController extends Controller
 
             Auth::login($user);
             
-            \DB::commit();
+            DB::commit();
 
             return redirect()->intended(route('dashboard'))->with('success', '¡Registro exitoso! Bienvenido.');
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             
-            \Log::error('Error durante el registro: ' . $e->getMessage());
+            Log::error('Error durante el registro: ' . $e->getMessage());
             
             return back()
                 ->withInput($request->except('password', 'password_confirmation'))
