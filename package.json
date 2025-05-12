@@ -29,7 +29,9 @@
         "@vueuse/core": "^10.9.0",
         "eslint": "^9.18.0",
         "floating-vue": "^5.2.2",
-        "laravel-precognition-vue": "^0.6.0",
+
+        "laravel-precognition-vue": "^0.7.2",
+
         "laravel-precognition-vue-inertia": "^0.5.4",
         "laravel-vue-i18n": "^2.7.6",
         "lodash": "^4.17.21",
