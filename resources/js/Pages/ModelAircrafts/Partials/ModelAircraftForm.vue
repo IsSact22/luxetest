@@ -62,7 +62,7 @@ const submit = () => {
 const cancel = () => {
     form.clearErrors();
     form.reset();
-    router.get(route("model-aircrafts.index"));
+    emit('close');
 };
 </script>
 <template>

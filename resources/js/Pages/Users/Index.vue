@@ -5,6 +5,11 @@ import Paginator from "@/Components/Paginator.vue";
 import { route } from "ziggy-js";
 import _ from "lodash";
 import { useToast } from "vue-toastification";
+import { ref } from "vue";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+
+const confirmDialog = ref(null);
+const selectedId = ref(null);
 
 const props = defineProps({
     resource: {
@@ -20,10 +25,26 @@ const fireSearch = _.throttle(function () {
     form.get(route("users.index"), { preserveState: true });
 }, 200);
 
-const destroy = (id) => {
-    if (confirm("Seguro desea eliminar el Usuario")) {
-        form.delete(route("users.destroy", id), { preserveState: true });
+const handleAction = () => {
+    if (selectedId.value) {
+        form.delete(route("users.destroy", selectedId.value), {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: () => {
+                selectedId.value = null;
+                toast.success("Usuario eliminado!");
+            },
+        });
     }
+};
+
+const showConfirmation = (id) => {
+    selectedId.value = id;
+    confirmDialog.value.show();
+};
+
+const destroy = (id) => {
+    showConfirmation(id);
 };
 const restore = (id) => {
     router.post(
@@ -55,7 +76,7 @@ const restore = (id) => {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300"
                             name="search"
-                            placeholder="search"
+                            placeholder="BUSCAR"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -130,10 +151,11 @@ const restore = (id) => {
                                         </svg>
                                     </span>
                                 </Link>
-                                <Link
+                                <button
                                     v-if="user.id !== 1 && !user.deleted_at"
                                     class="btn-delete"
-                                    @click="destroy(user.id)"
+                                    type="button"
+                                    @click.prevent="destroy(user.id)"
                                 >
                                     <span>
                                         <svg
@@ -151,8 +173,8 @@ const restore = (id) => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
-                                <Link
+                                </button>
+                                <button
                                     v-if="user.id !== 1 && user.deleted_at"
                                     class="btn-edit"
                                     @click="restore(user.id)"
@@ -173,7 +195,7 @@ const restore = (id) => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                                 <span
                                     v-if="user.id === 1"
                                     class="font-bold text-red-800"
@@ -192,5 +214,15 @@ const restore = (id) => {
                 </table>
             </div>
         </div>
+        <!-- Componente de Confirmación -->
+        <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este usuario?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>

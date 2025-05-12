@@ -7,7 +7,14 @@ import Paginator from "@/Components/Paginator.vue";
 import { ref } from "vue";
 import Modal from "@/Components/Modal.vue";
 import EngineTypeForm from "@/Pages/EngineTypes/Partials/EngineTypeForm.vue";
+import ConfirmDialog from "@/Components/ConfirmDialog.vue";
+import { router } from "@inertiajs/vue3";
+import { useToast } from "vue-toastification";
 
+
+const toast = useToast();
+const confirmDialog = ref(null);
+const selectedId = ref(null);
 const props = defineProps({
     resource: {
         type: Object,
@@ -31,11 +38,25 @@ const closeModal = () => {
     showModal.value = false;
 };
 const destroy = (id) => {
-    if (confirm("Seguro desea eliminar el registro")) {
-        form.delete(route("engine-types.destroy", id), { preserveState: true });
-    }
+    selectedId.value = id;
+    confirmDialog.value.show();
 };
 
+const handleAction = async () => {
+    if (selectedId.value) {
+        try {
+            await router.delete(route('engine-types.destroy', selectedId.value), {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['resource']
+            });
+            toast.success('Tipo de motor eliminado correctamente');
+            selectedId.value = null;
+        } catch (error) {
+            toast.error('Error al eliminar el tipo de motor');
+        }
+    }
+};
 const selected = ref(null);
 const handleSelected = (object) => {
     selected.value = object;
@@ -146,7 +167,7 @@ const handleSelected = (object) => {
                                         </svg>
                                     </span>
                                 </button>
-                                <Link
+                                <button
                                     v-if="$page.props.auth.user.is_super"
                                     class="btn-delete"
                                     @click="destroy(item.id)"
@@ -167,7 +188,7 @@ const handleSelected = (object) => {
                                             />
                                         </svg>
                                     </span>
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -181,5 +202,15 @@ const handleSelected = (object) => {
                 </table>
             </div>
         </div>
+         <!-- Componente de Confirmación -->
+         <ConfirmDialog
+            ref="confirmDialog"
+            :onConfirm="handleAction"
+            button-confirm-style="text-yellow-800 font-semibold bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+            cancelText="No, cancelar"
+            confirmText="Sí, eliminar"
+            message="¿Estás seguro de que deseas eliminar este tipo de motor?"
+            title="Confirma tu acción"
+        />
     </AuthenticatedLayout>
 </template>

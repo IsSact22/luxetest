@@ -26,11 +26,11 @@ const form = useForm({
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Profile Information
+                Información del Perfil
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
+                Actualice la información del perfil y la dirección de correo electrónico de su cuenta.
             </p>
         </header>
 
@@ -39,7 +39,7 @@ const form = useForm({
             @submit.prevent="form.patch(route('profile.update'))"
         >
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="Nombre" />
 
                 <TextInput
                     id="name"
@@ -91,7 +91,7 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">Guardar</PrimaryButton>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -103,7 +103,7 @@ const form = useForm({
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        Saved.
+                        Guardado.
                     </p>
                 </Transition>
             </div>
