@@ -5,6 +5,7 @@ import { onMounted } from "vue";
 import { route } from "ziggy-js";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
 defineProps({
     canResetPassword: {
@@ -41,9 +42,11 @@ const submit = () => {
         </div>
 
         <div
-            class="flex flex-row justify-between items-center mx-auto bg-[url('../../storage/app/public/img/background.png')] bg-center bg-cover bg-no-repeat"
-        >
-            <div class="w-1/2 h-screen">
+            class="flex flex-row justify-between items-center mx-auto bg-[url('../../storage/app/public/img/background.png')] bg-center bg-cover bg-no-repeat relative">
+            <!-- Overlay oscuro para reducir la opacidad del fondo -->
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            
+            <div class="w-1/2 h-screen  relative z-10">
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto mt-16"
                 >
@@ -133,6 +136,14 @@ const submit = () => {
                                 Iniciar Sesión
                             </button>
                         </div>
+                        <div>
+                            <Link
+                                :href="route('register')"
+                                class="text-yellow-500 font-poppins font-medium underline"
+                            >
+                                Crear Cuenta
+                            </Link>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -140,10 +151,10 @@ const submit = () => {
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto"
                 >
-                    <img
+                    <ApplicationLogo
                         alt="Logo Luxe Plus"
                         class="mb-6 w-30 h-30"
-                        src="storage/img/Logo.png"
+                       
                     />
                     <h2 class="text-5xl font-bold mb-5 text-center text-white">
                         Bienvenido a

@@ -279,7 +279,7 @@ const handleUpload = (eventData) => {
             onClose: () => {},
         };
         toast.success(
-            "The images have been uploaded successfully.",
+            "Imágenes subidas exitosamente.",
             toastOptions,
         );
     }

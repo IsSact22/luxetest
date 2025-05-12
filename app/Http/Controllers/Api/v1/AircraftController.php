@@ -2,152 +2,153 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Helpers\LogHelper;
-use App\Http\Controllers\Controller;
+use App\Contracts\AircraftRepositoryInterface;
 use App\Http\Requests\StoreAircraftRequest;
 use App\Http\Requests\UpdateAircraftRequest;
 use App\Http\Resources\AircraftResource;
 use App\Http\Responses\ApiErrorResponse;
 use App\Http\Responses\ApiSuccessResponse;
 use App\Models\Aircraft;
-use App\Traits\HasModelName;
-use App\Traits\QueryExceptionDataTrait;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
+use App\Http\Controllers\Controller;
 use Throwable;
-
-use function App\Helpers\AfterCatchUnknown;
+use Inertia\Inertia;
 
 class AircraftController extends Controller
 {
-    use HasModelName;
-    use QueryExceptionDataTrait;
-
-    public function index(Request $request): ApiSuccessResponse|ApiErrorResponse
+    public function __construct(protected AircraftRepositoryInterface $aircraftRepository)
     {
-        try {
-            $aircraft = Aircraft::query()
-                ->when($request->get('search'), static function ($query, string $search) {
-                    $query->whereHas('owner', static function (Builder $query) use ($search) {
-                        $query->where('name', 'LIKE', $search.'%');
-                    })
-                        ->orWhereHas('aircraftModel', static function (Builder $query) use ($search) {
-                            $query->where('name', 'LIKE', $search);
-                        });
-                })
-                ->paginate()
-                ->withQueryString();
-            $resource = AircraftResource::collection($aircraft);
-
-            return new ApiSuccessResponse(
-                $resource,
-                ['message' => 'resource '.$this->modelName],
-                ResponseAlias::HTTP_ACCEPTED
-            );
-        } catch (Throwable $throwable) {
-            LogHelper::logError($throwable);
-
-            return new ApiErrorResponse(
-                $throwable,
-                $throwable->getMessage(),
-                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
-            );
-        }
+        parent::__construct();
     }
 
-    public function store(StoreAircraftRequest $request): ApiSuccessResponse|ApiErrorResponse
+    public function index(Request $request)
     {
         try {
-            $aircraft = \App\Models\Aircraft::query()->create($request->all());
+            $this->authorize('viewAny', Aircraft::class);
+            $aircrafts = $this->aircraftRepository->getAll($request);
+            $resource = AircraftResource::collection($aircrafts);
+    
+            // Verifica si la petición es de Inertia
+            if ($request->hasHeader('X-Inertia')) {
+                return Inertia::render('Aircrafts/Index', [
+                    'resource' => $resource
+                ]);
+            }
+    
+            // Si la petición es una API (por ejemplo, desde Postman o fetch en frontend)
+            if ($request->expectsJson()) {
+                return new ApiSuccessResponse($resource, []);
+            }
+    
+            // En caso de acceso directo desde el navegador, redirigir a Inertia
+            return redirect()->route('aircrafts.index');
+        } catch (AuthorizationException) {
+            return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    public function store(StoreAircraftRequest $request)
+    {
+        try {
+            $this->authorize('create', Aircraft::class);
+            
+            // Crear un nuevo Aircraft con los datos validados
+            $aircraft = $this->aircraftRepository->newModel($request->validated());
             $resource = new AircraftResource($aircraft);
-
-            return new ApiSuccessResponse(
-                $resource,
-                ['message' => 'new resource '.$this->modelName],
-                ResponseAlias::HTTP_CREATED
-            );
-        } catch (ValidationException $e) {
-            return new ApiErrorResponse(
-                $e,
-                $e->getMessage(),
-                ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
-            );
+    
+           // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft create successfully');
+        }
+    
+            return new ApiSuccessResponse($resource, [], Response::HTTP_CREATED);
+        } catch (AuthorizationException) {
+            return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
         } catch (Throwable $e) {
-            LogHelper::logError($e);
-
-            return new ApiErrorResponse(
-                $e,
-                $e->getMessage(),
-                ResponseAlias::HTTP_INTERNAL_SERVER_ERROR
-            );
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 
-    public function show(string $id): ApiSuccessResponse|ApiErrorResponse
+    public function show(Request $request, int $id)
     {
         try {
-            $aircraft = \App\Models\Aircraft::query()->findOrFail($id);
+            $aircraft = $this->aircraftRepository->getById($id);
             $resource = new AircraftResource($aircraft);
-
-            return new ApiSuccessResponse(
-                $resource,
-                ['message' => 'resource '.$this->modelName],
-                ResponseAlias::HTTP_ACCEPTED
-            );
-        } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse($e, $e->getMessage());
+            $this->authorize('s', $aircraft);
+    
+          // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft ac successfully');
+        }
+    
+            return new ApiSuccessResponse($resource, []);
+        } catch (ModelNotFoundException) {
+            return new ApiErrorResponse(null, 'Aircraft Not Found', Response::HTTP_NOT_FOUND);
         } catch (Throwable $e) {
-            LogHelper::logError($e);
-
-            return AfterCatchUnknown();
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
-    public function update(UpdateAircraftRequest $request, string $id): ApiSuccessResponse|ApiErrorResponse
+    
+    public function update(UpdateAircraftRequest $request, int $id)
     {
         try {
-            $aircraft = \App\Models\Aircraft::query()->findOrFail($id);
-            $aircraft->update($request->all());
-            $resource = new AircraftResource($aircraft);
-
-            return new ApiSuccessResponse(
-                $resource,
-                ['message' => 'updated resource '.$this->modelName],
-                ResponseAlias::HTTP_ACCEPTED
-            );
-        } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse($e, $e->getMessage());
+            $aircraft = $this->aircraftRepository->getById($id);
+            $this->authorize('update', $aircraft);
+    
+            // Actualizar el modelo con los datos validados
+            $this->aircraftRepository->updateModel($request->validated(), $id);
+            $updatedAircraft = $this->aircraftRepository->getById($id);
+            $resource = new AircraftResource($updatedAircraft);
+    
+           // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft update successfully');
+        }
+    
+            return new ApiSuccessResponse($resource, [], Response::HTTP_OK);
+        } catch (AuthorizationException) {
+            return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
+        } catch (ModelNotFoundException) {
+            return new ApiErrorResponse(null, 'Aircraft Not Found', Response::HTTP_NOT_FOUND);
         } catch (Throwable $e) {
-            LogHelper::logError($e);
-
-            return new ApiErrorResponse($e, $e->getMessage());
+            Log::error($e->getMessage());
+            return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
+    public function destroy(int $id)
+{
+    try {
+        $aircraft = $this->aircraftRepository->getById($id);
+        $this->authorize('delete', $aircraft);
 
-    public function destroy(string $id): ApiSuccessResponse|ApiErrorResponse
-    {
-        try {
-            $aircraftModel = \App\Models\Aircraft::query()->findOrFail($id);
-            $aircraftModel->delete();
+        $this->aircraftRepository->deleteModel($id);
 
-            return new ApiSuccessResponse(
-                [],
-                ['message' => 'register deleted successfully'],
-                ResponseAlias::HTTP_ACCEPTED
-            );
-        } catch (ModelNotFoundException $e) {
-            return new ApiErrorResponse(
-                $e,
-                $e->getMessage(),
-                ResponseAlias::HTTP_NOT_FOUND
-            );
-        } catch (Throwable $e) {
-            LogHelper::logError($e);
-
-            return AfterCatchUnknown();
+        // Verifica si la petición es de Inertia
+        if (request()->hasHeader('X-Inertia')) {
+            return redirect()->route('aircrafts.index')->with('success', 'Aircraft deleted successfully');
         }
+
+        return new ApiSuccessResponse(['message' => 'Aircraft deleted successfully'], []);
+    } catch (AuthorizationException) {
+        return new ApiErrorResponse(null, 'Unauthorized', Response::HTTP_UNAUTHORIZED);
+    } catch (ModelNotFoundException) {
+        return new ApiErrorResponse(null, 'Aircraft Not Found', Response::HTTP_NOT_FOUND);
+    } catch (Throwable $e) {
+        Log::error($e->getMessage());
+        return new ApiErrorResponse($e, 'Internal Server Error', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
+
+}
+

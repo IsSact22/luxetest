@@ -71,7 +71,29 @@ class User extends Authenticatable implements HasMedia, JWTSubject
     {
         $this->addMediaConversion('thumb')
             ->width(50)
-            ->height(50);
+            ->height(50)
+            ->nonQueued()
+            ->performOnCollections('avatars');
+
+        $this->addMediaConversion('avatar')
+            ->width(200)
+            ->height(200)
+            ->nonQueued()
+            ->performOnCollections('avatars');
+    }
+
+    public function getAvatarUrl(): string
+    {
+        if ($this->hasMedia('avatars')) {
+            return $this->getFirstMediaUrl('avatars', 'avatar');
+        }
+
+        // Generar avatar con iniciales si no hay imagen
+        $name = trim($this->name);
+        $initials = strtoupper(mb_substr($name, 0, 2));
+        $bgColor = substr(md5($name), 0, 6); // Color aleatorio basado en el nombre
+
+        return "https://ui-avatars.com/api/?name={$initials}&background={$bgColor}&color=ffffff&size=200";
     }
 
     public function isReadOnly(): bool
