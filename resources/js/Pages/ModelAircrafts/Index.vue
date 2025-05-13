@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, router } from "@inertiajs/vue3";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
 import { route } from "ziggy-js";
@@ -14,17 +14,19 @@ const toast = useToast();
 /*confirm*/
 const confirmDialog = ref(null);
 const selectedId = ref(null);
-const handleAction = () => {
-    // Aquí va la lógica de la acción que deseas confirmar
+const handleAction = async () => {
     if (selectedId.value) {
-        form.delete(route("model-aircrafts.destroy", selectedId.value), {
-            preserveState: true,
-            preserveScroll: true, // Opcional: Mantiene la posición del scroll
-            onSuccess: () => {
-                selectedId.value = null; // Limpia el ID seleccionado
-                toast.success("Registro eliminado!");
-            },
-        });
+        try {
+            await router.delete(route('model-aircrafts.destroy', selectedId.value), {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['resource']
+            });
+            toast.success('Modelo eliminado correctamente');
+            selectedId.value = null;
+        } catch (error) {
+            toast.error('Error al eliminar el modelo');
+        }
     }
 };
 const showConfirmation = (id) => {
@@ -60,16 +62,19 @@ const handleSelected = (object) => {
     openModal();
 };
 
-const closeModal = () => {
+const closeModal = (refresh = false) => {
     selected.value = null;
     showModal.value = false;
+    if (refresh) {
+        form.get(route('model-aircrafts.index'), { preserveState: true });
+    }
 };
 </script>
 <template>
-    <Head :title="`${$t('Model Aircraft')}`" />
+    <Head title="Modelo de Aviones" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>{{ $t("Model Aircraft") }}</h2>
+            <h2>Modelo de Aviones</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
             <div class="my-4 p-4">
@@ -82,7 +87,7 @@ const closeModal = () => {
                             v-model="form.search"
                             class="px-2 py-1 rounded-md border-gray-300 uppercase"
                             name="search"
-                            :placeholder="$t('Search')"
+                            placeholder="buscar"
                             type="text"
                             @keyup="fireSearch"
                         />
@@ -92,7 +97,7 @@ const closeModal = () => {
                         type="button"
                         @click="openModal"
                     >
-                        {{ $t("New Model Aircraft") }}
+                        Nuevo Modelo
                     </button>
                 </form>
 
@@ -127,12 +132,8 @@ const closeModal = () => {
                         </div>
                         <div class="p-4">
                             <h2 class="text-lg font-bold">
-                                <span v-if="selected">{{
-                                    $t("Edit Model Aircraft")
-                                }}</span>
-                                <span v-else>{{
-                                    $t("Register new Model Aircraft")
-                                }}</span>
+                                <span v-if="selected">Editar Modelo</span>
+                                <span v-else>Registrar nuevo Modelo</span>
                             </h2>
                             <ModelAircraftForm
                                 :model-aircraft="selected"
@@ -147,10 +148,10 @@ const closeModal = () => {
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>{{ $t("Brand") }}</th>
-                            <th>{{ $t("Engine Type") }}</th>
-                            <th>{{ $t("Model") }}</th>
-                            <th>{{ $t("Actions") }}</th>
+                            <th>Marca</th>
+                            <th>Motor/Tipo</th>
+                            <th>Modelo</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -7,6 +7,7 @@ import { route } from "ziggy-js";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
+import { useToast } from "vue-toastification";
 
 const form = useForm("post", route("users.store"), {
     role: null,
@@ -16,17 +17,24 @@ const form = useForm("post", route("users.store"), {
     password: "",
     password_confirmation: "",
     avatar: null,
-    locale: null,
 });
 
-const locale = ref([
-    { value: "es", label: "Español" },
-    { value: "en", label: "English" },
-]);
+const toast = useToast();
 
 const submit = async () => {
     form.submit({
-        onFinish: () => form.reset(),
+        onSuccess: () => {
+            toast.success('Usuario creado exitosamente');
+            form.reset();
+            router.get(route('users.index'), {}, {
+                preserveState: true,
+                preserveScroll: true
+            });
+        },
+        onError: () => {
+            toast.error('Error al crear el usuario');
+            // Los errores específicos ya son manejados automáticamente por el componente InputError
+        }
     });
 };
 
@@ -41,38 +49,52 @@ const getOwners = async () => {
 };
 onMounted(getOwners);
 
+
 const avatar = ref(null);
 
 function handleFileChange(event) {
-    form.avatar = event.target.files[0];
-}
+    const file = event.target.files[0];
+    if (file) {
+        // Validar tamaño (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            form.errors.avatar = 'El archivo es demasiado grande. El tamaño máximo es 2MB.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
 
+        // Validar tipo de archivo
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            form.errors.avatar = 'Formato de archivo no válido. Use JPG, PNG, GIF o WEBP.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
+
+        form.errors.avatar = ''; // Limpiar error si todo está bien
+        form.avatar = file;
+    }
+}
 const cancelForm = () => {
     form.reset();
     router.get(route("users.index"));
 };
 </script>
 <template>
-    <Head :title="`${$t('Users')}`" />
+    <Head title="Users" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>{{ $t("Users") }}</h2>
+            <h2>Usuarios</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 border rounded-md px-4 py-1 bg-white">
-                <h1 class="text-xl text-neutral-600">
-                    {{ $t("Create User") }}
-                </h1>
+                <h1 class="text-xl text-neutral-600">Crear Usuario</h1>
                 <form @submit.prevent="submit">
                     <div
                         class="flex flex-col my-2 space-y-2 px-2 py-2 border rounded-md bg-white"
                     >
                         <label for="isOwner">
-                            {{
-                                $t(
-                                    "If it is a crew member, please verify the owner.",
-                                )
-                            }}
+                            Si se trata de una tripulante, por favor verificar
+                            el propietario.
                         </label>
                         <div
                             class="flex flex-row justify-items-center items-center space-x-2"
@@ -86,7 +108,7 @@ const cancelForm = () => {
                                     type="radio"
                                     value="cam"
                                 />
-                                <label class="text-sm" for="cam">Cam</label>
+                                <label for="cam">Cam</label>
                             </div>
                             <div
                                 class="flex-1 justify-items-center items-center space-x-2"
@@ -97,10 +119,23 @@ const cancelForm = () => {
                                     type="radio"
                                     value="owner"
                                 />
-                                <label class="text-sm" for="owner">{{
-                                    $t("Owner")
-                                }}</label>
+                                <label class="text-xs" for="owner"
+                                    >Owner (Propietario)</label
+                                >
                             </div>
+                                                       <div
+                                                            class="flex-1 justify-items-center items-center space-x-2"
+                                                        >
+                                                            <input
+                                                                id="crew"
+                                                                v-model="form.role"
+                                                                type="radio"
+                                                                value="crew"
+                                                            />
+                                                            <label class="text-xs" for="owner"
+                                                                >Crew (Tripulante)</label
+                                                            >
+                                                        </div>
                         </div>
                     </div>
                     <div
@@ -117,7 +152,7 @@ const cancelForm = () => {
                             class="rounded-md border border-md border-gray-300"
                             name="owner_id"
                         >
-                            <option :value="null">{{ $t("Select") }}</option>
+                            <option :value="null">Select</option>
                             <option
                                 v-for="(owner, idx) in owners"
                                 :key="idx"
@@ -128,25 +163,6 @@ const cancelForm = () => {
                         </select>
                         <InputError
                             :message="form.errors.owner_id"
-                            class="mt-2"
-                        />
-                    </div>
-                    <div class="flex flex-col my-2 space-y-2">
-                        <InputLabel
-                            :value="$t('Language')"
-                            for="locale"
-                        ></InputLabel>
-                        <select
-                            class="rounded-md border border-gray-300"
-                            name="locale"
-                            id="locale"
-                            v-model="form.locale"
-                            @change="form.validate('locale')">
-                            <option :value="null">{{ $t("Select") }}</option>
-                            <option v-for="(item, idx) in locale" :key="idx" :value="item.value" v-html="item.label"></option>
-                        </select>
-                        <InputError
-                            :message="form.errors.locale"
                             class="mt-2"
                         />
                     </div>
@@ -214,31 +230,42 @@ const cancelForm = () => {
                             class="mt-2"
                         />
                     </div>
-                    <div
-                        class="flex flex-col my-2 space-y-2 border rounded-md px-2 py-2 bg-white"
-                    >
-                        <label for="avatar">{{ $t("Avatar") }}</label>
-                        <input
-                            id="avatar"
-                            ref="avatar"
-                            type="file"
-                            @input="form.avatar = $event.target.files[0]"
-                        />
+                    <div class="flex flex-col my-2 space-y-2 border rounded-md px-4 py-3 bg-white">
+                        <label for="avatar" class="text-sm font-medium text-gray-700">Avatar:</label>
+                        <div class="mt-1 flex items-center space-x-4">
+                            <input
+                                id="avatar"
+                                ref="avatar"
+                                type="file"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
+                                class="block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-blue-50 file:text-blue-700
+                                    hover:file:bg-blue-100"
+                                @input="handleFileChange"
+                            />
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">
+                            Formatos permitidos: JPG, PNG, GIF, WEBP. Tamaño máximo: 2MB
+                        </p>
+                        <InputError :message="form.errors.avatar" class="mt-2" />
                     </div>
                     <div class="flex flex-row justify-around my-4">
-                        <button
+                        <button 
                             class="btn-submit"
                             type="submit"
                             @click="submit"
                         >
-                            {{ $t("Register") }}
+                            Registrar
                         </button>
                         <button
                             class="btn-cancel"
                             type="button"
                             @click="cancelForm"
                         >
-                            {{ $t("Cancel") }}
+                            Cancelar
                         </button>
                     </div>
                     <progress

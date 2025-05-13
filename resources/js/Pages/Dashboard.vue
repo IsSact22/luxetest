@@ -9,22 +9,31 @@ const camos = ref({});
 const getCamos = async () => {
     try {
         const response = await axios.get(route("camos.dashboard"));
-        camos.value = response.data.data;
+        camos.value = response.data.data || {};
     } catch (err) {
-        console.error(err);
+        console.error('Error al obtener camos:', err);
+        camos.value = {};
     }
 };
+
 const hasPendingRate = ref(0);
 const queryPendingRate = async () => {
     try {
         const response = await axios.get(route("has-pending-rates"));
-        hasPendingRate.value = response.data;
+        hasPendingRate.value = response.data || 0;
     } catch (e) {
-        console.error(e);
+        console.error('Error al obtener pending rates:', e);
+        hasPendingRate.value = 0;
     }
 };
-onMounted(getCamos);
-onMounted(queryPendingRate);
+
+// Verificar que el usuario esté completamente cargado antes de hacer las llamadas
+if (usePage().props.auth.user) {
+    onMounted(() => {
+        getCamos();
+        queryPendingRate();
+    });
+}
 </script>
 
 <template>
@@ -37,24 +46,19 @@ onMounted(queryPendingRate);
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg px-2"
-                >
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg px-2">
                     <h2 class="text-xl p-6 text-black-900">
-                        <span>{{ $t("Welcome") }}</span>
-                        {{ $page.props.auth.user.name }}
-                        <small class="text-yellow-700 capitalize">{{
-                            $page.props.auth.user.roles[0].name
-                        }}</small>
+                        <span>Bienvenido</span> {{ $page.props.auth.user.name }}
+                        <small v-if="$page.props.auth.user.roles && $page.props.auth.user.roles.length > 0" class="text-yellow-700 capitalize">
+                            {{ $page.props.auth.user.roles[0].name }}
+                        </small>
                     </h2>
 
                     <div
                         v-if="hasPendingRate && hasPendingRate.length > 0"
                         class="bg-yellow-100 rounded-md px-4 py-2 my-5"
                     >
-                        <h3
-                            class="flex justify-items-start text-amber-700 space-x-1"
-                        >
+                        <h3 class="flex justify-items-start text-amber-700 space-x-1">
                             <svg
                                 class="size-6"
                                 fill="none"
@@ -74,7 +78,7 @@ onMounted(queryPendingRate);
                     </div>
 
                     <div
-                        v-if="!usePage().props.auth.user.is_super"
+                        v-if="$page.props.auth.user && !$page.props.auth.user.is_super"
                         class="grid grid-cols-3 gap-4 my-2"
                     >
                         <div v-for="(camo, idx) in camos" :key="idx">

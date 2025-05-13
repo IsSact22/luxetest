@@ -27,10 +27,14 @@ const submit = () => {
     form.submit({
         preserveScroll: true,
         onSuccess: () => {
+            const message = props.adminRate ? "Tarifa actualizada" : "Tarifa creada";
+            toast.success(message);
             form.reset();
-            emit("showForm", false);
-            toast.success("Admin Rate created");
+           router.visit(route("admin-rates.index"));
         },
+        onError: (errors) =>{
+            toast.error('Por favor verifica los datos ingresados');
+        }
     });
 };
 const cancel = () => {
@@ -43,7 +47,7 @@ const cancel = () => {
 <template>
     <form class="bg-white p-4" @submit.prevent="submit">
         <div class="my-2">
-            <InputLabel for="name">{{ $t("Name") }}</InputLabel>
+            <InputLabel for="name">Nombre</InputLabel>
             <input
                 id="name"
                 v-model="form.name"
@@ -57,7 +61,7 @@ const cancel = () => {
         </div>
 
         <div class="my-2">
-            <InputLabel for="description">{{ $t("Description") }}</InputLabel>
+            <InputLabel for="description">Descripción</InputLabel>
             <input
                 id="description"
                 v-model="form.description"
@@ -77,9 +81,9 @@ const cancel = () => {
             class="flex flex-row justify-items-center items-center space-x-7 my-2"
         >
             <PrimaryButton v-if="form.isDirty" type="submit"
-                >{{ $t("Save") }}
+                >Guardar
             </PrimaryButton>
-            <SecondaryButton @click="cancel">{{ $t("Cancel") }}</SecondaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
         </div>
     </form>
 </template>

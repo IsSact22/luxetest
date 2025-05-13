@@ -100,10 +100,10 @@ const handleDelete = (id) => {
 };
 </script>
 <template>
-    <Head :title="`${$t('Permissions')}`" />
+    <Head title="Permisos" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>{{ $t("Permissions") }}</h2>
+            <h2>Permisos</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center py-2">
             <!-- Modal -->
@@ -157,7 +157,7 @@ const handleDelete = (id) => {
                             <div class="flex justify-end mt-6">
                                 <button
                                     :disabled="form.processing"
-                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded"
                                     type="submit"
                                 >
                                     Guardar
@@ -191,10 +191,10 @@ const handleDelete = (id) => {
                 </div>
                 <!--                <button class="btn-primary" type="button">Nuevo Permiso</button>-->
                 <Link :href="route('users.index')" class="btn-primary">
-                    {{ $t("Users") }}
+                    Usuarios
                 </Link>
                 <Link :href="route('roles.index')" class="btn-primary">
-                    {{ $t("Roles") }}
+                    Roles
                 </Link>
             </form>
 
@@ -202,10 +202,10 @@ const handleDelete = (id) => {
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>{{ $t("Name") }}</th>
-                        <th>{{ $t("Guard name") }}</th>
-                        <th>{{ $t("Created on") }}</th>
-                        <th>{{ $t("Actions") }}</th>
+                        <th>Nombre</th>
+                        <th>Nombre de Guardia</th>
+                        <th>Creado el</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -26,8 +26,8 @@ class UpdateRoleRequest extends FormRequest
         return [
             'name' => [
                 ...$this->isPrecognitive() ?
-                    [Rule::unique('roles', 'name')->ignore($this->role)] :
-                    ['required', 'string', Rule::unique('roles', 'name')->ignore($this->role)],
+                    [Rule::unique('roles', 'name')->ignore($this->id)] :
+                    ['required', 'string', Rule::unique('roles', 'name')->ignore($this->id)],
             ],
             'guard_name' => ['nullable', 'string'],
             'permissions' => ['required'],

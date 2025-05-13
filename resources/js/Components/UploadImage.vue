@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import { useToast } from "vue-toastification";
 import { useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import { useToast } from "vue-toastification";
 
 const toast = useToast();
 const props = defineProps({
@@ -16,13 +16,38 @@ const form = useForm({
     id: props.id,
     images: null,
 });
+
+form.transform((data) => {
+    const formData = new FormData();
+    formData.append('id', props.id);
+    images.value.forEach((img, index) => {
+        formData.append(`images[]`, img.file);
+    });
+    return formData;
+});
+
 const submit = async () => {
+    if (!images.value.length) {
+        toast.error('Por favor selecciona al menos una imagen');
+        return;
+    }
+
     form.post(route("camo_activities.add_images"), {
+        forceFormData: true,
+        preserveScroll: true,
         onSuccess: () => {
+            // toast.success('Imágenes subidas exitosamente');
             emit("uploaded", true);
             form.reset();
+            images.value = [];
+            preview.value = [];
         },
+        // onError: (errors) => {
+        //     toast.error('Error al subir las imágenes');
+        //     console.error(errors);
+        // }
     });
+
 };
 
 const isDragging = ref(false);
@@ -82,7 +107,7 @@ const onDrop = (event) => {
 <template>
     <form class="card" @submit.prevent="submit" @keydown.enter.prevent>
         <div class="top">
-            <p>Drag & drop images</p>
+            <p>Arrastrar y soltar imágenes</p>
         </div>
         <div
             class="drag-area"
@@ -91,12 +116,12 @@ const onDrop = (event) => {
             @drop.prevent="onDrop"
         >
             <span v-if="!isDragging">
-                Drag & drop image here or
+                Arrastrar y soltar imágenes aquí o
                 <span class="select" role="button" @click="selectFiles">
-                    choose
+                    seleccionar
                 </span>
             </span>
-            <div v-else class="select">Drop images here</div>
+            <div v-else class="select">Soltar imágenes aquí</div>
             <input
                 id="file"
                 ref="fileInput"
@@ -133,11 +158,11 @@ const onDrop = (event) => {
         </div>
         <div>
             <div>
-                Added files <span class="badge-info">{{ images.length }}</span>
+                Archivos agregados <span class="badge-info">{{ images.length }}</span>
             </div>
         </div>
         <button v-if="form.isDirty" type="submit" @click="submit">
-            Upload
+            Subir
         </button>
         <div class="my-2">
             <progress

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -7,12 +7,14 @@ import NavLink from "@/Components/NavLink.vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import { route } from "ziggy-js";
-import { loadLanguageAsync } from "laravel-vue-i18n";
 
 const toast = useToast();
-const flash = usePage().props.flash.message;
-if (flash) {
-    toast(flash.message, flash.type);
+const flash = usePage().props.flash;
+if (flash.success) {
+    toast.success(flash.success);
+}
+if (flash.error) {
+    toast.error(flash.error);
 }
 const showingNavigationDropdown = ref(false);
 const showCamos = computed(() => {
@@ -28,10 +30,6 @@ const showUsers = computed(() => {
 const showBackoffice = computed(() => {
     const user = usePage().props.auth.user;
     return user.is_super || user.is_admin || user.is_cam;
-});
-
-onMounted(() => {
-    loadLanguageAsync(usePage().props.auth.user.locale);
 });
 </script>
 
@@ -56,7 +54,7 @@ onMounted(() => {
                     <Link
                         :href="route('profile.edit')"
                         class="text-yellow-300 hover:underline"
-                        >{{ $t("Profile") }}
+                        >Perfil
                     </Link>
                 </div>
             </div>
@@ -110,7 +108,7 @@ onMounted(() => {
                                 />
                             </svg>
                         </span>
-                        <span>{{ $t("Planes") }}</span>
+                        <span>{{ $t("Airplane") }}</span>
                     </NavLink>
                     <NavLink
                         :active="route().current('camos.index')"
@@ -172,18 +170,18 @@ onMounted(() => {
                                     :href="route('engine-types.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Motor type") }}
+                                    Tipo de Motor
                                 </DropdownLink>
                                 <DropdownLink
                                     :href="route('brand-aircrafts.index')"
                                     class="text-black"
-                                    >{{ $t("Aircraft brand") }}
+                                    >Marca de Avión
                                 </DropdownLink>
                                 <DropdownLink
                                     :href="route('model-aircrafts.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Aircraft Model") }}
+                                    Modelo de Avión
                                 </DropdownLink>
                                 <hr />
                                 <DropdownLink
@@ -191,7 +189,7 @@ onMounted(() => {
                                     :href="route('admin-rates.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Administration fees") }}
+                                    Tarifas de administración
                                 </DropdownLink>
                                 <hr />
                                 <DropdownLink
@@ -199,7 +197,7 @@ onMounted(() => {
                                     :href="route('labor-rates.index')"
                                     class="text-black"
                                 >
-                                    {{ $t("Labor rates") }}
+                                    Tarifas laborales
                                 </DropdownLink>
                             </div>
                         </template>

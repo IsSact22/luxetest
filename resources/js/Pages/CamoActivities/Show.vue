@@ -111,7 +111,7 @@ const goBack = () => {
                             >Fecha de Finalización</strong
                         >
                         <br />
-                        {{ resource.data.complete_at }}
+                        {{ resource.data.completed_at }}
                     </p>
                 </div>
                 <div

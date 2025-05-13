@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\User;
-use App\Notifications\WelcomeMail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 use Inertia\Inertia;
+
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
@@ -28,21 +31,33 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $payload = precognitive(static fn($bail) => $request->validated());
+        try {
+            DB::beginTransaction();
+            
+            $user = \App\Models\User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        $user = User::query()->create([
-            'name' => $payload['name'],
-            'email' => $payload['email'],
-            'password' => Hash::make($payload['password']),
-        ]);
-        $user->language()->create(['locale' => $payload['locale']]);
+            // // Asignar rol por defecto al usuario
+            // $user->assignRole('cam');
 
+            event(new Registered($user));
 
-        event(new Registered($user));
-        $user->notify(new WelcomeMail($user));
+            Auth::login($user);
+            
+            DB::commit();
 
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
+            return redirect()->route('dashboard')->with('success', '¡Registro exitoso! Bienvenido.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Error durante el registro: ' . $e->getMessage());
+            
+            return back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->with('error', 'Error al registrar el usuario. Por favor, intenta nuevamente.');
+        }
     }
 }

@@ -5,8 +5,6 @@ namespace App\Models;
 use App\ActivityStatus;
 use App\ApprovalStatus;
 use App\Helpers\HasRateValue;
-use App\Observers\CamoActivityObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +21,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 /**
  * @mixin IdeHelperCamoActivity
  */
-#[ObservedBy(CamoActivityObserver::class)]
 class CamoActivity extends Model implements HasMedia
 {
     use HasFactory;
@@ -76,8 +73,16 @@ class CamoActivity extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('preview')
-            ->fit(Fit::Contain, 120, 120)
-            ->nonQueued();
+            ->fit(Fit::Contain, 150, 150)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections($this->mediaCollectionName);
+
+        $this->addMediaConversion('thumbnail')
+            ->fit(Fit::Contain, 400, 300)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections($this->mediaCollectionName);
     }
 
     #[Override]
@@ -94,7 +99,7 @@ class CamoActivity extends Model implements HasMedia
     protected function getSpecialRate(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->specialRate()->latest()->first()
+            get: fn () => $this->specialRate()->latest()->first()
         );
     }
 
@@ -106,14 +111,14 @@ class CamoActivity extends Model implements HasMedia
     protected function missingRateValue(): Attribute
     {
         return Attribute::make(
-            get: fn() => HasRateValue::hasRate($this->labor_rate_id)
+            get: fn () => HasRateValue::hasRate($this->labor_rate_id)
         );
     }
 
     protected function missingRateName(): Attribute
     {
         return Attribute::make(
-            get: fn() => HasRateValue::getRate($this->labor_rate_id)
+            get: fn () => HasRateValue::getRate($this->labor_rate_id)
         );
     }
 

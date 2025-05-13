@@ -37,10 +37,14 @@ const submit = () => {
     form.submit({
         preserveScroll: true,
         onSuccess: () => {
+            const message = props.aircraft ? "Avión actualizado" : "Avión creado";
+            toast.success(message);
             form.reset();
-            emit("close", true);
-            toast.success("Avión creado");
+            router.visit(route('aircrafts.index'));
         },
+        onError: (errors) => {
+            toast.error('Por favor verifica los datos ingresados');
+        }
     });
 };
 const cancel = () => {
@@ -55,9 +59,7 @@ const cancel = () => {
         @submit.prevent="submit"
     >
         <div class="my-2">
-            <label class="block" for="model_aircraft_id">{{
-                $t("Model")
-            }}</label>
+            <label class="block" for="model_aircraft_id">Modelo</label>
             <select
                 id="model_aircraft_id"
                 v-model="form.model_aircraft_id"
@@ -74,9 +76,7 @@ const cancel = () => {
             </select>
         </div>
         <div class="my-2">
-            <label class="block" for="register"
-                >{{ $t("Registration") }}/{{ $t("Enrollment") }}</label
-            >
+            <label class="block" for="register">Registro/Matricula</label>
             <input
                 id="register"
                 v-model="form.register"
@@ -88,7 +88,7 @@ const cancel = () => {
             <InputError :message="form.errors.register" class="mt-2" />
         </div>
         <div class="my-2">
-            <label class="block" for="serial">{{ $t("Serial") }}</label>
+            <label class="block" for="serial">Serial</label>
             <input
                 id="serial"
                 v-model="form.serial"
@@ -100,10 +100,8 @@ const cancel = () => {
             <InputError :message="form.errors.serial" class="mt-2" />
         </div>
         <div class="flex flex-row justify-around items-center space-x-7 my-2">
-            <SecondaryButton @click="cancel">{{
-                $t("Cancel")
-            }}</SecondaryButton>
-            <PrimaryButton :disable="form.processing">{{ $t("Save") }}</PrimaryButton>
+            <SecondaryButton @click="cancel">Cancelar</SecondaryButton>
+            <PrimaryButton :disable="form.processing">Guardar</PrimaryButton>
         </div>
     </form>
 </template>

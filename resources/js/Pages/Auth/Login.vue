@@ -5,7 +5,7 @@ import { onMounted } from "vue";
 import { route } from "ziggy-js";
 import Checkbox from "@/Components/Checkbox.vue";
 import InputError from "@/Components/InputError.vue";
-import { isLoaded, loadLanguageAsync } from "laravel-vue-i18n";
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 
 defineProps({
     canResetPassword: {
@@ -24,21 +24,6 @@ const form = useForm({
 
 onMounted(() => {
     document.getElementById("login").classList.add("loaded");
-
-    // Detecta el idioma del navegador (por ejemplo 'en', 'es')
-    const userLang = navigator.language || navigator.userLanguage;
-    const lang = userLang.split("-")[0]; // Captura el idioma principal
-
-    // Si el idioma no está cargado, lo cargamos dinámicamente
-    if (!isLoaded(lang)) {
-        loadLanguageAsync(lang)
-            .then(() => {
-                console.log(`${lang} cargado correctamente`);
-            })
-            .catch((error) => {
-                console.error(`Error al cargar el idioma: ${lang}`, error);
-            });
-    }
 });
 
 const submit = () => {
@@ -57,9 +42,11 @@ const submit = () => {
         </div>
 
         <div
-            class="flex flex-row justify-between items-center mx-auto bg-[url('../../storage/app/public/img/background.png')] bg-center bg-cover bg-no-repeat"
-        >
-            <div class="w-1/2 h-screen">
+            class="flex flex-row justify-between items-center mx-auto bg-[url('../../storage/app/public/img/background.png')] bg-center bg-cover bg-no-repeat relative">
+            <!-- Overlay oscuro para reducir la opacidad del fondo -->
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            
+            <div class="w-1/2 h-screen  relative z-10">
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto mt-16"
                 >
@@ -71,27 +58,24 @@ const submit = () => {
                         <h2
                             class="text-yellow-400 text-3xl font-poppins font-medium leading-normal"
                         >
-                            {{ $t("Login") }}
+                            Iniciar Sesión
                         </h2>
                         <p
                             class="text-black-50 font-poppins not-italic leading-normal"
                         >
-                            {{
-                                $t(
-                                    "Enter your username and password to log into your account",
-                                )
-                            }}
+                            Ingresa tu usuario y contraseña para entrar en tu
+                            cuenta
                         </p>
                         <div>
                             <label class="block text-black-50" for="email">
-                                {{ $t("User") }}
+                                Usuario
                             </label>
                             <input
                                 id="email"
                                 v-model="form.email"
                                 class="w-96 py-3 bg-black-700 rounded-md text-white focus:ring-yellow-50"
                                 name="email"
-                                :placeholder="$t('Email')"
+                                placeholder="Correo Electrónico"
                                 type="text"
                             />
                             <InputError
@@ -102,14 +86,14 @@ const submit = () => {
 
                         <div>
                             <label class="block text-black-50" for="password">
-                                {{ $t("Password") }}
+                                Contraseña
                             </label>
                             <input
                                 id="password"
                                 v-model="form.password"
                                 class="w-96 py-3 bg-black-700 rounded-md text-white focus:ring-yellow-50"
                                 name="password"
-                                :placeholder="$t('Password')"
+                                placeholder="Contraseña"
                                 type="password"
                             />
                             <InputError
@@ -127,7 +111,7 @@ const submit = () => {
                                 />
                                 <span
                                     class="ms-2 text-sm text-yellow-600 font-poppins font-medium"
-                                    >{{ $t("Remember User") }}</span
+                                    >Recordar Usuario</span
                                 >
                             </label>
                         </div>
@@ -138,7 +122,7 @@ const submit = () => {
                                 :href="route('password.request')"
                                 class="text-yellow-500 font-poppins font-medium underline"
                             >
-                                {{ $t("Recover Password") }}
+                                Recuperar Contraseña
                             </Link>
                         </div>
 
@@ -149,8 +133,16 @@ const submit = () => {
                                 class="w-96 px-4 py-2 rounded-full bg-yellow-500 font-medium font-poppins"
                                 type="submit"
                             >
-                                {{ $t("Login") }}
+                                Iniciar Sesión
                             </button>
+                        </div>
+                        <div>
+                            <Link
+                                :href="route('register')"
+                                class="text-yellow-500 font-poppins font-medium underline"
+                            >
+                                Crear Cuenta
+                            </Link>
                         </div>
                     </form>
                 </div>
@@ -159,24 +151,21 @@ const submit = () => {
                 <div
                     class="flex flex-col justify-items-center items-center mx-auto"
                 >
-                    <img
+                    <ApplicationLogo
                         alt="Logo Luxe Plus"
                         class="mb-6 w-30 h-30"
-                        src="storage/img/Logo.png"
+                       
                     />
                     <h2 class="text-5xl font-bold mb-5 text-center text-white">
-                        {{ $t("Welcome to") }}
+                        Bienvenido a
                         <span class="text-yellow-500">LUXE PLUS</span>
                     </h2>
                     <p class="text-white text-center py-3 text-2xl">
-                        {{ $t("Airworthiness tracker") }}
+                        Airworthiness tracker
                     </p>
                     <p class="text-white text-center pt-2 px-10 text-2xl">
-                        {{
-                            $t(
-                                "Our CAMO application facilitates efficient management of continued airworthiness for aircraft fleets",
-                            )
-                        }}
+                        Nuestra aplicación CAMO facilita la gestión eficiente de
+                        la aeronavegabilidad continua para flotas de aeronaves
                     </p>
                 </div>
             </div>

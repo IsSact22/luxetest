@@ -4,16 +4,16 @@
             v-if="props.user.role !== 'owner'"
             class="text-lg font-medium text-gray-900"
         >
-            {{ $t("Update Role") }}
+            Actualizar Rol
         </h2>
         <h2 v-else class="text-lg font-medium text-gray-900">
-            {{ $t("Role Permissions") }}
+            Permisos del Rol
         </h2>
         <p
             v-if="props.user.role !== 'owner'"
             class="mt-1 text-sm text-gray-600"
         >
-            {{ $t("Make sure the user has a role assigned.") }}
+            Asegúrese de que el usuario tenga un rol asignado.
         </p>
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div class="flex flex-row justify-items-center items-center">
@@ -46,7 +46,7 @@
 
             <div class="flex items-center gap-4">
                 <PrimaryButton :disabled="form.processing"
-                    >{{ $t("Save") }}
+                    >Guardar
                 </PrimaryButton>
 
                 <Transition
@@ -59,7 +59,7 @@
                         v-if="form.recentlySuccessful"
                         class="text-sm text-gray-600"
                     >
-                        {{ $t("Saved") }}
+                        Guardado.
                     </p>
                 </Transition>
             </div>
@@ -72,6 +72,8 @@ import { onMounted, ref } from "vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { useForm } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import axios from "axios";
+import { useToast } from "vue-toastification";
 
 const props = defineProps({
     user: Object,
@@ -79,9 +81,26 @@ const props = defineProps({
 const form = useForm({
     role: props.user.role,
 });
-const submit = async () => {
-    alert(route("users.update", props.user.id));
-    form.patch(route("users.update", props.user.id));
+const toast = useToast();
+
+const submit = () => {
+    form.patch(route("users.update", props.user.id), {
+        onSuccess: async () => {
+            toast.success("Rol actualizado exitosamente");
+            // Actualizar el rol del usuario localmente
+            props.user.role = form.role;
+            // Recargar los permisos del usuario
+            try {
+                const response = await axios.get(route("users.show", props.user.id));
+                props.user.permissions = response.data.permissions;
+            } catch (error) {
+                console.error("Error al recargar permisos:", error);
+            }
+        },
+        onError: () => {
+            toast.error("Error al actualizar el rol");
+        }
+    });
 };
 const roles = ref(null);
 const getRoles = async () => {

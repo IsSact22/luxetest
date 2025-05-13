@@ -1,10 +1,9 @@
 <template>
     <div>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ $t("Update User") }}
-        </h2>
+        <h2 class="text-lg font-medium text-gray-900">Actualizar Usuario</h2>
         <p class="mt-1 text-sm text-gray-600">
-            {{ $t("Please update your user information and email address.") }}
+            Actualice la información de su usuario y su dirección de correo
+            electrónico.
         </p>
         <form class="mt-6 space-y-6" @submit.prevent="submit">
             <div>
@@ -32,24 +31,6 @@
                 />
                 <InputError :message="form.errors.email" class="mt-2" />
             </div>
-            <div>
-                <InputLabel :value="$t('Language')" for="email"></InputLabel>
-                <select
-                    class="rounded-md border border-gray-300"
-                    name="locale"
-                    id="locale"
-                    v-model="form.locale"
-                >
-                    <option :value="null">{{ $t("Select") }}</option>
-                    <option
-                        v-for="(item, idx) in locale"
-                        :key="idx"
-                        :value="item.value"
-                        v-html="item.label"
-                    ></option>
-                </select>
-                <InputError :message="form.errors.locale" class="mt-2" />
-            </div>
             <div
                 class="flex flex-col my-2 space-y-2 rounded-md border border-gray-300 px-2 py-2 w-1/2"
             >
@@ -58,7 +39,8 @@
                     id="avatar"
                     name="avatar"
                     type="file"
-                    @input="form.avatar = $event.target.files[0]"
+                    accept="image/*"
+                    @change="handleFileChange"
                 />
                 <progress
                     v-if="form.progress"
@@ -70,9 +52,9 @@
                 <InputError :message="form.errors.avatar" class="mt-2" />
             </div>
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">{{
-                    $t("Save")
-                }}</PrimaryButton>
+                <PrimaryButton :disabled="form.processing"
+                    >Guardar</PrimaryButton
+                >
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -99,29 +81,58 @@ import { router, useForm } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { route } from "ziggy-js";
 import { ref } from "vue";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const props = defineProps({
     user: Object,
 });
 const userId = ref(props.user.id);
-const locale = ref([
-    { value: "es", label: "Español" },
-    { value: "en", label: "English" },
-]);
 const form = useForm({
     name: props.user.name,
     email: props.user.email,
     avatar: null,
-    locale: props.user.locale,
-    _method: "PATCH",
+    _method: "PATCH"
 });
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        // Validar tamaño (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            form.errors.avatar = 'El archivo es demasiado grande. El tamaño máximo es 2MB.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
+
+        // Validar tipo de archivo
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            form.errors.avatar = 'Formato de archivo no válido. Use JPG, PNG, GIF o WEBP.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
+
+        form.errors.avatar = ''; // Limpiar error si todo está bien
+        form.avatar = file;
+    }
+};
+
 const submit = () => {
-    router.post(route("users.update", userId.value), {
-        _method: "patch",
-        name: form.name,
-        email: form.email,
-        locale: form.locale,
-        avatar: form.avatar,
+    form.post(route("users.update", userId.value), {
+        onSuccess: () => {
+            toast.success('Usuario actualizado exitosamente');
+            form.reset('password', 'password_confirmation');
+            form.avatar = null;
+            router.visit(route('users.index'));
+        },
+        onError: (errors) => {
+            toast.error('Error al actualizar el usuario');
+            console.error('Error updating user:', errors);
+        },
+        preserveScroll: true,
+        preserveState: false,
+        forceFormData: true
     });
 };
 </script>
