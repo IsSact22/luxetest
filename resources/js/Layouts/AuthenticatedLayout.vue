@@ -17,6 +17,15 @@ if (flash.error) {
     toast.error(flash.error);
 }
 const showingNavigationDropdown = ref(false);
+const isMenuExpanded = ref(true);
+
+const toggleMenu = () => {
+    isMenuExpanded.value = !isMenuExpanded.value;
+};
+
+const expandMenu = () => {
+    isMenuExpanded.value = true;
+};
 const showCamos = computed(() => {
     const userRoles = usePage().props.auth.userRoles;
     return ["super-admin", "admin", "cam", "owner", "crew"].includes(
@@ -35,28 +44,38 @@ const showBackoffice = computed(() => {
 
 <template>
     <div class="min-h-screen bg-white flex">
-        <nav class="flex flex-col bg-black-700 border-r border-gray-100 w-56">
+        <nav class="flex flex-col bg-black-700 border-r border-gray-100 transition-all duration-300" :class="{ 'w-56': isMenuExpanded, 'w-20': !isMenuExpanded }">
             <!-- Logo -->
-            <div class="inline-flex p-7">
-                <Link :href="route('dashboard')">
-                    <ApplicationLogo
-                        class="block h-9 w-auto fill-current text-white"
-                    />
-                </Link>
+            <div class="flex justify-between items-center p-7">
+                <div class="flex items-center space-x-2">
+                    <Link :href="route('dashboard')" v-show="isMenuExpanded">
+                        <ApplicationLogo
+                            class="block h-9 w-auto fill-current text-white"
+                        />
+                    </Link>
+                </div>
+                <button @click="toggleMenu" class="p-2 rounded-md hover:bg-yellow-500 transition-colors duration-200">
+                    <svg class="w-6 h-6 stroke-yellow-500 hover:stroke-black" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
 
             <!-- User Info -->
-            <div class="p-4 text-white">
-                <div class="font-medium text-base">
-                    {{ $page.props.auth.user.name }}
-                </div>
-                <div class="text-sm">
-                    <Link
-                        :href="route('profile.edit')"
-                        class="text-yellow-300 hover:underline"
-                        >Perfil
-                    </Link>
-                </div>
+            <div class="p-4">
+                <NavLink
+                    :href="route('profile.edit')"
+                    class="inline-flex items-center py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black transition-all duration-300"
+                    :class="{ 'space-x-7': isMenuExpanded, 'justify-center': !isMenuExpanded }"
+                >
+                    <span>
+                        <svg class="size-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12C15.3137 12 18 9.31371 18 6C18 2.68629 15.3137 0 12 0C8.68629 0 6 2.68629 6 6C6 9.31371 8.68629 12 12 12Z"/>
+                            <path d="M12 14C7.03172 14 3 18.0317 3 23C3 23.5523 3.44772 24 4 24H20C20.5523 24 21 23.5523 21 23C21 18.0317 16.9683 14 12 14Z"/>
+                        </svg>
+                    </span>
+                    <span v-if="isMenuExpanded" class="text-white">{{ $page.props.auth.user.name }}</span>
+                </NavLink>
             </div>
 
             <!-- Navigation Links -->
@@ -65,7 +84,7 @@ const showBackoffice = computed(() => {
                     <NavLink
                         :active="route().current('dashboard')"
                         :href="route('dashboard')"
-                        class="inline-flex items-center space-x-7 py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black"
+                        class="inline-flex items-center py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black transition-all duration-300" :class="{ 'space-x-7': isMenuExpanded, 'justify-center': !isMenuExpanded }"
                     >
                         <span>
                             <svg
@@ -87,13 +106,13 @@ const showBackoffice = computed(() => {
                                 />
                             </svg>
                         </span>
-                        <span>{{ $t("Dashboard") }}</span>
+                        <span v-if="isMenuExpanded">{{ $t("Dashboard") }}</span>
                     </NavLink>
                     <NavLink
                         v-show="showBackoffice"
                         :active="route().current('aircrafts.index')"
                         :href="route('aircrafts.index')"
-                        class="inline-flex items-center space-x-7 py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black"
+                        class="inline-flex items-center py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black transition-all duration-300" :class="{ 'space-x-7': isMenuExpanded, 'justify-center': !isMenuExpanded }"
                     >
                         <span>
                             <svg
@@ -108,12 +127,12 @@ const showBackoffice = computed(() => {
                                 />
                             </svg>
                         </span>
-                        <span>{{ $t("Airplane") }}</span>
+                        <span v-if="isMenuExpanded">{{ $t("Airplane") }}</span>
                     </NavLink>
                     <NavLink
                         :active="route().current('camos.index')"
                         :href="route('camos.index')"
-                        class="inline-flex items-center space-x-7 py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black"
+                        class="inline-flex items-center py-2 stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black transition-all duration-300" :class="{ 'space-x-7': isMenuExpanded, 'justify-center': !isMenuExpanded }"
                     >
                         <span>
                             <svg
@@ -127,7 +146,7 @@ const showBackoffice = computed(() => {
                                 />
                             </svg>
                         </span>
-                        <span>{{ $t("Camos") }}</span>
+                        <span v-if="isMenuExpanded">{{ $t("Camos") }}</span>
                     </NavLink>
                 </div>
 
@@ -136,6 +155,7 @@ const showBackoffice = computed(() => {
                         <template #trigger>
                             <button
                                 class="w-full text-left px-4 py-2 text-white stroke-yellow-500 fill-yellow-500 hover:bg-yellow-500 hover:rounded-md hover:text-black hover:stroke-black hover:fill-black"
+                                @click="expandMenu"
                             >
                                 <span
                                     class="inline-flex items-center space-x-7"
@@ -152,7 +172,7 @@ const showBackoffice = computed(() => {
                                             />
                                         </svg>
                                     </span>
-                                    <span>{{ $t("System") }}</span>
+                                    <span v-if="isMenuExpanded">{{ $t("System") }}</span>
                                 </span>
                             </button>
                         </template>
@@ -233,7 +253,7 @@ const showBackoffice = computed(() => {
                         </g>
                     </svg>
                 </span>
-                <span>{{ $t("Logout") }}</span>
+                <span v-if="isMenuExpanded">{{ $t("Logout") }}</span>
             </NavLink>
         </nav>
 

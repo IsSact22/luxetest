@@ -616,9 +616,8 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                     <input
                         id="labor_mount"
                         v-model="form.labor_mount"
-                        :aria-readonly="true"
-                        :readonly="true"
-                        class="w-32 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right input-not-allowed"
+                      
+                        class="w-32 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right "
                         name="labor_mount"
                         step="0.1"
                         type="number"
@@ -637,9 +636,8 @@ const enableSpecialRate = computed(() => props.user.is_admin);
                     <input
                         id="material_mount"
                         v-model="form.material_mount"
-                        :aria-readonly="true"
-                        :readonly="true"
-                        class="w-32 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right input-not-allowed"
+                       
+                        class="w-32 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-right "
                         name="material_mount"
                         placeholder="0.00"
                         step="0.1"
