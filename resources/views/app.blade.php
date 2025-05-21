@@ -3,6 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#000000">
+        <meta name="description" content="Gestión de servicios aéreos de lujo">
+
+        <link rel="manifest" href="/manifest.json">
+        <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 

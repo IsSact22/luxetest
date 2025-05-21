@@ -40,27 +40,26 @@ export default defineConfig(({ mode }) => {
             visualizer({ open: false }), // Visualizador OFF por defecto,
             VitePWA({
                 registerType: 'autoUpdate',
-                manifest: {
-                    name: 'Luxeplus',
-                    short_name: 'Luxeplus',
-                    description: 'Luxeplus - Tu plataforma de servicios',
-                    theme_color: '#ffffff',
-                    icons: [
+                includeAssets: ['icons/*.png'],
+                manifest: false,
+                devOptions: {
+                    enabled: true
+                },
+                workbox: {
+                    globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+                    runtimeCaching: [
                         {
-                            src: '/icons/icon-192x192.png',
-                            sizes: '192x192',
-                            type: 'image/png'
-                        },
-                        {
-                            src: '/icons/icon-512x512.png',
-                            sizes: '512x512',
-                            type: 'image/png',
-                            purpose: 'any maskable'
+                            urlPattern: /^https:\/\/api\..*/i,
+                            handler: 'NetworkFirst',
+                            options: {
+                                cacheName: 'api-cache',
+                                networkTimeoutSeconds: 10,
+                                cacheableResponse: {
+                                    statuses: [0, 200]
+                                }
+                            }
                         }
-                    ],
-                    start_url: '/',
-                    display: 'standalone',
-                    background_color: '#ffffff'
+                    ]
                 },
                 workbox: {
                     globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
