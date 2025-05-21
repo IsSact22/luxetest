@@ -8,6 +8,7 @@ import i18n from "laravel-vue-i18n/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import { createHtmlPlugin } from "vite-plugin-html";
 import vueDevTools from "vite-plugin-vue-devtools";
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ mode }) => {
     const isProduction = mode === 'production';
@@ -36,7 +37,48 @@ export default defineConfig(({ mode }) => {
                 },
             }),
             i18n(),
-            visualizer({ open: false }), // Visualizador OFF por defecto
+            visualizer({ open: false }), // Visualizador OFF por defecto,
+            VitePWA({
+                registerType: 'autoUpdate',
+                manifest: {
+                    name: 'Luxeplus',
+                    short_name: 'Luxeplus',
+                    description: 'Luxeplus - Tu plataforma de servicios',
+                    theme_color: '#ffffff',
+                    icons: [
+                        {
+                            src: '/icons/icon-192x192.png',
+                            sizes: '192x192',
+                            type: 'image/png'
+                        },
+                        {
+                            src: '/icons/icon-512x512.png',
+                            sizes: '512x512',
+                            type: 'image/png',
+                            purpose: 'any maskable'
+                        }
+                    ],
+                    start_url: '/',
+                    display: 'standalone',
+                    background_color: '#ffffff'
+                },
+                workbox: {
+                    globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+                    runtimeCaching: [
+                        {
+                            urlPattern: /^https:\/\/api\.*/i,
+                            handler: 'NetworkFirst',
+                            options: {
+                                cacheName: 'api-cache',
+                                networkTimeoutSeconds: 10,
+                                cacheableResponse: {
+                                    statuses: [0, 200]
+                                }
+                            }
+                        }
+                    ]
+                }
+            })
         ],
         resolve: {
             alias: {

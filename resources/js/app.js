@@ -1,5 +1,6 @@
 import "./bootstrap";
 import "../css/app.css";
+import { registerSW } from 'virtual:pwa-register';
 
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
@@ -22,6 +23,8 @@ const pinia = createPinia();
 pinia.use(storeReset);
 pinia.use(piniaPluginPersistedState);
 
+
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
@@ -30,7 +33,31 @@ createInertiaApp({
             import.meta.glob("./Pages/**/*.vue"),
         ),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
+        const app = createApp({ render: () => h(App, props) });
+        
+        // Registrar el service worker
+        const toast = useToast();
+        const updateSW = registerSW({
+            onNeedRefresh() {
+                toast.info('¡Nueva versión disponible! Haz clic aquí para actualizar.', {
+                    timeout: false,
+                    closeOnClick: false,
+                    draggable: false,
+                    closeButton: false,
+                    onClick: () => {
+                        updateSW();
+                        window.location.reload();
+                    }
+                });
+            },
+            onOfflineReady() {
+                toast.success('¡La aplicación está lista para trabajar offline!', {
+                    timeout: 3000
+                });
+            },
+        });
+
+        return app
             .use(plugin)
             .use(ZiggyVue)
             .use(pinia)
