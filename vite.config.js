@@ -86,6 +86,7 @@ export default defineConfig(({ mode }) => {
                 filename: 'sw.js',
                 workbox: {
                     globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+                    navigationPreload: true,
                     runtimeCaching: [
                         {
                             urlPattern: /^https:\/\/api\.*/i,
@@ -93,6 +94,31 @@ export default defineConfig(({ mode }) => {
                             options: {
                                 cacheName: 'api-cache',
                                 networkTimeoutSeconds: 10,
+                                cacheableResponse: {
+                                    statuses: [0, 200]
+                                }
+                            }
+                        },
+                        {
+                            urlPattern: /\.(?:png|jpg|jpeg|svg|gif)$/,
+                            handler: 'CacheFirst',
+                            options: {
+                                cacheName: 'images-cache'
+                            }
+                        },
+                        {
+                            urlPattern: /^https:\/\/fonts\.*/i,
+                            handler: 'CacheFirst',
+                            options: {
+                                cacheName: 'fonts-cache'
+                            }
+                        },
+                        {
+                            urlPattern: new RegExp('/*'),
+                            handler: 'NetworkFirst',
+                            options: {
+                                cacheName: 'offline-cache',
+                                networkTimeoutSeconds: 5,
                                 cacheableResponse: {
                                     statuses: [0, 200]
                                 }
