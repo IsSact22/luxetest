@@ -73,8 +73,16 @@ class CamoActivity extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('preview')
-            ->fit(Fit::Contain, 120, 120)
-            ->nonQueued();
+            ->fit(Fit::Contain, 150, 150)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections($this->mediaCollectionName);
+
+        $this->addMediaConversion('thumbnail')
+            ->fit(Fit::Contain, 400, 300)
+            ->sharpen(10)
+            ->nonQueued()
+            ->performOnCollections($this->mediaCollectionName);
     }
 
     #[Override]

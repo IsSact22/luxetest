@@ -1,0 +1,83 @@
+{
+  "id": "/",
+  "name": "LuxePlus",
+  "short_name": "LuxePlus",
+  "description": "Gestión de servicios aéreos de lujo - Tu plataforma integral para servicios aéreos premium",
+  "categories": ["business", "productivity"],
+  "lang": "es",
+  "dir": "ltr",
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "any",
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "platform": "wide"
+    },
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "platform": "narrow"
+    }
+  ],
+  "display_override": [
+    "window-controls-overlay"
+  ],
+  "features": [
+    "Gestión de aeronaves",
+    "Control de acceso basado en roles",
+    "Gestión de servicios aéreos",
+    "Interfaz responsiva"
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Ir al panel de control",
+      "url": "/dashboard",
+      "icons": [{
+        "src": "/icons/icon-192x192.png",
+        "sizes": "192x192"
+      }]
+    }
+  ],
+  "edge_side_panel": {},
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

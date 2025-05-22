@@ -75,8 +75,22 @@ const form = useForm(method, url, {
 });
 
 const submit = async () => {
-    console.log("click");
-    form.submit();
+    try {
+        await form.submit({
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('CAMO creado exitosamente');
+                router.get(route("camos.index"));
+            },
+            onError: (errors) => {
+                console.error('Errores:', errors);
+                toast.error('Error al crear el CAMO');
+            }
+        });
+    } catch (error) {
+        console.error('Error en submit:', error);
+        toast.error('Error al procesar la solicitud');
+    }
 };
 const cancel = () => {
     form.clearErrors();

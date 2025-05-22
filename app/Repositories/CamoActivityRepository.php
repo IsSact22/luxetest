@@ -66,6 +66,25 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
         try {
             $status = ActivityStatus::from($data['status']);
             $approvalStatus = ApprovalStatus::from($data['approval_status']);
+
+
+            // Calcular labor_mount automáticamente
+        $laborMount = null;
+        if (isset($data['estimate_time']) && isset($data['labor_rate_value_id'])) {
+            // Obtener el valor de la tarifa
+            $laborRateValue = DB::table('labor_rate_values')
+                ->where('id', $data['labor_rate_value_id'])
+                ->first();
+
+            if ($laborRateValue) {
+                // Si hay special_rate, usar ese valor, sino usar el amount de la tarifa
+                $rate = isset($data['special_rate']) ? $data['special_rate'] : $laborRateValue->amount;
+                $laborMount = $data['estimate_time'] * $rate;
+            }
+        }
+
+
+
             $dto = new CamoActivityDTO(
                 null,
                 $data['camo_id'],
@@ -80,7 +99,8 @@ class CamoActivityRepository implements CamoActivityRepositoryInterface
                 $data['completed_at'] ?? null,
                 $status,
                 $data['comments'] ?? null,
-                (float)$data['labor_mount'],
+                // (float)$data['labor_mount'],
+                $laborMount ?? 0,
                 $data['material_mount'] ?? 0,
                 $data['material_information'] ?? null,
                 $data['awr'] ?? null,

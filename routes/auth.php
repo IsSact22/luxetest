@@ -9,15 +9,16 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests as Precognitive;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
+use App\Http\Requests\Auth\RegisterRequest;
 
 Route::middleware('guest')->group(static function () {
     Route::get('register', static fn (): \Inertia\Response => (new RegisteredUserController)->create())
         ->name('register');
-    Route::post('register', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new RegisteredUserController)
+    Route::post('register', static fn (\App\Http\Requests\Auth\RegisterRequest $request): RedirectResponse => (new RegisteredUserController)
         ->store($request))->middleware(Precognitive::class);
-    Route::get('login', static fn (): \Inertia\Response => (new AuthenticatedSessionController)->create())
+    Route::post('login', static fn (\App\Http\Requests\Auth\LoginRequest $request): RedirectResponse => (new AuthenticatedSessionController)->store($request))
         ->name('login');
-    Route::post('login', static fn (\App\Http\Requests\Auth\LoginRequest $request): RedirectResponse => (new AuthenticatedSessionController)->store($request));
+    Route::get('login', static fn (): \Inertia\Response => (new AuthenticatedSessionController)->create());
     Route::get('forgot-password', static fn (): \Inertia\Response => (new PasswordResetLinkController)->create())
         ->name('password.request');
     Route::post('forgot-password', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new PasswordResetLinkController)->store($request))
@@ -42,5 +43,5 @@ Route::middleware('auth')->group(static function () {
     Route::post('confirm-password', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new \App\Http\Controllers\Auth\ConfirmablePasswordController)->store($request));
     Route::put('password', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new \App\Http\Controllers\Auth\PasswordController)->update($request))->name('password.update');
     Route::post('logout', static fn (\Illuminate\Http\Request $request): RedirectResponse => (new AuthenticatedSessionController)->destroy($request))
-        ->name('logout');
+    ->name('logout');
 });

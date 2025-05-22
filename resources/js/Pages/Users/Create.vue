@@ -7,6 +7,7 @@ import { route } from "ziggy-js";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputError from "@/Components/InputError.vue";
+import { useToast } from "vue-toastification";
 
 const form = useForm("post", route("users.store"), {
     role: null,
@@ -18,9 +19,22 @@ const form = useForm("post", route("users.store"), {
     avatar: null,
 });
 
+const toast = useToast();
+
 const submit = async () => {
     form.submit({
-        onFinish: () => form.reset(),
+        onSuccess: () => {
+            toast.success('Usuario creado exitosamente');
+            form.reset();
+            router.get(route('users.index'), {}, {
+                preserveState: true,
+                preserveScroll: true
+            });
+        },
+        onError: () => {
+            toast.error('Error al crear el usuario');
+            // Los errores específicos ya son manejados automáticamente por el componente InputError
+        }
     });
 };
 
@@ -35,12 +49,31 @@ const getOwners = async () => {
 };
 onMounted(getOwners);
 
+
 const avatar = ref(null);
 
 function handleFileChange(event) {
-    form.avatar = event.target.files[0];
-}
+    const file = event.target.files[0];
+    if (file) {
+        // Validar tamaño (2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            form.errors.avatar = 'El archivo es demasiado grande. El tamaño máximo es 2MB.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
 
+        // Validar tipo de archivo
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            form.errors.avatar = 'Formato de archivo no válido. Use JPG, PNG, GIF o WEBP.';
+            event.target.value = ''; // Limpiar el input
+            return;
+        }
+
+        form.errors.avatar = ''; // Limpiar error si todo está bien
+        form.avatar = file;
+    }
+}
 const cancelForm = () => {
     form.reset();
     router.get(route("users.index"));
@@ -50,11 +83,11 @@ const cancelForm = () => {
     <Head title="Users" />
     <AuthenticatedLayout>
         <template #header>
-            <h2>Users</h2>
+            <h2>Usuarios</h2>
         </template>
         <div class="flex flex-col justify-items-center items-center">
             <div class="my-4 border rounded-md px-4 py-1 bg-white">
-                <h1 class="text-xl text-neutral-600">Create User</h1>
+                <h1 class="text-xl text-neutral-600">Crear Usuario</h1>
                 <form @submit.prevent="submit">
                     <div
                         class="flex flex-col my-2 space-y-2 px-2 py-2 border rounded-md bg-white"
@@ -90,7 +123,7 @@ const cancelForm = () => {
                                     >Owner (Propietario)</label
                                 >
                             </div>
-                            <!--                            <div
+                                                       <div
                                                             class="flex-1 justify-items-center items-center space-x-2"
                                                         >
                                                             <input
@@ -102,7 +135,7 @@ const cancelForm = () => {
                                                             <label class="text-xs" for="owner"
                                                                 >Crew (Tripulante)</label
                                                             >
-                                                        </div>-->
+                                                        </div>
                         </div>
                     </div>
                     <div
@@ -197,19 +230,30 @@ const cancelForm = () => {
                             class="mt-2"
                         />
                     </div>
-                    <div
-                        class="flex flex-col my-2 space-y-2 border rounded-md px-2 py-2 bg-white"
-                    >
-                        <label for="avatar">Avatar:</label>
-                        <input
-                            id="avatar"
-                            ref="avatar"
-                            type="file"
-                            @input="form.avatar = $event.target.files[0]"
-                        />
+                    <div class="flex flex-col my-2 space-y-2 border rounded-md px-4 py-3 bg-white">
+                        <label for="avatar" class="text-sm font-medium text-gray-700">Avatar:</label>
+                        <div class="mt-1 flex items-center space-x-4">
+                            <input
+                                id="avatar"
+                                ref="avatar"
+                                type="file"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
+                                class="block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-blue-50 file:text-blue-700
+                                    hover:file:bg-blue-100"
+                                @input="handleFileChange"
+                            />
+                        </div>
+                        <p class="mt-1 text-sm text-gray-500">
+                            Formatos permitidos: JPG, PNG, GIF, WEBP. Tamaño máximo: 2MB
+                        </p>
+                        <InputError :message="form.errors.avatar" class="mt-2" />
                     </div>
                     <div class="flex flex-row justify-around my-4">
-                        <button
+                        <button 
                             class="btn-submit"
                             type="submit"
                             @click="submit"

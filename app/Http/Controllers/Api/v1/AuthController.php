@@ -11,6 +11,8 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 use function App\Helpers\AfterCatchUnknown;
@@ -20,7 +22,7 @@ class AuthController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->middleware('auth:sanctum', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -65,20 +67,18 @@ class AuthController extends Controller
         }
     }
 
-    public function refresh(): ApiSuccessResponse|ApiErrorResponse
+    /**
+     * Logout the user (Invalidate the token).
+     */
+    public function logout(): ApiSuccessResponse|ApiErrorResponse
     {
         try {
+            auth('api')->logout();
+
             return new ApiSuccessResponse(
-                [
-                    'status' => 'success',
-                    'user' => Auth::user(),
-                    'authorisation' => [
-                        'token' => Auth::refresh(),
-                        'type' => 'bearer',
-                    ],
-                ],
-                ['message' => 'login successfully'],
-                ResponseAlias::HTTP_ACCEPTED
+                null,
+                ['message' => 'Successfully logged out'],
+                ResponseAlias::HTTP_OK
             );
         } catch (Exception $exception) {
             LogHelper::logError($exception);
@@ -87,25 +87,52 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request): ApiSuccessResponse|ApiErrorResponse
+    /**
+     * Register a new user.
+     */
+    public function register(Request $request): ApiSuccessResponse|ApiErrorResponse
     {
         try {
-            Auth::logout();
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            \DB::beginTransaction();
+
+            $user = \App\Models\User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => \Hash::make($request->password),
+            ]);
+
+            // Asignar el rol por defecto si no lo tiene
+            if (!$user->hasRole('cam')) {
+                $user->assignRole('cam');
+            }
+
+            \DB::commit();
+
+            // Generar token JWT
+            $token = auth('api')->login($user);
 
             return new ApiSuccessResponse(
-                [],
-                ['message' => 'User logged out successfully.'],
-                ResponseAlias::HTTP_ACCEPTED
+                [
+                    'status' => 'success',
+                    'user' => $user,
+                    'authorization' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ],
+                ['message' => 'User registered successfully'],
+                ResponseAlias::HTTP_CREATED
             );
-        } catch (AuthorizationException $e) {
-            // failure to logout
-            return new ApiErrorResponse(
-                $e,
-                'User not authorized',
-                ResponseAlias::HTTP_FORBIDDEN
-            );
-        } catch (Exception $e) {
-            LogHelper::logError($e);
+
+        } catch (Exception $exception) {
+            \DB::rollBack();
+            LogHelper::logError($exception);
 
             return AfterCatchUnknown();
         }

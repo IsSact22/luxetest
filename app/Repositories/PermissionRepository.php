@@ -11,9 +11,22 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Override;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionRepository implements PermissionRepositoryInterface
 {
+    public function getRoles(Request $request): LengthAwarePaginator
+    {
+        $perPage = $request->has('per_page') ? $request->get('per_page') : 10;
+
+        return Role::orderBy('name')
+            ->when($request->get('search'), static function ($query, string $search) {
+                $query->where('name', 'like', $search.'%');
+            })
+            ->paginate($perPage)
+            ->withQueryString();
+    }
+
     public function __construct(protected Permission $model) {}
 
     #[Override]

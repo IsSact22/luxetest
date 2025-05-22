@@ -1,0 +1,63 @@
+name: Deploy to test server
+
+on:
+  push:
+    branches:
+      - develop  # Ejecutar en cada push a la rama develop
+  workflow_dispatch:  # Permitir la ejecución manual
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Usaremos una imagen de Ubuntu para el servidor
+
+    steps:
+      # Paso 1: Clonar el repositorio
+      - name: Check out code
+        uses: actions/checkout@v3  # Usa la versión más reciente de actions/checkout
+
+      # Paso 2: Configurar PHP
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'  # Ajusta la versión de PHP a la que uses
+          extensions: mbstring, ctype, fileinfo, json, pdo_mysql, tokenizer, xml  # Extensiones comunes para Laravel
+          coverage: none  # Desactiva la cobertura si no la necesitas
+
+      # Paso 3: Instalar dependencias de Composer
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      # Paso 4: Configurar Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'  # Ajusta la versión de Node.js si es necesario
+          cache: 'npm'  # Habilita el caché de npm para acelerar las instalaciones
+
+      # Paso 5: Instalar dependencias de npm
+      - name: Install npm dependencies
+        run: npm install
+
+      # Paso 6: Compilar assets con Vite
+      - name: Build assets with Vite
+        run: npm run build
+
+      # Paso 7: Desplegar en el servidor de pruebas
+      - name: Deploy to test Server
+        uses: appleboy/ssh-action@master  # Usa la acción de SSH de Appleboy
+        with:
+          host: ${{ secrets.SERVER_TEST_IP }}  # IP del servidor
+          username: ${{ secrets.SSH_TEST_USER }}  # Usuario SSH
+          key: ${{ secrets.SSH_TEST_PRIVATE_KEY }}  # Clave privada SSH
+          script: |
+            cd ${{ secrets.APP_TEST_DIR }}  # Ruta del proyecto en el servidor
+            git fetch origin  # Obtener los últimos cambios del repositorio
+            git reset --hard origin/develop  # Resetear a la rama develop
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+            npm install
+            npm run build
+            # php artisan migrate --force  # Ejecuta las migraciones
+            php artisan config:cache  # Cachea la configuración
+            php artisan route:cache  # Cachea las rutas
+            php artisan view:cache  # Cachea las vistas (opcional)
+            php artisan optimize  # Optimiza la aplicación

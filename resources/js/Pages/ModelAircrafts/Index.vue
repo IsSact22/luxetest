@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { Head, useForm, router } from "@inertiajs/vue3";
 import Paginator from "@/Components/Paginator.vue";
 import _ from "lodash";
 import { route } from "ziggy-js";
@@ -14,17 +14,19 @@ const toast = useToast();
 /*confirm*/
 const confirmDialog = ref(null);
 const selectedId = ref(null);
-const handleAction = () => {
-    // Aquí va la lógica de la acción que deseas confirmar
+const handleAction = async () => {
     if (selectedId.value) {
-        form.delete(route("model-aircrafts.destroy", selectedId.value), {
-            preserveState: true,
-            preserveScroll: true, // Opcional: Mantiene la posición del scroll
-            onSuccess: () => {
-                selectedId.value = null; // Limpia el ID seleccionado
-                toast.success("Registro eliminado!");
-            },
-        });
+        try {
+            await router.delete(route('model-aircrafts.destroy', selectedId.value), {
+                preserveScroll: true,
+                preserveState: true,
+                only: ['resource']
+            });
+            toast.success('Modelo eliminado correctamente');
+            selectedId.value = null;
+        } catch (error) {
+            toast.error('Error al eliminar el modelo');
+        }
     }
 };
 const showConfirmation = (id) => {
@@ -60,9 +62,12 @@ const handleSelected = (object) => {
     openModal();
 };
 
-const closeModal = () => {
+const closeModal = (refresh = false) => {
     selected.value = null;
     showModal.value = false;
+    if (refresh) {
+        form.get(route('model-aircrafts.index'), { preserveState: true });
+    }
 };
 </script>
 <template>
